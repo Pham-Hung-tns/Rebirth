@@ -1,4 +1,6 @@
-## GameTopDown
+## Đồ án tốt nghiệp: Rebirth
+
+### Thể loại: Top-down, dungeon, 2D, mobile
 
 ### 🛠️ Setup Test Scene trong Editor Mode
 
@@ -96,7 +98,7 @@
 
 - Tạo asset `EnemyDetailsSO` trong menu: `Scriptable Objects/Enemy/Enemy Details`:
   - **enemyPrefab**: prefab enemy (có `EnemyController`, `EnemyVitality`, vũ khí…).
-  - **chaseDistance**: khoảng cách detect đuổi theo player (được AI dùng).
+  - **chaseDistance**: khoảng cách detect đuổi theo player (dùng A* để triển khai).
   - **weapon**: `WeaponData` nếu enemy có bắn.
   - **firingIntervalMin/Max, firingDurationMin/Max, firingLineOfSightRequired**: tham số bắn (sẵn để AI/combat logic dùng).
   - **healthByLevel** (`EnemyHealthDetails[]`):
@@ -149,7 +151,6 @@
 > - Có thể quan sát/tune tỉ lệ quái bằng cách chỉnh `ratio` trong `enemiesByLevelList` của `RoomTemplateSO`:
 >   - Tăng `ratio` của một `EnemyDetailsSO` → thấy loại đó xuất hiện nhiều hơn.
 
-> **Lưu ý**: Hiện tại việc **lock/mở cửa vật lý** (Door prefab) chưa được nối lại với event spawn – behavior này phụ thuộc vào script `Door`/collider trong prefab. Bạn có thể dùng `OnRoomChanged` để:
 > - Gọi `instantiatedRoom.LockDoors()` trước khi spawn (khi có sẵn logic).
 > - Sau `OnRoomEnemiesDefeated` thì unlock và chuyển lại ambient music.
 
@@ -167,7 +168,6 @@
     - `AtSpawnerPosition`: spawn ngay tại transform của `ChestSpawner`.
     - `AtPlayerPosition`: spawn tại vị trí player lúc sự kiện xảy ra.
   - **Loot fields** (`weaponSpawnByLevel`, `healthSpawnByLevel`, `ammoSpawnByLevel`, `numberOfItemsToSpawnMin/Max`):
-    - Các struct đã sẵn sàng để bạn nối với hệ loot thực tế (ví dụ tạo item từ `WeaponData`, heal % máu, ammo %).
     - Mặc định, logic loot vẫn do script `Chest` hiện tại xử lý (spawn 1 predefined item hoặc `RandomItemInEachChest` từ `LevelManager`).
 
 > **Kiểm thử nhanh Chest**  
@@ -188,7 +188,7 @@
   - `EnemySpawner` (global).
   - (Tuỳ chọn) các `ChestSpawner` trong prefab phòng.
 
-Với cấu hình trên, bạn có thể:
+Với cấu hình trên, có thể điều chỉnh các thông số sau trên Inspector:
 - Điều chỉnh tỉ lệ spawn enemy bằng `SpawnableObjectsByLevel<EnemyDetailsSO>.ratio`.
 - Điều chỉnh tổng số & tốc độ spawn bằng `RoomEnemySpawnParameters`.
 - Thử 2 chế độ spawn rương (`OnRoomEntry` / `OnEnemiesDefeated`) và xác suất min/max để xác nhận behavior mong muốn.
