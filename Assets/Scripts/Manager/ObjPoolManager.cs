@@ -51,4 +51,20 @@ public class ObjPoolManager : Persistance<ObjPoolManager>
         }
         obj.gameObject.SetActive(false);
     }
+
+    public void ClearAllPool()
+    {
+        foreach (var queue in pool.Values)
+        {
+            foreach (var projectile in queue)
+            {
+                if (projectile != null && projectile.gameObject != null)
+                {
+                    Destroy(projectile.gameObject);
+                }
+            }
+            queue.Clear();
+        }
+        pool.Clear();
+    }
 }

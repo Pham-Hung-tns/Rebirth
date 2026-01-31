@@ -14,6 +14,9 @@ public class EnemyMovement : MonoBehaviour
     private int currentPathIndex = 0;
     private float lastPathRequestTime = -999f;
     private EnemyController brain;
+    private bool isChasing = false; // Flag để biết khi nào ChaseAction đang active
+    private float lastDirectionChangeTime = -999f; // Timer để delay gọi ChangeDirection
+    private float directionChangeInterval = 0.3f; // Delay giữa các lần ChangeDirection (0.2s)
     
     // Room grid cache (allocated when spawned in a room)
     private bool hasRoomGrid = false;
@@ -32,9 +35,11 @@ public class EnemyMovement : MonoBehaviour
     public Tilemap GroundTilemap { get => groundTilemap; set => groundTilemap = value; }
     public Tilemap CollisionTilemap { get => collisionTilemap; set => collisionTilemap = value; }
 
-    private void Awake()
+    public void SetChasing(bool chasing) => isChasing = chasing;
+
+    public void Initialized(EnemyController controller)
     {
-        brain = GetComponent<EnemyController>();
+        brain = controller;
     }
 
     private void Start()
@@ -96,6 +101,11 @@ public class EnemyMovement : MonoBehaviour
         {
             MoveAlongPathStep();
         }
+        else if (isChasing)
+        {
+            // Nếu đang chase mà không có path, di chuyển trực tiếp tới player (tránh khựng lại)
+            MoveTowardPatrolPosition();
+        }
     }
 
     // Public: request a path to world target (throttled by Settings.enemyPathRebuildCooldown)
@@ -133,6 +143,27 @@ public class EnemyMovement : MonoBehaviour
                 currentPath = null; // reached
             }
         }
+    }
+
+    // Di chuyển trực tiếp tới PatrolPosition khi không có path
+    private void MoveTowardPatrolPosition()
+    {
+        if (brain == null || brain.Rb == null || brain.EnemyConfig == null)
+            return;
+        
+        Vector2 rbPos = brain.Rb.position;
+        Vector2 targetPos = brain.PatrolPosition;
+        float step = brain.EnemyConfig.speed * Time.deltaTime;
+        Vector2 next = Vector2.MoveTowards(rbPos, targetPos, step);
+        
+        // Chỉ gọi ChangeDirection với delay để tránh xoay quá nhanh
+        if (Time.time - lastDirectionChangeTime >= directionChangeInterval)
+        {
+            brain.ChangeDirection(targetPos);
+            lastDirectionChangeTime = Time.time;
+        }
+        
+        brain.Rb.MovePosition(next);
     }
 
     // Convert world to cell and run A* on tile grid

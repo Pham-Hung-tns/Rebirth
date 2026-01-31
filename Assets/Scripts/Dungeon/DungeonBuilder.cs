@@ -98,16 +98,36 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
         // Clear room template dictionary
         roomTemplateDictionary.Clear();
 
+        // Defensive checks to avoid null key crash
+        if (roomTemplateList == null)
+        {
+            Debug.LogError("LoadRoomTemplatesIntoDictionary: roomTemplateList is null");
+            return;
+        }
+
         // Load room template list into dictionary
         foreach (RoomTemplateSO roomTemplate in roomTemplateList)
         {
+            if (roomTemplate == null)
+            {
+                Debug.LogWarning("LoadRoomTemplatesIntoDictionary: encountered null RoomTemplateSO in roomTemplateList, skipping.");
+                continue;
+            }
+
+            if (string.IsNullOrEmpty(roomTemplate.guid))
+            {
+                string prefabName = roomTemplate.prefab != null ? roomTemplate.prefab.name : "<null prefab>";
+                Debug.LogWarning($"LoadRoomTemplatesIntoDictionary: RoomTemplateSO has null/empty guid (prefab={prefabName}), skipping.");
+                continue;
+            }
+
             if (!roomTemplateDictionary.ContainsKey(roomTemplate.guid))
             {
                 roomTemplateDictionary.Add(roomTemplate.guid, roomTemplate);
             }
             else
             {
-                Debug.Log("Duplicate Room Template Key In " + roomTemplateList);
+                Debug.LogWarning($"Duplicate Room Template Key In roomTemplateList: {roomTemplate.guid}");
             }
         }
     }
@@ -136,11 +156,15 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             return false;  // Không tạo được dungeon
         }
 
+        Debug.Log($"AttemptToBuildRandomDungeon: Selected room node graph={(roomNodeGraph!=null?roomNodeGraph.name:"<null>")}, entranceNode={(entranceNode!=null?entranceNode.id:"<null>")}");
+
         // Bắt đầu với giả định không có phòng nào chồng lấn
         bool noRoomOverlaps = true;
 
         // Xử lý các node trong hàng đợi
         noRoomOverlaps = ProcessRoomsInOpenRoomNodeQueue(roomNodeGraph, openRoomNodeQueue, noRoomOverlaps);
+
+        Debug.Log($"AttemptToBuildRandomDungeon: After processing queue. openRoomNodeQueue.Count={openRoomNodeQueue.Count}, noRoomOverlaps={noRoomOverlaps}, dungeonBuilderRoomDictionary.Count={dungeonBuilderRoomDictionary.Count}");
 
         // Nếu đã xử lý hết các node và không có phòng nào chồng lấn thì trả về true
         if (openRoomNodeQueue.Count == 0 && noRoomOverlaps)
@@ -178,26 +202,52 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 if (roomTemplate == null)
                 {
                     Debug.LogError($"Không tìm thấy RoomTemplateSO cho loại phòng: {roomNode.roomNodeType.roomNodeTypeName}");
-                    // Có thể return false hoặc throw exception ở đây để dễ debug
                 }
 
+                string templateInfo = roomTemplate != null ? roomTemplate.guid : "<null template>";
+                string prefabInfo = (roomTemplate != null && roomTemplate.prefab != null) ? roomTemplate.prefab.name : "<null prefab>";
+                Debug.Log($"Processing Entrance Node: nodeId={roomNode.id}, selectedTemplate={templateInfo}, prefab={prefabInfo}");
 
                 Room room = CreateRoomFromRoomTemplate(roomTemplate, roomNode);
 
-                room.isPositioned = true;
+                // mark as positioned for entrance - even if template/prefab had issues we avoid null derefs
+                if (room != null)
+                {
+                    room.isPositioned = true;
 
-                // Thêm phòng vào dictionary
-                dungeonBuilderRoomDictionary.Add(room.id, room);
-                entranceRoomCache = room;
+                    // Thêm phòng vào dictionary (guard against duplicate keys)
+                    if (!dungeonBuilderRoomDictionary.ContainsKey(room.id))
+                    {
+                        dungeonBuilderRoomDictionary.Add(room.id, room);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"AttemptToBuildRandomDungeon: Duplicate room id when adding entrance: {room.id}");
+                    }
+
+                    entranceRoomCache = room;
+                }
+                else
+                {
+                    Debug.LogError($"CreateRoomFromRoomTemplate returned null for entrance node {roomNode.id}");
+                }
             }
             // Nếu không phải phòng cửa vào
             else
             {
-                // Lấy phòng cha cho node
-                Room parentRoom = dungeonBuilderRoomDictionary[roomNode.parentRoomNodeIDList[0]];
-
-                // Kiểm tra xem có thể đặt phòng mà không bị chồng lấn không
-                noRoomOverlaps = CanPlaceRoomWithNoOverlaps(roomNode, parentRoom);
+                // Lấy phòng cha cho node - guard để tránh KeyNotFoundException
+                Room parentRoom = null;
+                string parentId = (roomNode.parentRoomNodeIDList != null && roomNode.parentRoomNodeIDList.Count > 0) ? roomNode.parentRoomNodeIDList[0] : "<no-parent-id>";
+                if (!string.IsNullOrEmpty(parentId) && dungeonBuilderRoomDictionary.TryGetValue(parentId, out parentRoom))
+                {
+                    // Kiểm tra xem có thể đặt phòng mà không bị chồng lấn không
+                    noRoomOverlaps = CanPlaceRoomWithNoOverlaps(roomNode, parentRoom);
+                }
+                else
+                {
+                    Debug.LogError($"ProcessRoomsInOpenRoomNodeQueue: Parent room with id {parentId} not found for node {roomNode.id}");
+                    noRoomOverlaps = false;
+                }
             }
         }
 
@@ -211,21 +261,36 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     {
         // Khởi tạo và giả định có chồng lấn cho đến khi chứng minh ngược lại
         bool roomOverlaps = true;
+        int placementAttempts = 0;
 
         // Do While Room Overlaps - try to place against all available doorways of the parent until
         // the room is successfully placed without overlap.
         while (roomOverlaps)
         {
+            placementAttempts++;
+            Debug.Log($"[CanPlaceRoomWithNoOverlaps] Attempt #{placementAttempts} for node {roomNode.id} (type: {roomNode.roomNodeType.roomNodeTypeName})");
+
             // Select random unconnected available doorway for Parent
             List<Doorway> unconnectedAvailableParentDoorways = GetUnconnectedAvailableDoorways(parentRoom.doorWayList).ToList();
+            Debug.Log($"  Parent room {parentRoom.id} has {unconnectedAvailableParentDoorways.Count} available doorways (total doorways: {parentRoom.doorWayList.Count})");
 
             if (unconnectedAvailableParentDoorways.Count == 0)
             {
+                // Log which doorways are unavailable to help diagnose
+                int unavailableCount = 0;
+                int connectedCount = 0;
+                foreach (var dw in parentRoom.doorWayList)
+                {
+                    if (dw.isUnavailable) unavailableCount++;
+                    if (dw.isConnected) connectedCount++;
+                }
+                Debug.LogWarning($"[CanPlaceRoomWithNoOverlaps] No more available doorways for parent room {parentRoom.id}. Placement FAILED after {placementAttempts} attempts. (connected={connectedCount}, unavailable={unavailableCount})");
                 // If no more doorways to try then overlap failure.
                 return false; // room overlaps
             }
 
             Doorway doorwayParent = unconnectedAvailableParentDoorways[UnityEngine.Random.Range(0, unconnectedAvailableParentDoorways.Count)];
+            Debug.Log($"  Selected parent doorway: orientation={doorwayParent.orientation}, position={doorwayParent.position}");
 
 
             // Get a random room template for room node that is consistent with the parent door orientation
@@ -236,6 +301,9 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 Debug.LogError($"Không tìm thấy RoomTemplateSO phù hợp cho node: {roomNode.id}, loại: {roomNode.roomNodeType.name}, hướng doorway: {doorwayParent.orientation}");
             }
 
+            string templateInfo = roomtemplate != null ? roomtemplate.guid : "<null>";
+            Debug.Log($"  Selected template: {templateInfo}");
+
             // Create a room
             Room room = CreateRoomFromRoomTemplate(roomtemplate, roomNode);
 
@@ -243,17 +311,26 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             if (PlaceTheRoom(parentRoom, doorwayParent, room))
             {
                 // If room doesn't overlap then set to false to exit while loop
+                Debug.Log($"  ✓ Room {room.id} placed successfully at lowerBounds={room.lowerBounds}, upperBounds={room.upperBounds}");
                 roomOverlaps = false;
 
                 // Mark room as positioned
                 room.isPositioned = true;
 
                 // Add room to dictionary
-                dungeonBuilderRoomDictionary.Add(room.id, room);
+                if (!dungeonBuilderRoomDictionary.ContainsKey(room.id))
+                {
+                    dungeonBuilderRoomDictionary.Add(room.id, room);
+                }
+                else
+                {
+                    Debug.LogWarning($"Room {room.id} already in dictionary when placing");
+                }
 
             }
             else
             {
+                Debug.Log($"  ✗ Room placement failed: overlap detected or invalid placement");
                 roomOverlaps = true;
             }
 
@@ -320,6 +397,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
         // Return if no doorway in room opposite to parent doorway
         if (doorway == null)
         {
+            Debug.Log($"    [PlaceTheRoom] No opposite doorway found for {doorwayParent.orientation}");
             // Just mark the parent doorway as unavailable so we don't try and connect it again
             doorwayParent.isUnavailable = true;
 
@@ -362,6 +440,9 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
         room.lowerBounds = parent + adjustment + room.templateLowerBounds - doorway.position;
         room.upperBounds = room.lowerBounds + room.templateUpperBounds - room.templateLowerBounds;
 
+        Vector2Int newRoomSize = room.upperBounds - room.lowerBounds;
+        Debug.Log($"    [PlaceTheRoom] Calculated placement: room {room.id} (size={newRoomSize}) at lowerBounds={room.lowerBounds}, upperBounds={room.upperBounds}");
+
         Room overlappingRoom = CheckForRoomOverlap(room);
 
         if (overlappingRoom == null)
@@ -378,6 +459,8 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
         }
         else
         {
+            Vector2Int overlapRoomSize = overlappingRoom.upperBounds - overlappingRoom.lowerBounds;
+            Debug.Log($"    [PlaceTheRoom] OVERLAP detected! New room bounds=({room.lowerBounds}, {room.upperBounds}) size={newRoomSize} overlaps with room {overlappingRoom.id} bounds=({overlappingRoom.lowerBounds}, {overlappingRoom.upperBounds}) size={overlapRoomSize}");
             // Just mark the parent doorway as unavailable so we don't try and connect it again
             doorwayParent.isUnavailable = true;
 
@@ -532,6 +615,11 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     {
         // Initialise room from template
         Room room = new Room();
+        if (roomTemplate == null)
+        {
+            Debug.LogError($"CreateRoomFromRoomTemplate: roomTemplate is null for node {(roomNode!=null?roomNode.id:"<null>")}");
+            return null;
+        }
 
         room.templateID = roomTemplate.guid;
         room.id = roomNode.id;
@@ -551,6 +639,10 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
         room.roomLevelEnemySpawnParametersList = roomTemplate.roomEnemySpawnParametersList != null ? new List<RoomEnemySpawnParameters>(roomTemplate.roomEnemySpawnParametersList) : null;
         room.childRoomIDList = CopyStringList(roomNode.childRoomNodeIDList);
         room.doorWayList = CopyDoorwayList(roomTemplate.doorwayList);
+
+        // Debug info to help diagnose instantiation issues without causing crashes
+        string prefabInfo = room.prefab != null ? room.prefab.name : "<null prefab>";
+        Debug.Log($"CreateRoomFromRoomTemplate: Created Room object id={room.id}, templateID={room.templateID}, prefab={prefabInfo}, templateLowerBounds={room.templateLowerBounds}, spawnPositions={(room.spawnPositionArray!=null?room.spawnPositionArray.Length.ToString():"null")} ");
 
         // Set parent ID for room
         // if (roomNode.parentRoomNodeIDList.Count == 0) // Entrance

@@ -24,7 +24,7 @@ public class LevelManager : Singleton<LevelManager>
 
     private int currentDungeonIndex = 0;
 
-    // private Room currentRoom;
+    private Room currentRoom;
     private DungeonLevelSO currentDungeonLevel;
     private int amountOfEnemies;
     private GameObject currentDungeonGO;
@@ -93,45 +93,33 @@ public class LevelManager : Singleton<LevelManager>
         playerConfig.currentArmor = playerConfig.MaxArmor;
         playerConfig.currentEnergy = playerConfig.MaxEnergy;
     }
-    //private void CreateBoss(Room room)
-    //{
-    //    //Vector3 tilePos = ;
-    //    EnemyStateMachine boss = Instantiate(dungeonLibrary.levels[currentLevelIndex].Boss, room.PositionOfBoss(), Quaternion.identity, currentRoom.transform);
-    //    boss.CurrentRoom = room;
-    //}
 
+    private void CreateChestWhenCompleted()
+    {
+        if (currentRoom == null || currentRoom.instantiatedRoom == null)
+            return;
 
-    //private void CreateEnemies()
-    //{
-    //    int amount = GetAmountOfEnemies();
-    //    amountOfEnemies = amount;
-    //    for(int i = 0; i < amountOfEnemies; i++)
-    //    {
-    //        Vector3 tilePos = currentRoom.GetTilePosition();
-    //        NormalEnemyStates enemy = Instantiate(GetEnemies(), tilePos, Quaternion.identity, currentRoom.transform);
-    //        enemy.CurrentRoom = currentRoom;
-    //    } 
-    //}
-
-    //private NormalEnemyStates GetEnemies()
-    //{
-    //    NormalEnemyStates[] enemies = dungeonLibrary.levels[currentLevelIndex].enemies;
-    //    int randomIndex = UnityEngine.Random.Range(0, enemies.Length);
-    //    return enemies[randomIndex];
-    //}
-
-    //private int GetAmountOfEnemies()
-    //{
-    //    int amount = UnityEngine.Random.Range(dungeonLibrary.levels[currentLevelIndex].minEnemiesPerRoom, 
-    //        dungeonLibrary.levels[currentLevelIndex].maxEnemiesPerRoom);
-    //    return amount;
-    //}
-
-    //private void CreateChestWhenCompleted()
-    //{
-    //    Vector3 chestPos = currentRoom.GetTilePosition();
-    //    Instantiate(dungeonLibrary.chest, chestPos, Quaternion.identity, currentRoom.transform);
-    //}
+        // Chọn vị trí ngẫu nhiên từ spawn positions của room
+        if (currentRoom.spawnPositionArray != null && currentRoom.spawnPositionArray.Length > 0)
+        {
+            Vector2Int randomSpawnPos = currentRoom.spawnPositionArray[UnityEngine.Random.Range(0, currentRoom.spawnPositionArray.Length)];
+            Vector3 chestPos = currentRoom.instantiatedRoom.grid.CellToWorld(new Vector3Int(randomSpawnPos.x, randomSpawnPos.y, 0));
+            
+            // Lấy chest prefab từ resources hoặc GameResources
+            GameObject chestPrefab = Resources.Load<GameObject>("Chest");
+            if (chestPrefab == null)
+            {
+                GameResources gameResources = Resources.Load<GameResources>("GameResources");
+                if (gameResources != null && gameResources.chestItemPrefab != null)
+                    chestPrefab = gameResources.chestItemPrefab;
+            }
+            
+            if (chestPrefab != null)
+            {
+                Instantiate(chestPrefab, chestPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+            }
+        }
+    }
 
     private void PortalEventCallBack()
     {
@@ -178,10 +166,12 @@ public class LevelManager : Singleton<LevelManager>
             }
             else
             {
-                // Final level completed -> clear dungeon and show end-game debug UI
+                // Final level completed -> clear dungeon, reset player, clear pools and return to home
                 db.ClearDungeonRuntime();
-                Debug.Log("LevelManager: Final level completed. Game finished (debug).");
-                // TODO: show real end-game UI here
+                Debug.Log("LevelManager: Final level completed. Returning to Home Scene.");
+                ResetPlayerStats();
+                ClearAllObjectPools();
+                ReturnToHomeScene();
             }
         }
         else
@@ -199,39 +189,6 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
-    private void PlayerEnterRoom() //parameter: Room room)
-    {
-        AudioManager.Instance.PlaySFX("Door_Close");
-        AudioManager.Instance.PlayMusic("Battle");
-        
-        // Spawn enemies v� chests khi player v�o room
-        Room currentRoom = DungeonBuilder.Instance.GetRoomByRoomID("CurrentRoomID"); // TODO: track current room
-        if (currentRoom != null)
-        {
-            RoomContentSpawner.SpawnEnemiesInRoom(currentRoom, currentDungeonLevel);
-            RoomContentSpawner.SpawnChestsInRoom(currentRoom, currentDungeonLevel);
-        }
-        
-        //currentRoom = room;
-        //if (!currentRoom.roomCompleted)
-        //{
-        //    currentRoom.CloseRoom();
-        //    switch (currentRoom.RoomType)
-        //    {
-        //        case RoomType.RoomEnemy:
-        //            {
-        //                CreateEnemies();
-        //                break;
-        //            }
-        //        case RoomType.RoomBoss:
-        //            {
-        //                EnemyVitality boss = currentRoom.GetComponentInChildren<EnemyVitality>();
-        //                OnPlayerInRoomBoss?.Invoke(boss.Health);
-        //                break;
-        //            }
-        //    }
-        //}
-    }
 
     private IEnumerator IEContinueDungeon()
     {
@@ -267,41 +224,66 @@ public class LevelManager : Singleton<LevelManager>
 
     private void EnemyKilledBack(Transform enemyPos)
     {
-        //amountOfEnemies -= 1;
-        //CreateBonus(enemyPos);
-        //if(amountOfEnemies <= 0)
-        //{
-        //    if(currentRoom.roomCompleted == false)
-        //    {
-        //        AudioManager.Instance.PlaySFX("Door_Open");
-        //        amountOfEnemies = 0;
-        //        currentRoom.SetRoomCompleted();
-        //        CreateChestWhenCompleted();
-        //        OnRoomCompleted?.Invoke();
-        //    }
-        //    if(currentRoom.RoomType == RoomType.RoomBoss)
-        //    {
-        //        CreatePortal();
-        //    }
-        //}
+        if (currentRoom == null) return;
+
+        // Tạo bonus khi enemy chết
+        CreateBonus(enemyPos);
+        
+        // Đếm số enemy còn lại trong room
+        EnemyVitality[] remainingEnemies = currentRoom.instantiatedRoom.GetComponentsInChildren<EnemyVitality>();
+        amountOfEnemies = remainingEnemies.Length;
+        
+        // Nếu không còn enemy trong room
+        if (amountOfEnemies <= 0)
+        {
+            OnRoomCompleted?.Invoke();
+            
+            // Tạo chest ở vị trí ngẫu nhiên trong room
+            CreateChestWhenCompleted();
+        }
     }
 
-    private void CreatePortal()
-    {
-        //Vector3 pos = currentRoom.GetTilePosition();
-        //Instantiate(dungeonLibrary.portal, pos, Quaternion.identity, currentRoom.transform);
-    }
 
     private void CreateBonus(Transform enemyPos)
     {
-        //int amount = UnityEngine.Random.Range(dungeonLibrary.levels[currentLevelIndex].minBonus,
-        //    dungeonLibrary.levels[currentLevelIndex].maxBonus);
-        //for (int i = 0; i < amount; i++)
-        //{
-        //    int bonusRandom = UnityEngine.Random.Range(0, dungeonLibrary.bonus.Length);
-        //    Vector3 bonusRange = UnityEngine.Random.insideUnitCircle.normalized * dungeonLibrary.range;
-        //    Instantiate(dungeonLibrary.bonus[bonusRandom], enemyPos.position + bonusRange, Quaternion.identity);
-        //}
+        if (currentRoom == null || currentRoom.prefab == null)
+            return;
+
+        // Get room template SO từ Room
+        RoomTemplateSO roomTemplate = GetRoomTemplateForRoom(currentRoom);
+        if (roomTemplate == null || roomTemplate.bonusPrefabs == null || roomTemplate.bonusPrefabs.Length == 0)
+            return;
+
+        int amount = UnityEngine.Random.Range(roomTemplate.minBonusPerKill, roomTemplate.maxBonusPerKill + 1);
+        
+        for (int i = 0; i < amount; i++)
+        {
+            int bonusRandom = UnityEngine.Random.Range(0, roomTemplate.bonusPrefabs.Length);
+            Vector3 bonusOffset = UnityEngine.Random.insideUnitCircle.normalized * roomTemplate.bonusSpreadRadius;
+            Vector3 spawnPos = enemyPos.position + bonusOffset;
+            
+            Instantiate(roomTemplate.bonusPrefabs[bonusRandom], spawnPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+        }
+    }
+
+    /// <summary>
+    /// Lấy RoomTemplateSO từ Room object
+    /// </summary>
+    private RoomTemplateSO GetRoomTemplateForRoom(Room room)
+    {
+        if (room == null || currentDungeonLevel == null)
+            return null;
+
+        // Tìm room template trong roomTemplateList của current level
+        foreach (RoomTemplateSO template in currentDungeonLevel.roomTemplateList)
+        {
+            if (template != null && template.prefab == room.prefab)
+            {
+                return template;
+            }
+        }
+
+        return null;
     }
 
     private void OnEnable()
@@ -322,8 +304,61 @@ public class LevelManager : Singleton<LevelManager>
 
     private void HandleRoomCleared(Room room)
     {
-        // Placeholder: update UI or progress
+        // Update current room reference
+        currentRoom = room;
+        
+        // Đếm số enemy trong room mới
+        if (room != null && room.instantiatedRoom != null)
+        {
+            EnemyVitality[] enemies = room.instantiatedRoom.GetComponentsInChildren<EnemyVitality>();
+            amountOfEnemies = enemies.Length;
+        }
     }
 
     public DungeonLevelSO GetCurrentDungeonLevel() => currentDungeonLevel;
+
+    private void ResetPlayerStats()
+    {
+        if (SelectedPlayer == null) return;
+
+        PlayerController pc = SelectedPlayer.GetComponent<PlayerController>();
+        if (pc == null) return;
+
+        PlayerConfig playerConfig = pc.PlayerData;
+        if (playerConfig == null) return;
+
+        // Reset all player stats to max values
+        playerConfig.currentHealth = playerConfig.MaxHealth;
+        playerConfig.currentArmor = playerConfig.MaxArmor;
+        playerConfig.currentEnergy = playerConfig.MaxEnergy;
+        playerConfig.timeCooldownArmor = 0;
+
+        Debug.Log("LevelManager: Player stats reset to default values.");
+    }
+
+    private void ClearAllObjectPools()
+    {
+        if (ObjPoolManager.Instance != null)
+        {
+            ObjPoolManager.Instance.ClearAllPool();
+            Debug.Log("LevelManager: All object pools cleared.");
+        }
+    }
+
+    private void ReturnToHomeScene()
+    {
+        Debug.Log("LevelManager: Loading Home Scene.");
+        DestroyPlayer();
+        UnityEngine.SceneManagement.SceneManager.LoadScene(Settings.homeScene);
+    }
+
+    private void DestroyPlayer()
+    {
+        if (SelectedPlayer != null)
+        {
+            Destroy(SelectedPlayer);
+            SelectedPlayer = null;
+            Debug.Log("LevelManager: Player destroyed.");
+        }
+    }
 }

@@ -18,12 +18,12 @@ MonoBehaviour:
   speed: 8
   acceleration: 15
   deceleration: 10
-  currentHealth: 1
+  currentHealth: 5
   MaxHealth: 5
-  currentArmor: 0
+  currentArmor: 5
   MaxArmor: 5
-  timeCooldownArmor: 0
-  timeRecoverArmor: 0
+  timeCooldownArmor: 3
+  timeRecoverArmor: 2
   currentEnergy: 200
   MaxEnergy: 200
   CriticalChance: 45

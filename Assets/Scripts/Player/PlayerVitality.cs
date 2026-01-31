@@ -27,7 +27,7 @@ public class PlayerVitality : MonoBehaviour, ITakeDamage
     }
 
     #region Player Health Methods
-    public void TakeDamage(float amount, GameObject attacker, Vector2 knockbackDir, float knockbackForce)
+    public void TakeDamage(int amount, GameObject attacker, Vector2 knockbackDir, float knockbackForce)
     {
         // sau này sẽ thêm âm thanh và hiển thị damage
         //AudioManager.Instance.PlaySFX("Human_Damage");

@@ -10,7 +10,6 @@ public class WanderAction : AIAction
 
     public override void OnEnter()
     {
-        enemyBrain.ChangeAnim(Settings.WANDER_STATE);
         enemyBrain.TimeLimit = enemyBrain.EnemyConfig.timeToWander;
 
         movement = enemyBrain != null ? enemyBrain.GetComponent<EnemyMovement>() : null;
@@ -27,6 +26,8 @@ public class WanderAction : AIAction
                 return;
             }
         }
+        
+        enemyBrain.ChangeAnimationState(Settings.WANDER_STATE);
     }
 
     public override void OnUpdate()

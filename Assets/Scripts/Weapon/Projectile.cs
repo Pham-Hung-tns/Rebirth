@@ -7,14 +7,14 @@ public class Projectile : MonoBehaviour
 {
     [Header("Config")]
     [SerializeField] private float speed;
-    public float Damage { get; set; }
     public float Speed { get; set; }
     public Vector3 Direction { get; set; }
-    public float knockback = 0f; // Lực đẩy khi trúng đạn
-    public bool isKnockbackFromProjectile; // Lực đẩy có từ viên đạn không?
 
     private GameObject owner;
-    private bool canKnockback = false;
+    private int damage;
+    private Vector2 knockbackDir;
+    private float knockbackForce;
+    private GameObject ownerRoot;
 
     // Start is called before the first frame update
     void Start()
@@ -28,26 +28,39 @@ public class Projectile : MonoBehaviour
         transform.Translate(Direction * (speed *Time.deltaTime), Space.World);
     }
 
-    public void Initialize(GameObject owner, float speed, float damage)
+    public void Initialize(GameObject owner, float speed, int damage, Vector2 knockbackDir, float knockbackForce)
     {
         this.owner = owner;
+        // store root of owner hierarchy to ignore collisions with any child collider
+        if (owner != null)
+            ownerRoot = owner.transform.root.gameObject;
+        else
+            ownerRoot = null;
         this.speed = speed;
-        this.Damage = damage;
+        this.damage = damage;
+        this.knockbackDir = knockbackDir;
+        this.knockbackForce = knockbackForce;
         gameObject.SetActive(true);
+        Debug.Log($"[Projectile] Initialized. Owner={ownerRoot?.name} Speed={speed} Damage={damage}");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject == owner) return;
+        // Ignore collision with owner or any child of owner's hierarchy
+        if (ownerRoot != null)
+        {
+            if (collision.transform == ownerRoot.transform || collision.transform.IsChildOf(ownerRoot.transform))
+                return;
+        }
+        else
+        {
+            if (collision.gameObject == owner) return;
+        }
 
         ITakeDamage td = collision.GetComponent<ITakeDamage>();
         if(td != null)
         {
-            // no knockback info here, pass zero
-            if(canKnockback == false)
-                td.TakeDamage(Damage, owner, Vector2.zero, 0f);
-            else
-                td.TakeDamage(Damage, owner, Direction, knockback);
+            td.TakeDamage(damage, owner, knockbackDir, knockbackForce);
             ReturnBullet();
             return;
         }

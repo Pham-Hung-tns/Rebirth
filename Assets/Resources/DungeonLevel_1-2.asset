@@ -16,12 +16,8 @@ MonoBehaviour:
   roomTemplateList:
   - {fileID: 11400000, guid: 71d4071e8de3f68478a2c4aed8c4b502, type: 2}
   - {fileID: 11400000, guid: 19b4ed180bc79714abe4935759d8acc8, type: 2}
-  - {fileID: 11400000, guid: 8e66d5b78ece4a6459070c085eb964d0, type: 2}
+  - {fileID: 11400000, guid: ec466f3562f9d7741b5a91c5e51bffb9, type: 2}
   - {fileID: 11400000, guid: a5507522127051a4fb41fad1be2c4338, type: 2}
-  - {fileID: 11400000, guid: f80fb87e95ddddb4a995cb4b7933eb45, type: 2}
-  - {fileID: 11400000, guid: d31e62a29f89ba844a52653b5b7f7bae, type: 2}
-  - {fileID: 11400000, guid: 18026b2a80e159047b18027862f76545, type: 2}
-  - {fileID: 11400000, guid: 900bc19811454784b9481b054999babd, type: 2}
   - {fileID: 11400000, guid: db033d4c9bb22f54eadf2768623c3932, type: 2}
   roomNodeGraphList:
   - {fileID: 11400000, guid: f125c686a31e40e498287d7eb98eb8f7, type: 2}

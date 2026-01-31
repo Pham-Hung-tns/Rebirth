@@ -11,11 +11,12 @@ public class Door : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private Collider2D doorCollider;
 
-    private static readonly int OpenHash = Settings.open;
+    //private static readonly int OpenHash = Settings.open;
     private bool isLocked;
 
     private void Awake()
     {
+        animator = GetComponent<Animator>();
         if (doorCollider == null)
             doorCollider = GetComponent<Collider2D>();
     }
@@ -24,11 +25,14 @@ public class Door : MonoBehaviour
     {
         isLocked = true;
         if (doorCollider != null) doorCollider.enabled = true;
-        if (animator != null) animator.ResetTrigger(OpenHash);
+        if (animator != null) animator.SetBool("isClose", true);
+
+        Debug.Log($"[Door] {gameObject.name} LockDoor called. Animator isClose=true. Collider enabled={doorCollider != null && doorCollider.enabled}");
     }
 
     public void UnlockDoor(float delay = 0f)
     {
+        Debug.Log($"[Door] {gameObject.name} UnlockDoor called with delay={delay}.");
         if (gameObject.activeInHierarchy)
             StartCoroutine(UnlockRoutine(delay));
     }
@@ -39,8 +43,10 @@ public class Door : MonoBehaviour
             yield return new WaitForSeconds(delay);
 
         isLocked = false;
-        if (animator != null) animator.SetTrigger(OpenHash);
+        if (animator != null) animator.SetBool("isClose", false);
         if (doorCollider != null) doorCollider.enabled = false;
+
+        Debug.Log($"[Door] {gameObject.name} UnlockRoutine completed. Animator isClose=false. Collider enabled={doorCollider != null && doorCollider.enabled}");
     }
 }
 

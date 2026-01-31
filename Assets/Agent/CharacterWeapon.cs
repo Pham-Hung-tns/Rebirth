@@ -109,7 +109,7 @@ public class CharacterWeapon : MonoBehaviour
 
         if (Time.time < _lastAttackTime + currentWeapon.WeaponData.cooldown) return;
 
-        if (currentWeapon.WeaponData is RangeWeaponDataSO rangeData && rangeData.canCharge)
+        if (currentWeapon.WeaponData.canCharge)
         {
             _isCharging = true;
             _chargeStartTime = Time.time;
@@ -119,7 +119,6 @@ public class CharacterWeapon : MonoBehaviour
         else
         {
             // Tấn công ngay lập tức (Melee hoặc Súng thường)
-            //currentWeapon.Change;
             ExecuteAttack(1f);
         }
     }
@@ -129,17 +128,16 @@ public class CharacterWeapon : MonoBehaviour
     {
         if (currentWeapon == null || currentWeapon.WeaponData == null) return;
 
-        if (_isCharging && currentWeapon.WeaponData is RangeWeaponDataSO rangeData)
+        if (_isCharging)
         {
             _isCharging = false;
 
             // Tính toán lực tụ được (từ 0 đến 1)
-            float chargeDuration = Mathf.Clamp(Time.time - _chargeStartTime, 0, rangeData.maxChargeTime);
-            float chargeRatio = chargeDuration / rangeData.maxChargeTime;
+            float chargeDuration = Mathf.Clamp(Time.time - _chargeStartTime, 0, currentWeapon.WeaponData.maxChargeTime);
+            float chargeRatio = chargeDuration / currentWeapon.WeaponData.maxChargeTime;
 
             // Tính Damage Multiplier dựa trên lực tụ
-            float damageMultiplier = Mathf.Lerp(rangeData.minChargeDamageMultiplier, rangeData.maxChargeDamageMultiplier, chargeRatio);
-
+            float damageMultiplier = Mathf.Lerp(currentWeapon.WeaponData.minChargeDamageMultiplier, currentWeapon.WeaponData.maxChargeDamageMultiplier, chargeRatio);
             // turn off charging animator flag and trigger attack
             currentWeapon.ChangeAnimationState(Settings.BOW_RELEASE);
 
@@ -149,7 +147,7 @@ public class CharacterWeapon : MonoBehaviour
 
     // --- Core Logic ---
 
-    private void ExecuteAttack(float damageMultiplier)
+    protected void ExecuteAttack(float damageMultiplier)
     {
         _lastAttackTime = Time.time;
 

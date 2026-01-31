@@ -46,6 +46,8 @@ public class TestDungeonBuilderEditor
         dungeonBuilder.LoadRoomNodeTypeList();
         bool result = dungeonBuilder.GenerateDungeon(dungeonLevel);
         Debug.Log("Kết quả tạo dungeon: " + result);
+        if (!result)
+            DebugLogRoomPlacements(dungeonBuilder);
 
         if (result)
         {
@@ -81,6 +83,9 @@ public class TestDungeonBuilderEditor
         dungeonBuilder.LoadRoomNodeTypeList();
         bool result = dungeonBuilder.GenerateDungeon(dungeonLevel);
         Debug.Log("Kết quả tạo dungeon: " + result);
+        if (!result)
+            DebugLogRoomPlacements(dungeonBuilder);
+
     }
 
     [MenuItem("Tools/Test Dungeon Builder/Spawn Enemies Only")]
@@ -177,6 +182,41 @@ public class TestDungeonBuilderEditor
         }
 
         Debug.Log($"✅ Đã spawn {totalChestsSpawned} chests trong editor mode.");
+    }
+
+    private static void DebugLogRoomPlacements(DungeonBuilder dungeonBuilder)
+    {
+        if (dungeonBuilder == null) return;
+
+        var dict = dungeonBuilder.dungeonBuilderRoomDictionary;
+        if (dict == null || dict.Count == 0) return;
+
+        // Only log failures: when a Room is null or its instantiatedRoom is null
+        foreach (var kvp in dict)
+        {
+            string key = kvp.Key != null ? kvp.Key.ToString() : "<null key>";
+            Room room = kvp.Value;
+
+            if (room == null)
+            {
+                Debug.LogError($"[Room {key}] Không thể đặt room: đối tượng Room là null.");
+                continue;
+            }
+
+            if (room.instantiatedRoom == null)
+            {
+                string spawnInfo = (room.spawnPositionArray == null) ? "spawnPositions=null" : $"spawnPositions={room.spawnPositionArray.Length}";
+                string roomName = "<no-name>";
+                if (room.prefab != null && !string.IsNullOrEmpty(room.prefab.name))
+                    roomName = room.prefab.name;
+                else if (!string.IsNullOrEmpty(room.id))
+                    roomName = room.id;
+                else if (!string.IsNullOrEmpty(room.templateID))
+                    roomName = room.templateID;
+
+                Debug.LogError($"[Room {key} - {roomName}] Không thể instantiate room. lowerBounds={room.lowerBounds} templateLowerBounds={room.templateLowerBounds} {spawnInfo}");
+            }
+        }
     }
 
     private static EnemyDetailsSO SelectRandomEnemy(Room room, DungeonLevelSO level)

@@ -117,7 +117,7 @@ public class UIManager : Singleton<UIManager>
 
     public void ReturnHome()
     {
-        SceneManager.LoadScene("HomeScene");
+        SceneManager.LoadScene(Settings.homeScene);
     }
 
     public void ShowPickupButton(bool isActive)

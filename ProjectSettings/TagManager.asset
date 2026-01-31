@@ -26,7 +26,7 @@ TagManager:
   - Obstacle
   - Boss_Projectile
   - Spike
-  - 
+  - FogRevealer
   - 
   - 
   - 
@@ -52,11 +52,11 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: Floor
+  - name: Ground
     uniqueID: 3937198635
     locked: 0
-  - name: Walls
-    uniqueID: 2020064685
+  - name: Decoration
+    uniqueID: 2568009733
     locked: 0
   - name: Extra
     uniqueID: 4061544169
@@ -64,14 +64,14 @@ TagManager:
   - name: Props
     uniqueID: 1249629529
     locked: 0
+  - name: Gate
+    uniqueID: 2912691991
+    locked: 0
   - name: Sword
     uniqueID: 967134103
     locked: 0
   - name: Enemy
     uniqueID: 65628399
-    locked: 0
-  - name: Door
-    uniqueID: 1069915683
     locked: 0
   - name: Player
     uniqueID: 561647781
@@ -79,8 +79,20 @@ TagManager:
   - name: Gun & Bow
     uniqueID: 1957423847
     locked: 0
+  - name: Door
+    uniqueID: 1069915683
+    locked: 0
   - name: Font
     uniqueID: 4112656661
+    locked: 0
+  - name: Decoration2
+    uniqueID: 2709058443
+    locked: 0
+  - name: Collision
+    uniqueID: 2020064685
+    locked: 0
+  - name: Fog
+    uniqueID: 1534321683
     locked: 0
   - name: UI
     uniqueID: 1228980549

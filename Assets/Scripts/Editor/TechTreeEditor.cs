@@ -62,9 +62,9 @@ public class TechTreeEditor : Editor
                 
                 // Draw icon on the left outside the node
                 Rect iconRect = new Rect(nodeRect.x - 50f, nodeRect.y, 50f, 50f);
-                if (targetTree.tree[nodeIdx].tech != null && targetTree.tree[nodeIdx].tech.image != null)
+                if (targetTree.tree[nodeIdx].tech != null && targetTree.tree[nodeIdx].tech.icon != null)
                 {
-                    GUI.DrawTexture(iconRect, targetTree.tree[nodeIdx].tech.image, ScaleMode.ScaleToFit);
+                    GUI.DrawTexture(iconRect, targetTree.tree[nodeIdx].tech.icon.texture, ScaleMode.ScaleToFit);
                 }
                 
                 // Draw foldout header

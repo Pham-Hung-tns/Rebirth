@@ -43,7 +43,7 @@ public class MeleeWeapon : Weapon
 
                     if (weaponData is MeleeWeaponDataSO meleeData)
                     {
-                        float damage = meleeData.damage;
+                        int damage = Mathf.RoundToInt(meleeData.damage);
                         if (Character is PlayerWeapon playerWeapon)
                         {
                             damage = playerWeapon.GetDamageCritical();
@@ -84,10 +84,10 @@ public class MeleeWeapon : Weapon
         PlayAttackSFX();
 
         // Determine damage (consider character critical for player)
-        float baseDamage = meleeData.damage * damageMultiplier;
+        int baseDamage = Mathf.RoundToInt(meleeData.damage * damageMultiplier);
         if (Character is PlayerWeapon player)
         {
-            baseDamage = player.GetDamageCritical() * damageMultiplier;
+            baseDamage = Mathf.RoundToInt(player.GetDamageCritical() * damageMultiplier);
         }
 
         // Detect targets
@@ -111,13 +111,13 @@ public class MeleeWeapon : Weapon
         }
     }
 
-    private void SpawnEnergyWave(GameObject prefab, Vector3 pos, Quaternion rot, float speed, float damage)
+    private void SpawnEnergyWave(GameObject prefab, Vector3 pos, Quaternion rot, float speed, int damage)
     {
         GameObject projObj = Instantiate(prefab, pos, rot);
         Projectile proj = projObj.GetComponent<Projectile>();
         if (proj)
         {
-            proj.Initialize(Character.Owner, speed, damage);
+            proj.Initialize(Character.Owner, speed, Mathf.RoundToInt(WeaponData.damage), projObj.transform.right, 0f);
         }
     }
 }

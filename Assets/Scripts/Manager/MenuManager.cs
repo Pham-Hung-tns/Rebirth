@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -17,6 +18,10 @@ public class MenuManager : Singleton<MenuManager>
     [SerializeField] private TextMeshProUGUI maxHealthStat;
     [SerializeField] private TextMeshProUGUI maxEnergyStat;
     [SerializeField] private TextMeshProUGUI maxArmorStat;
+    [SerializeField] private GameObject statPanel;
+    [SerializeField] private GameObject weaponPanel;
+    [SerializeField] private Image weaponImage;
+    [SerializeField] private TextMeshProUGUI energyConsumptionText;
 
     [Header("Coin")]
     [SerializeField] private TextMeshProUGUI coinUI;
@@ -30,6 +35,15 @@ public class MenuManager : Singleton<MenuManager>
     [SerializeField] Button upgradeButton;
     [SerializeField] Button chooseButton;
     [SerializeField] GameObject moveButton;
+    [SerializeField] GameObject fireButton;
+    //[SerializeField] GameObject pickupButton;
+    [SerializeField] GameObject useSkillButton;
+    [SerializeField] GameObject changeWeaponButton;
+
+    [Header("Skill Tree UI")]
+    [SerializeField] private GameObject skillTreePanel;
+    [SerializeField] private Button[] skillTreeButtons = new Button[3];
+    [SerializeField] private TextMeshProUGUI skillTreeDetailText;
     protected override void Awake()
     {
         base.Awake();
@@ -38,6 +52,7 @@ public class MenuManager : Singleton<MenuManager>
     {
         coinUI.text = CoinManager.Instance.totalCoins.ToString();
         CreateCharactersInScene();
+        SetupSkillTreeButtonListeners();
     }
 
     private void CreateCharactersInScene()
@@ -67,9 +82,24 @@ public class MenuManager : Singleton<MenuManager>
         currentPlayer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         playerSelected = true;
         moveButton.SetActive(true);
+        fireButton.SetActive(true);
+        useSkillButton.SetActive(true);
+        changeWeaponButton.SetActive(true);
+        //pickupButton.SetActive(true);
+        statPanel.SetActive(true);
         currentPlayer.GetComponent<ClickHandle>().enabled = false;
+
+        PlayerWeapon.OnShowUIWeaponEvent += ShowUIWeapon;
     }
 
+    private void ShowUIWeapon(Weapon weapon)
+    {
+        if (weapon == null) return;
+        if (weaponPanel != null && !weaponPanel.activeSelf)
+            weaponPanel.SetActive(true);
+        if (weaponImage != null) weaponImage.sprite = weapon.WeaponData.icon;
+        if (energyConsumptionText != null) energyConsumptionText.text = weapon.WeaponData.energy.ToString();
+    }
     // show stat of current player
     public void ShowStats(SelectCharacter player)
     {
@@ -95,6 +125,7 @@ public class MenuManager : Singleton<MenuManager>
             upgradeCharacterText.text = $"Upgrade\n({currentPlayer.PlayerConfig.upgradeCost.ToString()})";
         }
         ResetStat();
+        ShowSkillTreeUI();
     }
 
 
@@ -152,6 +183,81 @@ public class MenuManager : Singleton<MenuManager>
     private void Update()
     {
         coinUI.text = CoinManager.Instance.totalCoins.ToString();
+    }
+
+    // Skill Tree UI Methods
+    private void SetupSkillTreeButtonListeners()
+    {
+        for (int i = 0; i < skillTreeButtons.Length; i++)
+        {
+            int index = i;
+            skillTreeButtons[i].onClick.AddListener(() => DisplaySkillTreeDetail(index));
+        }
+    }
+
+    private void DisplaySkillTreeDetail(int buttonIndex)
+    {
+        if (currentPlayer == null || currentPlayer.PlayerConfig == null) return;
+
+        List<TechNode> skillNodes = currentPlayer.PlayerConfig.GetSkillNodes();
+        
+        if (buttonIndex >= 0 && buttonIndex < skillNodes.Count)
+        {
+            TechNode node = skillNodes[buttonIndex];
+            string detailText = $"<b>Definition:</b>\n{node.tech.definition}";
+            
+            skillTreeDetailText.text = detailText;
+        }
+        else
+        {
+            skillTreeDetailText.text = "No skill available";
+        }
+    }
+
+    public void ShowSkillTreeUI()
+    {
+        if (currentPlayer == null || currentPlayer.PlayerConfig == null) return;
+
+        List<TechNode> skillNodes = currentPlayer.PlayerConfig.GetSkillNodes();
+        
+        // Setup and display the 3 buttons
+        for (int i = 0; i < skillTreeButtons.Length; i++)
+        {
+            if (i < skillNodes.Count)
+            {
+                skillTreeButtons[i].gameObject.SetActive(true);
+                
+                // Display icon
+                Image buttonImage = skillTreeButtons[i].GetComponent<Image>();
+                if (buttonImage != null && skillNodes[i].tech.icon != null)
+                {
+                    buttonImage.sprite = skillNodes[i].tech.icon;
+                }
+                
+                // Clear button text since we're showing icon
+                TextMeshProUGUI buttonText = skillTreeButtons[i].GetComponentInChildren<TextMeshProUGUI>();
+                if (buttonText != null)
+                {
+                    buttonText.text = "";
+                }
+            }
+            else
+            {
+                skillTreeButtons[i].gameObject.SetActive(false);
+            }
+        }
+
+        skillTreePanel.SetActive(true);
+        // Display first skill by default
+        if (skillNodes.Count > 0)
+        {
+            DisplaySkillTreeDetail(0);
+        }
+    }
+
+    public void HideSkillTreeUI()
+    {
+        skillTreePanel.SetActive(false);
     }
 }
 

@@ -76,4 +76,17 @@ public class InputReader : ScriptableObject, IPlayerActions
         if (context.phase == InputActionPhase.Performed)
             ChangeItemEvent?.Invoke();
     }
+
+    // Allow external callers (eg. UI controllers) to enable/disable the gameplay action map
+    public void SetGameplayEnabled(bool enabled)
+    {
+        if (_gameInput == null)
+        {
+            _gameInput = new PlayerControls();
+            _gameInput.Player.SetCallbacks(this);
+        }
+
+        if (enabled) _gameInput.Player.Enable();
+        else _gameInput.Player.Disable();
+    }
 }

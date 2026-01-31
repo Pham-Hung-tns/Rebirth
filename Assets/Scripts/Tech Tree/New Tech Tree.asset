@@ -17,10 +17,10 @@ MonoBehaviour:
     requirements: []
     researchCost: 0
     level: 0
-    UIposition: {x: 423, y: 340.19998}
+    UIposition: {x: 399, y: 356.19998}
   - tech: {fileID: 11400000, guid: 1695a3a0c5c27ae449fe0e30bc7ff827, type: 2}
     requirements:
     - {fileID: 11400000, guid: 756feec7821a92a4ebed188c504a99b0, type: 2}
     researchCost: 0
     level: 1
-    UIposition: {x: 745, y: 336.2}
+    UIposition: {x: 695, y: 248.20001}

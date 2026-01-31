@@ -7,7 +7,7 @@ public class ShowDamageText : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI dmgText;
 
-    public void SetDamageText(float value)
+    public void SetDamageText(int value)
     {
         dmgText.text = value.ToString();
     }

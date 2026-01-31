@@ -32,7 +32,7 @@ public abstract class CharacterController : MonoBehaviour
         // Handle skill input
     }
 
-    protected void ChangeAnimationState(int newState)
+    public void ChangeAnimationState(int newState)
     {
         if (currentState == newState) return;
         animator.CrossFade(newState, 0.25f);

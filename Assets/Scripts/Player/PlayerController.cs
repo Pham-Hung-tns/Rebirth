@@ -46,7 +46,15 @@ public class PlayerController : CharacterController
     {
         // Controller ra lệnh cho Movement module di chuyển mỗi khung hình
         _movement.CalculateSpeed(_moveInput);
-        _movement.RotationPlayer(_moveInput);
+        // Nếu có enemy trong tầm, ưu tiên quay mặt về phía enemy thay vì dựa vào input di chuyển
+        Vector2 facingDirection = _moveInput;
+        if (_detection != null && _detection.EnemyTarget != null)
+        {
+            Vector3 enemyPos = _detection.EnemyTarget.transform.position;
+            facingDirection = (enemyPos - transform.position);
+        }
+
+        _movement.RotationPlayer(facingDirection);
 
         _combat.RotateWeapon();
     }

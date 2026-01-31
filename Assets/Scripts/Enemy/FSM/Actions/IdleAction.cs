@@ -10,8 +10,8 @@ public class IdleAction : AIAction
         if (enemyBrain != null)
         {
             enemyBrain.Rb.velocity = Vector2.zero;
-            enemyBrain.ChangeAnim(Settings.IDLE_STATE);
             enemyBrain.TimeLimit = enemyBrain.EnemyConfig.timeToIdle;
+            enemyBrain.ChangeAnimationState(Settings.IDLE_STATE);
         }
     }
 

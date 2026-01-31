@@ -26,7 +26,7 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage
         //spr.color = initialColor;
     }
 
-    public void TakeDamage(float amount, GameObject attacker, Vector2 knockbackDir, float knockbackForce)
+    public void TakeDamage(int amount, GameObject attacker, Vector2 knockbackDir, float knockbackForce)
     {
         // Implement knockback
         if (knockbackForce > 0)

@@ -8,7 +8,7 @@ public class ReachedDestinationDecision : AIDecision
 {
     public override bool MakeADecision()
     {
-        return Vector3.Distance(enemyBrain.Rb.position, enemyBrain.PatrolPosition) <= 0.1f;
+        return Vector3.Distance(enemyBrain.Rb.position, enemyBrain.PatrolPosition) <= 0.5f;
  
     }
 }

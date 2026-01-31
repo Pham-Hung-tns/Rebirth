@@ -56,7 +56,7 @@ public class Spike : MonoBehaviour
             if(obj != null)
             {
                 DungeonCM.Instance.ShakeCM(3f, 1f);
-                obj.TakeDamage(1f, this.gameObject, Vector2.zero, 0f);
+                obj.TakeDamage(1, this.gameObject, Vector2.zero, 0f);
             }
         }    
     }

@@ -32,7 +32,6 @@ public class Weapon : MonoBehaviour
     }
     public void ChangeAnimationState(int newState)
     {
-        Debug.Log(newState);
         if (currentState == newState) return;
         animator.Play(newState);
         currentState = newState;

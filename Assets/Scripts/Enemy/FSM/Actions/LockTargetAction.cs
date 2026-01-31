@@ -11,6 +11,8 @@ public class LockTargetAction : AIAction
         target = enemyBrain.Player;
         enemyBrain.TimeLimit = enemyBrain.EnemyConfig.timeToAttack;
         enemyBrain.Rb.velocity = Vector2.zero;
+
+        enemyBrain.ChangeAnimationState(Settings.IDLE_STATE);
     }
 
     public override void OnUpdate()
