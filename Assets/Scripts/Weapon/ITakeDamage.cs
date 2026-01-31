@@ -8,5 +8,5 @@ public interface ITakeDamage
     // attacker: nguoi tan cong
     // knockback_Dir: huong knockback
     // knockback_Force: luc knockback
-    void TakeDamage(float amount, GameObject attacker, Vector2 knockbackDir, float knockbackForce);
+    void TakeDamage(int amount, GameObject attacker, Vector2 knockbackDir, float knockbackForce);
 }

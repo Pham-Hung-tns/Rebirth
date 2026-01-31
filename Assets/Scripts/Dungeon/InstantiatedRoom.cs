@@ -60,22 +60,34 @@ public class InstantiatedRoom : MonoBehaviour
         // if player hasn't entered the room then return
         if (collision.tag != Settings.playerTag) return;
 
+        Debug.Log($"[InstantiatedRoom] Player entered room trigger: roomId={room?.id} (previouslyVisited={room?.isPreviouslyVisited}) - Collider={collision.name}");
+
         // if room has already been visited then return
-        if (room.isPreviouslyVisited) return;
+        if (room.isPreviouslyVisited)
+        {
+            Debug.Log($"[InstantiatedRoom] Room {room.id} was already visited - skipping spawn and lock.");
+            return;
+        }
 
         // Set room as visited
         room.isPreviouslyVisited = true;
 
         // Get current dungeon level
         DungeonLevelSO dungeonLevel = LevelManager.Instance.GetCurrentDungeonLevel();
-        
-        if(dungeonLevel == null) return;
-        
+        if (dungeonLevel == null)
+        {
+            Debug.LogWarning($"[InstantiatedRoom] Current dungeon level is null for room {room.id} - aborting spawn.");
+            return;
+        }
+
+        Debug.Log($"[InstantiatedRoom] Spawning content for room {room.id} at level {dungeonLevel.name}.");
+
         // Spawn enemies and chests
         RoomContentSpawner.SpawnEnemiesInRoom(room, dungeonLevel);
         RoomContentSpawner.SpawnChestsInRoom(room, dungeonLevel);
 
         // Call room changed event
+        Debug.Log($"[InstantiatedRoom] Calling StaticEventHandler.CallRoomChangedEvent for room {room.id}.");
         StaticEventHandler.CallRoomChangedEvent(room);
     }
 
@@ -161,8 +173,6 @@ public class InstantiatedRoom : MonoBehaviour
     /// </summary>
     private void BlockOffUnusedDoorWays()
     {
-        Debug.Log("Goi ham block door!");
-        Debug.Log("kiem tra collisonTilemap: " + collisionTilemap != null);
         // Loop through all doorways
         foreach (Doorway doorway in room.doorWayList)
         {
@@ -175,7 +185,6 @@ public class InstantiatedRoom : MonoBehaviour
             // Block unconnected doorways using tiles on tilemaps
             if (collisionTilemap != null)
             {
-                Debug.Log("Dong cua");
                 BlockADoorwayOnTilemapLayer(collisionTilemap, doorway);
             }
 
@@ -211,7 +220,6 @@ public class InstantiatedRoom : MonoBehaviour
     /// </summary>
     private void BlockADoorwayOnTilemapLayer(Tilemap tilemap, Doorway doorway)
     {
-        Debug.Log("Goi Ham");
         switch (doorway.orientation)
         {
             case Orientation.north:
@@ -342,29 +350,35 @@ public class InstantiatedRoom : MonoBehaviour
 
                 GameObject door = null;
 
+                // Compute centered local position for the door prefab based on tile coords
+                // Convert tile coordinates to local units and place prefab center on the tile
+                Vector3 centeredPos = new Vector3((doorway.position.x + 0.5f) * tileDistance, (doorway.position.y + 0.5f) * tileDistance, 0f);
+
                 if (doorway.orientation == Orientation.north)
                 {
-                    // create door with parent as the room
                     door = Instantiate(doorway.doorPrefab, gameObject.transform);
-                    door.transform.localPosition = new Vector3(doorway.position.x + tileDistance / 2f, doorway.position.y, 0f);
+                    door.transform.localPosition = centeredPos;
                 }
                 else if (doorway.orientation == Orientation.south)
                 {
-                    // create door with parent as the room
                     door = Instantiate(doorway.doorPrefab, gameObject.transform);
-                    door.transform.localPosition = new Vector3(doorway.position.x + tileDistance / 2f, doorway.position.y, 0f);
+                    door.transform.localPosition = centeredPos;
                 }
                 else if (doorway.orientation == Orientation.east)
                 {
-                    // create door with parent as the room
                     door = Instantiate(doorway.doorPrefab, gameObject.transform);
-                    door.transform.localPosition = new Vector3(doorway.position.x + tileDistance, doorway.position.y + tileDistance * 2f, 0f); // KHONG CAN NHAN CHO 1.25F
+                    door.transform.localPosition = centeredPos;
                 }
                 else if (doorway.orientation == Orientation.west)
                 {
-                    // create door with parent as the room
                     door = Instantiate(doorway.doorPrefab, gameObject.transform);
-                    door.transform.localPosition = new Vector3(doorway.position.x, doorway.position.y + tileDistance * 2f, 0f); // KHONG CAN NHAN CHO 1.25F
+                    door.transform.localPosition = centeredPos;
+                }
+
+                // Preserve the prefab's scale
+                if (door != null)
+                {
+                    door.transform.localScale = doorway.doorPrefab.transform.localScale;
                 }
 
                 // // Get door component
@@ -436,9 +450,12 @@ public class InstantiatedRoom : MonoBehaviour
     {
         Door[] doorArray = GetComponentsInChildren<Door>();
 
+        Debug.Log($"[InstantiatedRoom] LockDoors called for room {room?.id}. Found {doorArray.Length} door(s).");
+
         // Trigger lock doors
         foreach (Door door in doorArray)
         {
+            Debug.Log($"[InstantiatedRoom] Locking door: {door.gameObject.name}");
             door.LockDoor();
         }
 
@@ -461,12 +478,14 @@ public class InstantiatedRoom : MonoBehaviour
     {
         if (doorUnlockDelay > 0f)
             yield return new WaitForSeconds(doorUnlockDelay);
-
         Door[] doorArray = GetComponentsInChildren<Door>();
+
+        Debug.Log($"[InstantiatedRoom] UnlockDoorsRoutine called for room {room?.id} after delay {doorUnlockDelay}. Found {doorArray.Length} door(s).");
 
         // Trigger open doors
         foreach (Door door in doorArray)
         {
+            Debug.Log($"[InstantiatedRoom] Unlocking door: {door.gameObject.name}");
             door.UnlockDoor();
         }
 

@@ -9,7 +9,7 @@ public class DamageManager : Singleton<DamageManager>
     {
         base.Awake();
     }
-    public void ShowDmg(float damage, Transform entityPos)
+    public void ShowDmg(int damage, Transform entityPos)
     {
         Vector3 newPos = Vector3.right * (UnityEngine.Random.Range(-0.5f, 0.7f)) + entityPos.position;
         ShowDamageText instance = Instantiate(dmgTextPrefab, newPos, Quaternion.identity, entityPos);

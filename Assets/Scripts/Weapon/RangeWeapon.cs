@@ -46,13 +46,18 @@ public class RangeWeapon : Weapon
 
             if (bullet != null)
             {
-                float baseDamage = rangeData.damage * damageMultiplier;
+                int baseDamage = Mathf.RoundToInt(rangeData.damage * damageMultiplier);
                 if (Character is PlayerWeapon player)
                 {
-                    baseDamage = player.GetDamageCritical() * damageMultiplier;
+                    baseDamage = Mathf.RoundToInt(player.GetDamageCritical() * damageMultiplier);
                 }
 
-                bullet.Initialize(Character.Owner, rangeData.projectileSpeed, baseDamage);
+                // Get knockback info from WeaponDataSO
+                Vector2 knockbackDir = bullet.Direction;
+                float knockbackForce = 0f; // Range weapons không có knockback mặc định
+                
+                // Initialize projectile with damage and knockback info from WeaponDataSO
+                bullet.Initialize(Character.Owner, rangeData.projectileSpeed, baseDamage, knockbackDir, knockbackForce);
             }
         }
     }

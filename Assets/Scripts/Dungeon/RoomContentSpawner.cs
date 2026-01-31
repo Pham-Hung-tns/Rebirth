@@ -62,21 +62,12 @@ public class RoomContentSpawner
             {
                 enemy.name = $"{enemyDetails.name}_{enemiesSpawned}";
 
-                // �p d?ng health theo level n?u c�
+                // Áp dụng health theo level nếu có
                 EnemyVitality vitality = enemy.GetComponent<EnemyVitality>();
                 if (vitality != null)
                 {
                     int health = GetHealthForLevel(enemyDetails, dungeonLevel, (int)vitality.Health);
                     vitality.Health = health;
-                }
-
-                // �p d?ng EnemyController n?u c�
-                EnemyController controller = enemy.GetComponent<EnemyController>();
-                if (controller != null && enemyDetails != null)
-                {
-                    // EnemyDetailsSO ch?a prefab, c�n EnemyConfig l� c?u h�nh ri�ng
-                    // Do b?n l?y t? RoomTemplateSO, EnemyConfig c� th? ???c set t? n?i kh�c
-                    // T?m th?i b? qua vi?c set EnemyConfig ? ?�y
                 }
 
                 // Ensure EnemyMovement (if present) receives the room tilemaps so pathfinding uses the correct room
@@ -88,6 +79,12 @@ public class RoomContentSpawner
                     if (emMovement.CollisionTilemap == null && room.instantiatedRoom.collisionTilemap != null)
                         emMovement.CollisionTilemap = room.instantiatedRoom.collisionTilemap;
                 }
+
+                // Temporarily deactivate enemy so it doesn't act immediately; activate after short delay
+                enemy.SetActive(false);
+                float delay = Random.Range(0.5f, 1f);
+                SpawnActivationHelper.Instance.ActivateAfterDelay(enemy, delay);
+                Debug.Log($"[RoomContentSpawner] Spawned enemy {enemy.name} - activation delayed by {delay:F2}s in room {room.id}");
 
                 enemiesSpawned++;
             }

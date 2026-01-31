@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8909334218c00f943a0cd09afb0b53e3, type: 3}
+  m_Name: Boar
+  m_EditorClassIdentifier: 
+  Health: 15
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 1024
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  rangeCanDetectPlayer: 5
+  rangeCanLookAtPlayer: 7
+  timeToWander: 3
+  timeToIdle: 5
+  speed: 10
+  moveRange: {x: 10, y: 10, z: 0}
+  timeToAttack: 2
+  attackType: 0
+  attackDelay: 0.5
+  initialWeapon: {fileID: 8736767362372929312, guid: baa395890fa20cd4d87607f63a71d116, type: 3}
+  initialSkill: {fileID: 0}

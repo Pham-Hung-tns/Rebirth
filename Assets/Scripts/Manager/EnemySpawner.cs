@@ -24,16 +24,45 @@ public class EnemySpawner : MonoBehaviour
     private void HandleRoomChanged(RoomChangedEventArgs args)
     {
         var room = args.room;
-        if (room == null || room.roomNodeType == null) return;
-        if (room.roomNodeType.isCorridor || room.roomNodeType.isEntrance) return;
-        if (room.isClearedOfEnemies) return;
+        Debug.Log($"[EnemySpawner] HandleRoomChanged called for roomId={room?.id}");
+
+        if (room == null || room.roomNodeType == null)
+        {
+            Debug.Log("[EnemySpawner] Aborting HandleRoomChanged: room is null or room.roomNodeType is null");
+            return;
+        }
+
+        if (room.roomNodeType.isCorridor || room.roomNodeType.isEntrance)
+        {
+            Debug.Log($"[EnemySpawner] Aborting HandleRoomChanged: room {room.id} is corridor or entrance");
+            return;
+        }
+
+        if (room.isClearedOfEnemies)
+        {
+            Debug.Log($"[EnemySpawner] Aborting HandleRoomChanged: room {room.id} is already cleared of enemies");
+            return;
+        }
 
         DungeonLevelSO currentLevel = LevelManager.Instance?.GetCurrentDungeonLevel();
-        if (currentLevel == null) return;
+        if (currentLevel == null)
+        {
+            Debug.Log("[EnemySpawner] Aborting HandleRoomChanged: current dungeon level is null");
+            return;
+        }
 
         RoomEnemySpawnParameters spawnParams = room.GetRoomEnemySpawnParameters(currentLevel);
-        if (spawnParams == null || room.spawnPositionArray == null || room.spawnPositionArray.Length == 0)
+        if (spawnParams == null)
+        {
+            Debug.Log($"[EnemySpawner] Aborting HandleRoomChanged: spawnParams null for room {room.id} at level {currentLevel.name}");
             return;
+        }
+
+        if (room.spawnPositionArray == null || room.spawnPositionArray.Length == 0)
+        {
+            Debug.Log($"[EnemySpawner] Aborting HandleRoomChanged: room {room.id} has no spawn positions");
+            return;
+        }
 
         if (!activeSpawns.ContainsKey(room))
         {
@@ -41,6 +70,7 @@ public class EnemySpawner : MonoBehaviour
             activeSpawns[room] = state;
 
             // Lock doors and switch to battle music when combat starts
+            Debug.Log($"[EnemySpawner] Conditions met. Locking doors for room {room.id} and starting spawn routine.");
             room.instantiatedRoom?.LockDoors();
             AudioManager.Instance.PlaySFX("Door_Close");
             AudioManager.Instance.PlayMusic("Battle");
@@ -91,18 +121,27 @@ public class EnemySpawner : MonoBehaviour
         Vector3 spawnWorldPos = GetRandomSpawnWorldPosition(state.Room);
         GameObject enemy = Instantiate(enemyDetails.enemyPrefab, spawnWorldPos, Quaternion.identity, state.Room.instantiatedRoom?.transform);
 
-        // Apply health by level if available
-        var vitality = enemy.GetComponent<EnemyVitality>();
-        if (vitality != null)
+        if (enemy != null)
         {
-            int health = GetHealthForLevel(enemyDetails, state.DungeonLevel, (int)vitality.Health);
-            vitality.Health = health;
-        }
+            // Configure before temporarily deactivating
+            var vitality = enemy.GetComponent<EnemyVitality>();
+            if (vitality != null)
+            {
+                int health = GetHealthForLevel(enemyDetails, state.DungeonLevel, (int)vitality.Health);
+                vitality.Health = health;
+            }
 
-        // Attach context for cleanup
-        var context = enemy.AddComponent<SpawnContext>();
-        context.SourceRoom = state.Room;
-        state.AliveCount++;
+            // Attach context for cleanup
+            var context = enemy.AddComponent<SpawnContext>();
+            context.SourceRoom = state.Room;
+            state.AliveCount++;
+
+            // Temporarily deactivate the enemy to freeze behavior, then activate after short delay
+            enemy.SetActive(false);
+            float delay = Random.Range(0.5f, 1f);
+            SpawnActivationHelper.Instance.ActivateAfterDelay(enemy, delay);
+            Debug.Log($"[EnemySpawner] Spawned enemy {enemy.name} (delayed active {delay:F2}s) in room {state.Room.id}");
+        }
     }
 
     private EnemyDetailsSO SelectRandomEnemy(Room room, DungeonLevelSO level)

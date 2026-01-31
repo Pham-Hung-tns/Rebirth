@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Bow
   m_EditorClassIdentifier: 
   Name: Bow
-  icon: {fileID: 21300000, guid: 7ae509c5ffb767e4ba4d2022bda5bc09, type: 3}
+  icon: {fileID: 21300000, guid: 007d8f4444afcd847bc5d893192e1ee5, type: 3}
   damage: 5
   energy: 0
   weaponType: 1
@@ -21,12 +21,12 @@ MonoBehaviour:
   firePoint: {fileID: 0}
   cooldown: 3
   weapon: {fileID: 5234706041011484672, guid: 271c5deee500be9418e421ea37324094, type: 3}
+  canCharge: 1
+  maxChargeTime: 2
+  minChargeDamageMultiplier: 0.5
+  maxChargeDamageMultiplier: 2
   projectilePrefab: {fileID: 2206017541237943215, guid: e3ba83d16c150df4987299e2e9b717a9, type: 3}
   projectileSpeed: 20
   projectileLifetime: 5
   projectileCount: 1
   spreadAngle: 0
-  canCharge: 1
-  maxChargeTime: 2
-  minChargeDamageMultiplier: 0.5
-  maxChargeDamageMultiplier: 2

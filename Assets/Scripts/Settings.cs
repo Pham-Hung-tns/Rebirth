@@ -16,6 +16,10 @@ public static class Settings
     public const int maxDungeonBuildAttempts = 10;
     #endregion
 
+    #region SCENE SETTINGS
+    public const string homeScene = "HomeScene";
+    #endregion
+
     #region ROOM SETTINGS
     public const float fadeInTime = 0.5f; // time to fade in the room
     public const int maxChildCorridors = 3; // Max number of child corridors leading from a room.
@@ -30,11 +34,18 @@ public static class Settings
     public const float baseSpeedForPlayerAnimations = 8f;
 
     // Animator parameters - Enemy
-    public const float baseSpeedForEnemyAnimations = 3f;
+    #region ANIMATOR ENEMY PARAMETERS
+      public const int defaultEnemyVitality = 20;
+    public static readonly int IDLE_STATE = Animator.StringToHash("Enemy_Idle");
+    public static readonly int WANDER_STATE = Animator.StringToHash("Enemy_Wander");
+    public static readonly int ATTACK_STATE = Animator.StringToHash("Enemy_Attack");
+    public static readonly int CHASE_STATE = Animator.StringToHash("Enemy_Chase");
+    #endregion
 
 
-    // Animator parameters - Door
-    public static readonly int open = Animator.StringToHash("open");
+    // // Animator parameters - Door
+    // public static readonly int open = Animator.StringToHash("Open");
+    // public static readonly int close = Animator.StringToHash("Close");
 
     // Animator parameters - DamageableDecoration
     public static readonly int destroy = Animator.StringToHash("destroy");
@@ -78,16 +89,8 @@ public static class Settings
     public const int targetFrameRateToSpreadPathfindingOver = 60;
     public const float playerMoveDistanceToRebuildPath = 3f;
     public const float enemyPathRebuildCooldown = 2f;
-
     #endregion
 
-    #region ENEMY PARAMETERS
-    public const int defaultEnemyVitality = 20;
-
-    public const string IDLE_STATE = "idle";
-    public const string WANDER_STATE = "wander";
-    public const string ATTACK_STATE = "attack";
-    #endregion
 
     #region UI PARAMETERS
     public const float uiHeartSpacing = 16f;

@@ -7,7 +7,7 @@ public class Prop : MonoBehaviour, ITakeDamage
 {
     [SerializeField] float durability;
     private int counter;
-    public void TakeDamage(float amount)
+    public void TakeDamage(int amount)
     {
         counter++;
         if (counter > durability)
@@ -16,7 +16,7 @@ public class Prop : MonoBehaviour, ITakeDamage
         }
     }
 
-    public void TakeDamage(float amount, GameObject attacker, Vector2 knockbackDir, float knockbackForce)
+    public void TakeDamage(int amount, GameObject attacker, Vector2 knockbackDir, float knockbackForce)
     {
         //TODO: Add knockback effect to prop
         Debug.Log("Prop take damage with knockback");

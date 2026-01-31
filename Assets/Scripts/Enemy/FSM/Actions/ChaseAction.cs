@@ -7,34 +7,34 @@ public class ChaseAction : AIAction
 {
     private Transform player;
     private EnemyMovement movement;
-    private float lastRequest = -999f;
 
     public override void OnEnter()
     {
         // initialize chase
         player = enemyBrain.Player?.transform;
-        movement = enemyBrain != null ? enemyBrain.GetComponent<EnemyMovement>() : null;
-        if (player != null && movement != null)
-            movement.RequestPath(player.position);
-        enemyBrain.ChangeAnim(Settings.WANDER_STATE);
+        movement = enemyBrain != null ? enemyBrain.EnemyMovement : null;
+        
+        // Set flag để EnemyMovement áp dụng fallback movement
+        if (movement != null)
+            movement.SetChasing(true);
+        
+        enemyBrain.ChangeAnimationState(Settings.CHASE_STATE);
     }
 
     public override void OnUpdate()
     {
-        if (player == null || enemyBrain == null)
+        if (player == null || enemyBrain == null || movement == null)
             return;
 
-        // periodically request a new path if player moved
-        if (movement != null && Time.time - lastRequest > 0.25f)
-        {
-            movement.RequestPath(player.position);
-            enemyBrain.PatrolPosition = player.position;
-            lastRequest = Time.time;
-        }
+        // Liên tục request path theo vị trí hiện tại của player
+        movement.RequestPath(player.position);
+        enemyBrain.PatrolPosition = player.position;
     }
 
     public override void OnExit()
-    {
-        enemyBrain.Player = null;
+    {   
+        // Unset flag khi rời ChaseAction (WanderAction sẽ quay lại pathfinding bình thường)
+        if (movement != null)
+            movement.SetChasing(false);
     }
 }

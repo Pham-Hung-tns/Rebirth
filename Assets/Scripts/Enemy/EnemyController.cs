@@ -6,33 +6,74 @@ public class EnemyController : CharacterController
 {
     [SerializeField] private EnemyVitality enemyVitality;
     [SerializeField] private EnemyWeapon enemyWeapon;
+    [SerializeField] private EnemySkill enemySkill;
+    [SerializeField] private EnemyMeleeAttack enemyMeleeAttack;
     [SerializeField] private EnemyConfig enemyConfig;
+    [SerializeField] private EnemyMovement enemyMovement;
 
     // List of states configured in the Inspector
     [SerializeField] private List<AIState> states = new List<AIState>();
 
     public AIState currentState;
     private Transform player;
-    //private Room currentRoom;
     
     private string currentAnim;
     private float currentTime = 0f;
     private float timeLimit = 0f;
     private Vector3 patrolPosition = Vector3.zero;
-    private bool canAttack = false;
+    private bool isAttack = false;
 
     
+    public EnemyMovement EnemyMovement { get => enemyMovement; set => enemyMovement = value; }
     public EnemyWeapon EnemyWeapon { get => enemyWeapon; set => enemyWeapon = value; }
+    public EnemySkill EnemySkill { get => enemySkill; set => enemySkill = value; }
+    public EnemyMeleeAttack EnemyMeleeAttack { get => enemyMeleeAttack; set => enemyMeleeAttack = value; }
     public EnemyConfig EnemyConfig { get => enemyConfig; set => enemyConfig = value; }
     public Vector3 PatrolPosition { get => patrolPosition; set => patrolPosition = value; }
     public float CurrentTime { get => currentTime; set => currentTime = value; }
     public float TimeLimit { get => timeLimit; set => timeLimit = value; }
     public Transform Player { get => player; set => player = value; }
-    public bool CanAttack { get => canAttack; set => canAttack = value; }
+    public bool IsAttack { get => isAttack; set => isAttack = value; }
+    
+    // Property để access attack system hiện tại
+    public IAttackable CurrentAttackSystem
+    {
+        get
+        {
+            switch (enemyConfig.attackType)
+            {
+                case EnemyConfig.AttackType.Skill:
+                    return enemySkill as IAttackable;
+                case EnemyConfig.AttackType.MeleeAttack:
+                    return enemyMeleeAttack as IAttackable;
+                case EnemyConfig.AttackType.Weapon:
+                default:
+                    return enemyWeapon as IAttackable;
+            }
+        }
+    }
 
     private void Awake()
     {
+        enemyMovement.Initialized(this);
         enemyVitality.Initialized(enemyConfig);
+    
+        // Chỉ khởi tạo component cần thiết dựa vào attackType
+        switch (enemyConfig.attackType)
+        {
+            case EnemyConfig.AttackType.Weapon:
+                if (enemyWeapon != null)
+                    enemyWeapon.Initialized(this, enemyConfig);
+                break;
+            case EnemyConfig.AttackType.Skill:
+                if (enemySkill != null)
+                    enemySkill.Initialized(this, enemyConfig);
+                break;
+            case EnemyConfig.AttackType.MeleeAttack:
+                if (enemyMeleeAttack != null)
+                    enemyMeleeAttack.Initialized(this, enemyConfig);
+                break;
+        }
     }
     private void Start()
     {
@@ -57,23 +98,20 @@ public class EnemyController : CharacterController
             currentState.EnterState();
             CurrentTime = 0f;
         }
-        if(enemyConfig != null && enemyConfig.initialWeapon != null)
-            enemyWeapon.CreateWeapon(enemyConfig.initialWeapon);
     }
 
     private void Update()
     {
         currentState?.UpdateState();
         CurrentTime += Time.deltaTime;
-
-        // check if see player to rotate weapon
-        //if (LevelManager.Instance.SelectedPlayer == null) { return; }
-        //Vector3 dir = LevelManager.Instance.SelectedPlayer.transform.position - transform.position;
-        //RotateWeapon(dir);
     }
 
     public void ChangeToState(AIState nextState)
     {
+        // Nếu còn đang tấn công, không cho phép chuyển state
+        if (IsAttack)
+            return;
+
         var previous = currentState;
         if (nextState == previous)
             return;
@@ -95,15 +133,6 @@ public class EnemyController : CharacterController
         Debug.Log("Current State: " + currentState);
     }
 
-    public void ChangeAnim(string animatorName)
-    {
-        if (currentAnim != animatorName)
-        {
-            animator.ResetTrigger(animatorName);
-            currentAnim = animatorName;
-            animator.SetTrigger(currentAnim);
-        }
-    }
     // Move enemy to new direction, flip sprite and rotate weapon
     public void ChangeDirection(Vector3 newPosition)
     {
@@ -120,9 +149,10 @@ public class EnemyController : CharacterController
             EnemyWeapon.RotateWeaponToPlayer(dir);
     }
 
-    protected override void OnAttack(bool canAttack)
+
+    protected override void OnAttack(bool IsAttack)
     {
-        base.OnAttack(canAttack);
+        base.OnAttack(IsAttack);
     }
 
     protected override void OnSkill(bool canUseSkill)
@@ -135,11 +165,28 @@ public class EnemyController : CharacterController
         base.OnMove(input);
     }
 
+    // Callback từ EnemyWeapon khi tấn công hoàn thành
+    public void OnAttackComplete()
+    {
+        IsAttack = false;
+    }
+
     // Gizmos
     public void OnDrawGizmos()
     {
         //Detect Player
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, enemyConfig.rangeCanDetectPlayer);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, enemyConfig.rangeCanLookAtPlayer);
+
+        // Attack Range
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(
+            transform.position + Vector3.right * (Spr.flipX ? -1 : 1),
+            enemyConfig.attackRange
+        );
+
     }
 }

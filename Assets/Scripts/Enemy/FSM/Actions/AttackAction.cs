@@ -4,28 +4,34 @@ using UnityEngine;
 
 public class AttackAction : AIAction
 {
-    private Transform player;
-    private float attackDuration = 0f;
+    private float delayTimer = 0f;
+
     public override void OnEnter()
     {
-        enemyBrain.TimeLimit = enemyBrain.EnemyConfig.timeToIdle;
-        enemyBrain.CanAttack = true;
-        // change to attack animation
+        enemyBrain.IsAttack = true;
+        enemyBrain.Rb.velocity = Vector2.zero;
+        delayTimer = enemyBrain.EnemyConfig.attackDelay;
     }
 
     public override void OnUpdate()
     {
-        attackDuration -= Time.deltaTime;
-        if(attackDuration <= 0f && enemyBrain.CanAttack != false)
+        delayTimer -= Time.deltaTime;
+        
+        // Theo dõi hướng player
+        if (enemyBrain.Player != null)
         {
-            enemyBrain.EnemyWeapon.StartAttack();
-            attackDuration = enemyBrain.EnemyConfig.timeBetweenAttack;
+            enemyBrain.ChangeDirection(enemyBrain.Player.position);
+        }
+        
+        if (enemyBrain.IsAttack == true && delayTimer <= 0f)
+        {
+            Debug.Log(enemyBrain.Player);
+            // Delay hết, gọi tấn công thông qua attack system (Weapon hoặc Skill)
+            enemyBrain.CurrentAttackSystem.StartAttack();
         }
     }
 
     public override void OnExit()
     {
-        enemyBrain.Player = null;
-        enemyBrain.CanAttack = false;
     }
 }

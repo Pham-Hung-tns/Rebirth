@@ -6,5 +6,5 @@ using UnityEngine;
 public class Tech : ScriptableObject
 {
     public string definition;
-    public Texture2D image;
+    public Sprite icon;
 }

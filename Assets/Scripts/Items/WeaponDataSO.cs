@@ -27,6 +27,12 @@ public class WeaponDataSO : ItemDataSO
     public Transform firePoint; // Điểm bắn
     public float cooldown;
     public Weapon weapon;
+
+    [Header("Charge Mechanics")]
+    public bool canCharge;
+    public float maxChargeTime = 2f; // Thời gian tụ lực tối đa
+    public float minChargeDamageMultiplier = 0.5f; // Sát thương khi chưa tụ lực
+    public float maxChargeDamageMultiplier = 2.0f; // Sát thương khi tụ lực full
     public override void PickUp()
     {
         LevelManager.Instance.SelectedPlayer.GetComponent<PlayerWeapon>().EquipWeapon(weapon);

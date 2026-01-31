@@ -140,12 +140,12 @@ public class TechTreeWindow : EditorWindow
 
                 EditorGUI.BeginFoldoutHeaderGroup(nodeRect, true, label);
 
-                // draw tech image (if any)
+                // draw tech icon (if any)
                 Tech techObj = techProp.objectReferenceValue as Tech;
-                if (techObj != null && techObj.image != null)
+                if (techObj != null && techObj.icon != null)
                 {
                     Rect imgRect = new Rect(uiPos + new Vector2(4f, 4f), new Vector2(40f, 40f));
-                    GUI.DrawTexture(imgRect, techObj.image, ScaleMode.ScaleToFit);
+                    GUI.DrawTexture(imgRect, techObj.icon.texture, ScaleMode.ScaleToFit);
                 }
 
                 // small fields inside node (moved right of image)

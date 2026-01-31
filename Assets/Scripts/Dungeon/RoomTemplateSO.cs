@@ -97,6 +97,45 @@ public class RoomTemplateSO : ScriptableObject
 
     public List<RoomEnemySpawnParameters> roomEnemySpawnParametersList;
 
+    #region Header BONUS CONFIG
+
+    [Space(10)]
+    [Header("BONUS CONFIG")]
+
+    #endregion Header BONUS CONFIG
+
+    #region Tooltip
+
+    [Tooltip("Populate the list with bonus prefabs that will be spawned when enemies are defeated in this room")]
+
+    #endregion Tooltip
+
+    public GameObject[] bonusPrefabs;
+
+    #region Tooltip
+
+    [Tooltip("Minimum number of bonus items to spawn per enemy kill")]
+
+    #endregion Tooltip
+
+    public int minBonusPerKill = 1;
+
+    #region Tooltip
+
+    [Tooltip("Maximum number of bonus items to spawn per enemy kill")]
+
+    #endregion Tooltip
+
+    public int maxBonusPerKill = 3;
+
+    #region Tooltip
+
+    [Tooltip("Radius around the enemy where bonus items are scattered")]
+
+    #endregion Tooltip
+
+    public float bonusSpreadRadius = 2f;
+
     public List<Doorway> GetDoorwayList()
     {
         return doorwayList;

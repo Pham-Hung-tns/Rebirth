@@ -103,16 +103,15 @@ public class PlayerWeapon : CharacterWeapon
     //    //    return;
     //}
 
-    public float GetDamageCritical()
+    public int GetDamageCritical()
     {
         float damage = currentWeapon.WeaponData.damage;
         float per = UnityEngine.Random.Range(0, 100f);
         if (per <= playerConfig.CriticalChance)
         {
-            damage = Mathf.RoundToInt(damage + (playerConfig.CriticalDamage / 100) * damage);
-            return damage;
+            return Mathf.RoundToInt(damage + (playerConfig.CriticalDamage / 100) * damage);
         }
-        return damage;
+        return Mathf.RoundToInt(damage);
     }
 
     public void RotateWeapon()

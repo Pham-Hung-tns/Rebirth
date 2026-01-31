@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c0a8f77d938f0746bb4af43bb61a6e4, type: 3}
   m_Name: Rifle
   m_EditorClassIdentifier: 
-  Name: AK47
+  Name: Rifle
   icon: {fileID: -730901295, guid: 13206ce5c0155524f8b9066ce518f830, type: 3}
   damage: 5
   energy: 0
@@ -21,12 +21,12 @@ MonoBehaviour:
   firePoint: {fileID: 0}
   cooldown: 1
   weapon: {fileID: 8736767362372929312, guid: baa395890fa20cd4d87607f63a71d116, type: 3}
+  canCharge: 0
+  maxChargeTime: 2
+  minChargeDamageMultiplier: 0.5
+  maxChargeDamageMultiplier: 2
   projectilePrefab: {fileID: 2206017541237943215, guid: c9a89c1b2dc352d428cc6f681a591799, type: 3}
   projectileSpeed: 15
   projectileLifetime: 5
   projectileCount: 3
   spreadAngle: 30
-  canCharge: 0
-  maxChargeTime: 2
-  minChargeDamageMultiplier: 0.5
-  maxChargeDamageMultiplier: 2
