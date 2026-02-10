@@ -61,11 +61,11 @@ TagManager:
   - name: Extra
     uniqueID: 4061544169
     locked: 0
-  - name: Props
-    uniqueID: 1249629529
-    locked: 0
   - name: Gate
     uniqueID: 2912691991
+    locked: 0
+  - name: Props
+    uniqueID: 1249629529
     locked: 0
   - name: Sword
     uniqueID: 967134103
@@ -90,6 +90,9 @@ TagManager:
     locked: 0
   - name: Collision
     uniqueID: 2020064685
+    locked: 0
+  - name: Torch
+    uniqueID: 2135683915
     locked: 0
   - name: Fog
     uniqueID: 1534321683
