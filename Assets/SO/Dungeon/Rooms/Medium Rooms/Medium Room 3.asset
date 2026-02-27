@@ -1,0 +1,60 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2708e4084c4a1534ba646096300f778c, type: 3}
+  m_Name: Medium Room 3
+  m_EditorClassIdentifier: 
+  guid: 287251767641aac429fc1502fbec1a3f
+  prefab: {fileID: 5763240310945081118, guid: 1dbcc9f92c77d2043a9d9200fd1e18da, type: 3}
+  previousPrefab: {fileID: 5763240310945081118, guid: 1dbcc9f92c77d2043a9d9200fd1e18da, type: 3}
+  roomNodeType: {fileID: 11400000, guid: 3ba68ecf6133d904bb18f9a2f6ddb1de, type: 2}
+  lowerBounds: {x: -13, y: -6}
+  upperBounds: {x: 13, y: 7}
+  doorwayList:
+  - position: {x: 0, y: 6}
+    orientation: 0
+    doorPrefab: {fileID: 4794979778358250718, guid: c784c1277d983184da85f5b0d384b1ea, type: 3}
+    doorwayStartCopyPosition: {x: -3, y: 7}
+    doorwayCopyTileWidth: 7
+    doorwayCopyTileHeight: 3
+    isConnected: 0
+    isUnavailable: 0
+  - position: {x: 0, y: -6}
+    orientation: 2
+    doorPrefab: {fileID: 4794979778358250718, guid: c784c1277d983184da85f5b0d384b1ea, type: 3}
+    doorwayStartCopyPosition: {x: -3, y: -5}
+    doorwayCopyTileWidth: 7
+    doorwayCopyTileHeight: 2
+    isConnected: 0
+    isUnavailable: 0
+  - position: {x: 13, y: 0}
+    orientation: 1
+    doorPrefab: {fileID: 6143454631257090644, guid: 5c85d316940d48d4db476a889504cfc6, type: 3}
+    doorwayStartCopyPosition: {x: 13, y: 4}
+    doorwayCopyTileWidth: 2
+    doorwayCopyTileHeight: 8
+    isConnected: 0
+    isUnavailable: 0
+  - position: {x: -13, y: 0}
+    orientation: 3
+    doorPrefab: {fileID: 6143454631257090644, guid: 5c85d316940d48d4db476a889504cfc6, type: 3}
+    doorwayStartCopyPosition: {x: -14, y: 4}
+    doorwayCopyTileWidth: 2
+    doorwayCopyTileHeight: 8
+    isConnected: 0
+    isUnavailable: 0
+  spawnPositionArray: []
+  enemiesByLevelList: []
+  roomEnemySpawnParametersList: []
+  bonusPrefabs: []
+  minBonusPerKill: 1
+  maxBonusPerKill: 3
+  bonusSpreadRadius: 2
