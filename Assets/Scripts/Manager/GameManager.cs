@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class GameManager : Persistance<GameManager>
+public class GameManager : Persistence<GameManager>
 {
     public Color weaponNormalColor;
      public Color weaponRareColor;

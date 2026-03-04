@@ -10,7 +10,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
     }
 }
 
-public class Persistance<T> : Singleton<T> where T : MonoBehaviour
+public class Persistence<T> : Singleton<T> where T : MonoBehaviour
 {
     protected override void Awake()
     {

@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -6,64 +5,342 @@ using System.IO;
 
 public class TechTreeWindow : EditorWindow
 {
-    Vector2 nodeSize = new Vector2(140f,70f);
-    Vector2 scrollPosition = Vector2.zero;
-    Vector2 scrollStartPos;
+    // === Layout ===
+    private Vector2 nodeSize = new Vector2(150f, 100f);
+    private Vector2 incomingEdgVec = new Vector2(100f, 10f);
+    private Vector2 outgoingEdgVec = new Vector2(-12f, 10f);
+    private Vector2 upArrowVec = new Vector2(-10f, -10f);
+    private Vector2 downArrowVec = new Vector2(-10f, 10f);
+    private Vector2 nextLineVec = new Vector2(0f, 20f);
+    private Vector2 indentVec = new Vector2(102f, 0f);
+    private Vector2 nodeContentSize = new Vector2(40f, 20f);
+    private Vector2 nodeLabelSize = new Vector2(100f, 20f);
 
+    // === State ===
     public TechTree targetTree;
-    SerializedObject serializedTree;
-    SerializedProperty treeProp;
+    private Vector2 scrollPosition = Vector2.zero;
+    private Vector2 scrollStartPos;
 
-    TechNode activeNode;
-    SerializedProperty activeNodeProp;
-    Vector2 mouseSelectionOffset;
+    // Node interaction
+    private TechNode activeNode;       // Node đang được kéo (left-click drag)
+    private TechNode selectedNode;     // Node đã chọn để tạo kết nối (right-click)
+    private Vector2 mouseSelectionOffset;
+
+    // Grid
+    private const float gridSmall = 25f;
+    private const float gridLarge = 100f;
 
     [MenuItem("Window/Tech Tree Editor")]
     public static void OpenWindow()
     {
-        TechTreeWindow w = GetWindow<TechTreeWindow>("Tech Tree");
+        TechTreeWindow w = GetWindow<TechTreeWindow>("Tech Tree Editor");
         w.minSize = new Vector2(600, 400);
     }
 
     void OnEnable()
     {
+        // Subscribe to selection change để auto-load khi click SO trong Project
+        Selection.selectionChanged += OnSelectionChanged;
+    }
+
+    void OnDisable()
+    {
+        Selection.selectionChanged -= OnSelectionChanged;
+    }
+
+    private void OnSelectionChanged()
+    {
+        // Auto-load TechTree khi select trong Project window
+        if (Selection.activeObject is TechTree tree)
+        {
+            targetTree = tree;
+            Repaint();
+        }
     }
 
     void OnGUI()
     {
-        EditorGUILayout.Space();
+        // === Header: Object field ===
+        EditorGUILayout.Space(4);
         TechTree newTarget = (TechTree)EditorGUILayout.ObjectField("Tech Tree Asset", targetTree, typeof(TechTree), false);
         if (newTarget != targetTree)
         {
             targetTree = newTarget;
-            if (targetTree != null)
-            {
-                serializedTree = new SerializedObject(targetTree);
-                treeProp = serializedTree.FindProperty("tree");
-                serializedTree.Update();
-            }
-            else
-            {
-                serializedTree = null;
-                treeProp = null;
-            }
+            selectedNode = null;
+            activeNode = null;
         }
 
-        if (serializedTree == null)
+        if (targetTree == null)
         {
-            EditorGUILayout.HelpBox("Assign a TechTree asset to edit.", MessageType.Info);
+            EditorGUILayout.HelpBox("Assign a TechTree asset to edit.\nHoặc double-click vào TechTree SO trong Project window.", MessageType.Info);
             return;
         }
 
-        Event e = Event.current;
+        // === Canvas area ===
+        Rect canvas = GUILayoutUtility.GetRect(position.width, position.height - 80);
+        GUI.BeginClip(canvas);
+        {
+            // Background
+            EditorGUI.DrawRect(new Rect(0, 0, canvas.width, canvas.height), new Color(0.15f, 0.15f, 0.15f));
 
-        serializedTree.Update();
+            // Grid
+            DrawGrid(gridSmall, 0.15f, canvas);
+            DrawGrid(gridLarge, 0.25f, canvas);
 
-        Rect canvas = GUILayoutUtility.GetRect(position.width, position.height - 60);
-        // Draw background
-        EditorGUI.DrawRect(canvas, new Color(0.12f, 0.12f, 0.12f));
+            Event e = Event.current;
+            int controlID = GUIUtility.GetControlID(FocusType.Passive);
+            EventType uiEvent = e.GetTypeForControl(controlID);
 
-        // Handle scroll panning with middle mouse
+            // Draw connections (bezier curves)
+            DrawConnections();
+
+            // Draw live connection line (khi đang kéo từ selectedNode)
+            DrawLiveConnectionLine(e);
+
+            // Draw nodes + handle node events
+            DrawNodesAndProcessEvents(e, uiEvent);
+
+            // Process canvas-level events (pan, drag-drop, deselect)
+            ProcessCanvasEvents(e, uiEvent, canvas);
+        }
+        GUI.EndClip();
+
+        // === Bottom toolbar ===
+        DrawToolbar();
+
+        // Force repaint khi đang kéo node hoặc kéo connection
+        if (activeNode != null || selectedNode != null)
+            Repaint();
+    }
+
+    #region Grid Drawing
+
+    private void DrawGrid(float spacing, float opacity, Rect canvas)
+    {
+        int cols = Mathf.CeilToInt(canvas.width / spacing) + 1;
+        int rows = Mathf.CeilToInt(canvas.height / spacing) + 1;
+
+        Handles.color = new Color(0.5f, 0.5f, 0.5f, opacity);
+
+        float offsetX = -(scrollPosition.x % spacing);
+        float offsetY = -(scrollPosition.y % spacing);
+
+        for (int i = 0; i < cols; i++)
+        {
+            float x = offsetX + i * spacing;
+            Handles.DrawLine(new Vector3(x, 0), new Vector3(x, canvas.height));
+        }
+        for (int j = 0; j < rows; j++)
+        {
+            float y = offsetY + j * spacing;
+            Handles.DrawLine(new Vector3(0, y), new Vector3(canvas.width, y));
+        }
+
+        Handles.color = Color.white;
+    }
+
+    #endregion
+
+    #region Connection Drawing
+
+    private void DrawConnections()
+    {
+        if (targetTree?.tree == null) return;
+
+        for (int i = 0; i < targetTree.tree.Count; i++)
+        {
+            TechNode node = targetTree.tree[i];
+            if (node == null || node.tech == null || node.requirements == null) continue;
+
+            Vector2 nodePos = node.UIposition - scrollPosition;
+
+            foreach (Tech req in node.requirements)
+            {
+                int reqIdx = targetTree.FindTechIndex(req);
+                if (reqIdx == -1) continue;
+
+                Vector2 reqPos = targetTree.tree[reqIdx].UIposition - scrollPosition;
+
+                Vector2 start = nodePos + outgoingEdgVec;
+                Vector2 end = reqPos + incomingEdgVec;
+
+                // Bezier curve
+                Handles.DrawBezier(start, end,
+                    start + Vector2.left * 100,
+                    end + Vector2.right * 100,
+                    Color.white, null, 3f);
+
+                // Arrow head
+                Handles.DrawLine(start, start + upArrowVec);
+                Handles.DrawLine(start, start + downArrowVec);
+            }
+        }
+    }
+
+    private void DrawLiveConnectionLine(Event e)
+    {
+        if (selectedNode != null && selectedNode.tech != null && e.button == 1)
+        {
+            Vector2 start = e.mousePosition;
+            Vector2 end = selectedNode.UIposition - scrollPosition + incomingEdgVec;
+
+            Handles.DrawBezier(start, end,
+                start + Vector2.left * 100,
+                end + Vector2.right * 100,
+                new Color(0.5f, 1f, 0.5f, 0.8f), null, 2f);
+
+            Repaint();
+        }
+    }
+
+    #endregion
+
+    #region Node Drawing & Events
+
+    private void DrawNodesAndProcessEvents(Event e, EventType uiEvent)
+    {
+        if (targetTree?.tree == null) return;
+
+        GUIStyle nodeStyle = new GUIStyle(EditorStyles.helpBox);
+        GUIStyle selectedNodeStyle = new GUIStyle(EditorStyles.helpBox);
+        selectedNodeStyle.normal.background = Texture2D.linearGrayTexture;
+
+        for (int i = 0; i < targetTree.tree.Count; i++)
+        {
+            TechNode node = targetTree.tree[i];
+            if (node == null || node.tech == null) continue;
+
+            Vector2 nodePos = node.UIposition - scrollPosition;
+            Rect nodeRect = new Rect(nodePos, nodeSize);
+
+            // === Draw node background ===
+            bool isSelected = (selectedNode == node);
+            GUI.Box(nodeRect, "", isSelected ? selectedNodeStyle : nodeStyle);
+
+            // === Draw icon ===
+            if (node.tech.icon != null)
+            {
+                Rect iconRect = new Rect(nodePos.x - 50f, nodePos.y, 50f, 50f);
+                GUI.DrawTexture(iconRect, node.tech.icon.texture, ScaleMode.ScaleToFit);
+            }
+
+            // === Draw header ===
+            Rect headerRect = new Rect(nodePos.x, nodePos.y, nodeSize.x, 20f);
+            EditorGUI.LabelField(headerRect, node.tech.name, EditorStyles.boldLabel);
+
+            // === Draw Cost field ===
+            EditorGUI.LabelField(new Rect(nodePos + nextLineVec, nodeLabelSize), "Research cost:");
+            int newCost = EditorGUI.IntField(new Rect(nodePos + nextLineVec + indentVec, nodeContentSize), node.researchCost);
+            if (newCost != node.researchCost)
+            {
+                Undo.RecordObject(targetTree, "Edit Tech Node Cost");
+                node.researchCost = newCost;
+                EditorUtility.SetDirty(targetTree);
+            }
+
+            // === Draw Level field ===
+            EditorGUI.LabelField(new Rect(nodePos + nextLineVec * 2, nodeLabelSize), "Level:");
+            int newLevel = EditorGUI.IntField(new Rect(nodePos + nextLineVec * 2 + indentVec, nodeContentSize), node.level);
+            if (newLevel != node.level)
+            {
+                Undo.RecordObject(targetTree, "Edit Tech Node Level");
+                node.level = newLevel;
+                EditorUtility.SetDirty(targetTree);
+            }
+
+            // === Mouse events on node ===
+            if (nodeRect.Contains(e.mousePosition))
+            {
+                if (uiEvent == EventType.MouseDown)
+                {
+                    // Left-click: bắt đầu kéo node
+                    if (e.button == 0)
+                    {
+                        activeNode = node;
+                        mouseSelectionOffset = node.UIposition - (e.mousePosition + scrollPosition);
+                        GUIUtility.hotControl = GUIUtility.GetControlID(FocusType.Passive);
+                        e.Use();
+                    }
+                    // Right-click: chọn node để tạo kết nối
+                    else if (e.button == 1)
+                    {
+                        selectedNode = node;
+                        e.Use();
+                        Repaint();
+                    }
+                }
+                else if (uiEvent == EventType.MouseUp)
+                {
+                    // Right-click release trên node khác → tạo/xóa kết nối
+                    if (e.button == 1 && selectedNode != null && selectedNode != node)
+                    {
+                        Undo.RecordObject(targetTree, "Modify TechTree Connection");
+
+                        if (node.requirements.Contains(selectedNode.tech))
+                        {
+                            // Xóa kết nối đã tồn tại
+                            node.requirements.Remove(selectedNode.tech);
+                        }
+                        else if (selectedNode.requirements.Contains(node.tech))
+                        {
+                            // Xóa kết nối ngược
+                            selectedNode.requirements.Remove(node.tech);
+                        }
+                        else if (targetTree.IsConnectible(targetTree.tree.IndexOf(selectedNode), i))
+                        {
+                            // Tạo kết nối mới
+                            node.requirements.Add(selectedNode.tech);
+
+                            // Sửa cascade requirements
+                            for (int k = 0; k < targetTree.tree.Count; k++)
+                                targetTree.CorrectRequirementsCascades(k);
+                        }
+
+                        EditorUtility.SetDirty(targetTree);
+                        selectedNode = null;
+                        e.Use();
+                    }
+                    // Left-click release: kết thúc kéo
+                    else if (e.button == 0)
+                    {
+                        activeNode = null;
+                        e.Use();
+                    }
+                }
+            }
+        }
+
+        // === Kéo node (drag) — xử lý ngoài vòng lặp node ===
+        if (activeNode != null && uiEvent == EventType.MouseDrag && e.button == 0)
+        {
+            Undo.RecordObject(targetTree, "Move Tech Node");
+            activeNode.UIposition = e.mousePosition + scrollPosition + mouseSelectionOffset;
+            EditorUtility.SetDirty(targetTree);
+            e.Use();
+            Repaint();
+        }
+
+        // === Mouse up ngoài node → release drag ===
+        if (uiEvent == EventType.MouseUp)
+        {
+            if (e.button == 0)
+            {
+                activeNode = null;
+            }
+            if (e.button == 1)
+            {
+                selectedNode = null;
+            }
+        }
+    }
+
+    #endregion
+
+    #region Canvas Events (Pan, Drag-Drop, Context Menu)
+
+    private void ProcessCanvasEvents(Event e, EventType uiEvent, Rect canvas)
+    {
+        // === Middle-click pan ===
         if (e.button == 2)
         {
             if (e.type == EventType.MouseDown)
@@ -75,210 +352,144 @@ public class TechTreeWindow : EditorWindow
             {
                 scrollPosition = -(e.mousePosition - scrollStartPos);
                 Repaint();
+                e.Use();
             }
         }
 
-        // Draw connections first
-        if (treeProp != null)
-        {
-            for (int i = 0; i < treeProp.arraySize; i++)
-            {
-                SerializedProperty nodeProp = treeProp.GetArrayElementAtIndex(i);
-                SerializedProperty techProp = nodeProp.FindPropertyRelative("tech");
-                SerializedProperty reqsProp = nodeProp.FindPropertyRelative("requirements");
-                SerializedProperty uiPosProp = nodeProp.FindPropertyRelative("UIposition");
-                if (techProp.objectReferenceValue == null) continue;
-            Vector2 uiPos = uiPosProp.vector2Value - scrollPosition + new Vector2(canvas.x, canvas.y);
-
-                if (reqsProp != null)
-                {
-                    for (int r = 0; r < reqsProp.arraySize; r++)
-                    {
-                        SerializedProperty req = reqsProp.GetArrayElementAtIndex(r);
-                        if (req.objectReferenceValue == null) continue;
-                        int reqIdx = FindTechIndex((Tech)req.objectReferenceValue);
-                        if (reqIdx == -1) continue;
-                        SerializedProperty reqNode = treeProp.GetArrayElementAtIndex(reqIdx);
-                        Vector2 reqUi = reqNode.FindPropertyRelative("UIposition").vector2Value - scrollPosition + new Vector2(canvas.x, canvas.y);
-
-                        Vector2 start = uiPos + new Vector2(-12f, 10f);
-                        Vector2 end = reqUi + new Vector2(100f, 10f);
-                        Handles.DrawBezier(start, end, start + Vector2.left * 100, end + Vector2.right * 100, Color.white, null, 3f);
-
-                        // draw simple arrowhead at end
-                        Color prev = Handles.color;
-                        Handles.color = Color.white;
-                        Vector2 dir = (end - start).normalized;
-                        float arrowSize = 8f;
-                        Vector2 basePoint = end - dir * arrowSize;
-                        Vector2 perp = new Vector2(-dir.y, dir.x) * (arrowSize * 0.5f);
-                        Handles.DrawAAConvexPolygon(end, basePoint + perp, basePoint - perp);
-                        Handles.color = prev;
-                    }
-                }
-            }
-        }
-
-        // Draw nodes
-        if (treeProp != null)
-        {
-            for (int i = 0; i < treeProp.arraySize; i++)
-            {
-                SerializedProperty nodeProp = treeProp.GetArrayElementAtIndex(i);
-                SerializedProperty techProp = nodeProp.FindPropertyRelative("tech");
-                SerializedProperty costProp = nodeProp.FindPropertyRelative("researchCost");
-                SerializedProperty levelProp = nodeProp.FindPropertyRelative("level");
-                SerializedProperty uiPosProp = nodeProp.FindPropertyRelative("UIposition");
-
-                Vector2 uiPos = uiPosProp.vector2Value - scrollPosition + new Vector2(canvas.x, canvas.y);
-                Rect nodeRect = new Rect(uiPos, nodeSize);
-
-                string label = techProp.objectReferenceValue != null ? techProp.objectReferenceValue.name : "NULL TECH";
-                EditorGUI.BeginDisabledGroup(true);
-                EditorGUI.LabelField(nodeRect, "");
-                EditorGUI.EndDisabledGroup();
-
-                EditorGUI.BeginFoldoutHeaderGroup(nodeRect, true, label);
-
-                // draw tech icon (if any)
-                Tech techObj = techProp.objectReferenceValue as Tech;
-                if (techObj != null && techObj.icon != null)
-                {
-                    Rect imgRect = new Rect(uiPos + new Vector2(4f, 4f), new Vector2(40f, 40f));
-                    GUI.DrawTexture(imgRect, techObj.icon.texture, ScaleMode.ScaleToFit);
-                }
-
-                // small fields inside node (moved right of image)
-                Rect costRect = new Rect(uiPos + new Vector2(52f, 12f), new Vector2(84f, 16f));
-                EditorGUI.LabelField(new Rect(costRect.x, costRect.y, 44f, costRect.height), "Cost:");
-                int newCost = EditorGUI.IntField(new Rect(costRect.x + 44f, costRect.y, 36f, costRect.height), costProp.intValue);
-                if (newCost != costProp.intValue)
-                {
-                    Undo.RecordObject(serializedTree.targetObject, "Edit Tech Node Cost");
-                    costProp.intValue = newCost;
-                    serializedTree.ApplyModifiedProperties();
-                }
-
-                Rect levelRect = new Rect(uiPos + new Vector2(52f, 32f), new Vector2(84f, 16f));
-                EditorGUI.LabelField(new Rect(levelRect.x, levelRect.y, 52f, levelRect.height), "Level:");
-                int newLevel = EditorGUI.IntField(new Rect(levelRect.x + 52f, levelRect.y, 28f, levelRect.height), levelProp.intValue);
-                if (newLevel != levelProp.intValue)
-                {
-                    Undo.RecordObject(serializedTree.targetObject, "Edit Tech Node Level");
-                    levelProp.intValue = newLevel;
-                    serializedTree.ApplyModifiedProperties();
-                }
-
-                // handle mouse events for move/select
-                Event evt = Event.current;
-                if (nodeRect.Contains(evt.mousePosition))
-                {
-                    if (evt.type == EventType.MouseDown && evt.button == 0)
-                    {
-                        activeNodeProp = nodeProp;
-                        activeNode = null;
-                        mouseSelectionOffset = uiPosProp.vector2Value - evt.mousePosition;
-                        evt.Use();
-                    }
-                    else if (evt.type == EventType.MouseUp && evt.button == 0)
-                    {
-                        activeNodeProp = null;
-                        evt.Use();
-                    }
-                }
-
-                if (activeNodeProp != null && evt.type == EventType.MouseDrag && evt.button == 0)
-                {
-                    Undo.RecordObject(serializedTree.targetObject, "Move Tech Node");
-                    Vector2 newUi = evt.mousePosition + mouseSelectionOffset;
-                    activeNodeProp.FindPropertyRelative("UIposition").vector2Value = newUi;
-                    serializedTree.ApplyModifiedProperties();
-                    Repaint();
-                    evt.Use();
-                }
-                EditorGUI.EndFoldoutHeaderGroup();
-            }
-        }
-
-        // Drag & drop add
+        // === Drag & Drop Tech SO vào canvas để thêm node ===
         if (e.type == EventType.DragUpdated)
         {
-            DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-            e.Use();
+            bool hasTech = false;
+            foreach (var obj in DragAndDrop.objectReferences)
+            {
+                if (obj is Tech) { hasTech = true; break; }
+            }
+            if (hasTech)
+            {
+                DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                e.Use();
+            }
         }
         else if (e.type == EventType.DragPerform)
         {
             bool added = false;
-            for (int i = 0; i < DragAndDrop.objectReferences.Length; i++)
+            foreach (var obj in DragAndDrop.objectReferences)
             {
-                if (DragAndDrop.objectReferences[i] is Tech)
+                if (obj is Tech tech)
                 {
-                    Tech t = DragAndDrop.objectReferences[i] as Tech;
-                    int insert = treeProp.arraySize;
-                    treeProp.InsertArrayElementAtIndex(insert);
-                    SerializedProperty newElem = treeProp.GetArrayElementAtIndex(insert);
-                    newElem.FindPropertyRelative("tech").objectReferenceValue = t;
-                    newElem.FindPropertyRelative("requirements").ClearArray();
-                    newElem.FindPropertyRelative("researchCost").intValue = 0;
-                    newElem.FindPropertyRelative("researchInvested").intValue = 0;
-                    newElem.FindPropertyRelative("UIposition").vector2Value = e.mousePosition + scrollPosition;
+                    Undo.RecordObject(targetTree, "Add Tech Node");
+                    targetTree.AddNode(tech, 1, e.mousePosition + scrollPosition);
                     added = true;
                 }
             }
             if (added)
             {
-                Undo.RecordObject(serializedTree.targetObject, "Add Tech Node");
-                serializedTree.ApplyModifiedProperties();
-                EditorUtility.SetDirty(serializedTree.targetObject);
+                EditorUtility.SetDirty(targetTree);
             }
+            DragAndDrop.AcceptDrag();
             e.Use();
         }
 
-        // Bottom UI: list and delete
-        GUILayout.BeginArea(new Rect(4, position.height - 52, position.width - 8, 48));
-        EditorGUILayout.BeginHorizontal();
-        if (GUILayout.Button("Refresh"))
+        // === Right-click context menu trên canvas trống ===
+        if (e.type == EventType.ContextClick)
         {
-            serializedTree = new SerializedObject(targetTree);
-            treeProp = serializedTree.FindProperty("tree");
-        }
-        if (GUILayout.Button("Clear Empty Nodes"))
-        {
-            Undo.RecordObject(serializedTree.targetObject, "Clear Empty Nodes");
-            for (int i = treeProp.arraySize - 1; i >= 0; i--)
+            // Kiểm tra không nằm trên node nào
+            bool overNode = false;
+            if (targetTree?.tree != null)
             {
-                if (treeProp.GetArrayElementAtIndex(i).FindPropertyRelative("tech").objectReferenceValue == null)
-                    treeProp.DeleteArrayElementAtIndex(i);
+                foreach (var node in targetTree.tree)
+                {
+                    if (node == null || node.tech == null) continue;
+                    Rect nodeRect = new Rect(node.UIposition - scrollPosition, nodeSize);
+                    if (nodeRect.Contains(e.mousePosition)) { overNode = true; break; }
+                }
             }
-            serializedTree.ApplyModifiedProperties();
-            EditorUtility.SetDirty(serializedTree.targetObject);
+
+            if (!overNode)
+            {
+                ShowCanvasContextMenu(e.mousePosition);
+                e.Use();
+            }
+        }
+    }
+
+    private void ShowCanvasContextMenu(Vector2 mousePos)
+    {
+        GenericMenu menu = new GenericMenu();
+        menu.AddItem(new GUIContent("Select All"), false, () =>
+        {
+            // Highlight tất cả (cho tương lai)
+            Repaint();
+        });
+        menu.AddSeparator("");
+
+        // Delete selected node
+        if (selectedNode != null)
+        {
+            string label = $"Delete '{selectedNode.tech?.name ?? "NULL"}'";
+            menu.AddItem(new GUIContent(label), false, () =>
+            {
+                Undo.RecordObject(targetTree, "Delete Tech Node");
+                targetTree.DeleteNode(selectedNode.tech);
+                if (activeNode == selectedNode) activeNode = null;
+                selectedNode = null;
+                EditorUtility.SetDirty(targetTree);
+            });
+        }
+        else
+        {
+            menu.AddDisabledItem(new GUIContent("Delete Node (right-click a node first)"));
+        }
+
+        menu.ShowAsContext();
+    }
+
+    #endregion
+
+    #region Bottom Toolbar
+
+    private void DrawToolbar()
+    {
+        EditorGUILayout.BeginHorizontal();
+
+        // Selected node info
+        if (selectedNode != null && selectedNode.tech != null)
+        {
+            EditorGUILayout.LabelField($"Selected: {selectedNode.tech.name}", EditorStyles.boldLabel);
+            if (GUILayout.Button("Delete Selected", GUILayout.Width(120)))
+            {
+                Undo.RecordObject(targetTree, "Delete Tech");
+                targetTree.DeleteNode(selectedNode.tech);
+                if (activeNode == selectedNode) activeNode = null;
+                selectedNode = null;
+                EditorUtility.SetDirty(targetTree);
+            }
+        }
+        else
+        {
+            EditorGUILayout.LabelField("Right-click node để chọn, right-click node khác để liên kết");
+        }
+
+        EditorGUILayout.EndHorizontal();
+
+        EditorGUILayout.BeginHorizontal();
+        if (GUILayout.Button("Export JSON")) ExportToJson();
+        if (GUILayout.Button("Import JSON")) ImportFromJson();
+        if (GUILayout.Button("Undo")) Undo.PerformUndo();
+        if (GUILayout.Button("Redo")) Undo.PerformRedo();
+        if (GUILayout.Button("Clear Empty"))
+        {
+            Undo.RecordObject(targetTree, "Clear Empty Nodes");
+            targetTree.tree.RemoveAll(n => n == null || n.tech == null);
+            EditorUtility.SetDirty(targetTree);
         }
         EditorGUILayout.EndHorizontal();
-        GUILayout.EndArea();
-        if (GUILayout.Button("Export JSON"))
-        {
-            ExportToJson();
-        }
-        if (GUILayout.Button("Import JSON"))
-        {
-            ImportFromJson();
-        }
-
-        serializedTree.ApplyModifiedProperties();
     }
 
-    int FindTechIndex(Tech tech)
-    {
-        if (treeProp == null) return -1;
-        for (int i = 0; i < treeProp.arraySize; i++)
-        {
-            SerializedProperty p = treeProp.GetArrayElementAtIndex(i).FindPropertyRelative("tech");
-            if (p != null && p.objectReferenceValue == tech) return i;
-        }
-        return -1;
-    }
+    #endregion
 
-    // JSON DTOs for import/export
+    #region JSON Import/Export
+
     [System.Serializable]
     class NodeDTO
     {
@@ -302,31 +513,27 @@ public class TechTreeWindow : EditorWindow
             return;
         }
         TechTreeDTO dto = new TechTreeDTO();
-        for (int i = 0; i < treeProp.arraySize; i++)
+        if (targetTree.tree != null)
         {
-            SerializedProperty nodeProp = treeProp.GetArrayElementAtIndex(i);
-            SerializedProperty techProp = nodeProp.FindPropertyRelative("tech");
-            SerializedProperty reqsProp = nodeProp.FindPropertyRelative("requirements");
-            SerializedProperty costProp = nodeProp.FindPropertyRelative("researchCost");
-            SerializedProperty levelProp = nodeProp.FindPropertyRelative("level");
-            SerializedProperty uiPosProp = nodeProp.FindPropertyRelative("UIposition");
-
-            NodeDTO n = new NodeDTO();
-            n.techGUID = techProp.objectReferenceValue != null ? AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(techProp.objectReferenceValue)) : "";
-            n.researchCost = costProp.intValue;
-            n.level = levelProp.intValue;
-            n.UIposition = uiPosProp.vector2Value;
-            n.requirementsGUIDs = new List<string>();
-            if (reqsProp != null)
+            for (int i = 0; i < targetTree.tree.Count; i++)
             {
-                for (int r = 0; r < reqsProp.arraySize; r++)
+                TechNode node = targetTree.tree[i];
+                NodeDTO n = new NodeDTO();
+                n.techGUID = node.tech != null ? AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(node.tech)) : "";
+                n.researchCost = node.researchCost;
+                n.level = node.level;
+                n.UIposition = node.UIposition;
+                n.requirementsGUIDs = new List<string>();
+                if (node.requirements != null)
                 {
-                    var req = reqsProp.GetArrayElementAtIndex(r);
-                    string g = req.objectReferenceValue != null ? AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(req.objectReferenceValue)) : "";
-                    n.requirementsGUIDs.Add(g);
+                    foreach (Tech req in node.requirements)
+                    {
+                        string g = req != null ? AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(req)) : "";
+                        n.requirementsGUIDs.Add(g);
+                    }
                 }
+                dto.nodes.Add(n);
             }
-            dto.nodes.Add(n);
         }
 
         string json = JsonUtility.ToJson(dto, true);
@@ -351,16 +558,13 @@ public class TechTreeWindow : EditorWindow
             return;
         }
 
-        Undo.RecordObject(serializedTree.targetObject, "Import TechTree JSON");
-        // clear existing
-        for (int i = treeProp.arraySize - 1; i >= 0; i--)
-            treeProp.DeleteArrayElementAtIndex(i);
+        Undo.RecordObject(targetTree, "Import TechTree JSON");
+        if (targetTree.tree != null) targetTree.tree.Clear();
+        else targetTree.tree = new List<TechNode>();
 
-        // populate
+        // Create nodes
         for (int i = 0; i < dto.nodes.Count; i++)
         {
-            treeProp.InsertArrayElementAtIndex(i);
-            SerializedProperty newElem = treeProp.GetArrayElementAtIndex(i);
             NodeDTO n = dto.nodes[i];
             Tech t = null;
             if (!string.IsNullOrEmpty(n.techGUID))
@@ -369,32 +573,34 @@ public class TechTreeWindow : EditorWindow
                 if (!string.IsNullOrEmpty(assetPath))
                     t = AssetDatabase.LoadAssetAtPath<Tech>(assetPath);
             }
-            newElem.FindPropertyRelative("tech").objectReferenceValue = t;
-            newElem.FindPropertyRelative("researchCost").intValue = n.researchCost;
-            newElem.FindPropertyRelative("level").intValue = n.level;
-            newElem.FindPropertyRelative("UIposition").vector2Value = n.UIposition;
-            var reqs = newElem.FindPropertyRelative("requirements");
-            reqs.ClearArray();
+            TechNode newNode = new TechNode(t, new List<Tech>(), n.researchCost, n.level, n.UIposition);
+            targetTree.tree.Add(newNode);
+        }
+
+        // Assign requirements
+        for (int i = 0; i < dto.nodes.Count; i++)
+        {
+            NodeDTO n = dto.nodes[i];
+            TechNode node = targetTree.tree[i];
+            node.requirements = new List<Tech>();
             if (n.requirementsGUIDs != null)
             {
-                for (int r = 0; r < n.requirementsGUIDs.Count; r++)
+                foreach (string rg in n.requirementsGUIDs)
                 {
-                    reqs.InsertArrayElementAtIndex(reqs.arraySize);
-                    string rg = n.requirementsGUIDs[r];
                     Tech rt = null;
                     if (!string.IsNullOrEmpty(rg))
                     {
                         string rp = AssetDatabase.GUIDToAssetPath(rg);
                         if (!string.IsNullOrEmpty(rp)) rt = AssetDatabase.LoadAssetAtPath<Tech>(rp);
                     }
-                    reqs.GetArrayElementAtIndex(reqs.arraySize - 1).objectReferenceValue = rt;
+                    node.requirements.Add(rt);
                 }
             }
         }
 
-        serializedTree.ApplyModifiedProperties();
-        EditorUtility.SetDirty(serializedTree.targetObject);
+        EditorUtility.SetDirty(targetTree);
         AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
     }
+
+    #endregion
 }

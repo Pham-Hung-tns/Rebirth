@@ -119,11 +119,24 @@ public class EnemySpawner : MonoBehaviour
         if (enemyDetails == null || enemyDetails.enemyPrefab == null) return;
 
         Vector3 spawnWorldPos = GetRandomSpawnWorldPosition(state.Room);
-        GameObject enemy = Instantiate(enemyDetails.enemyPrefab, spawnWorldPos, Quaternion.identity, state.Room.instantiatedRoom?.transform);
+
+        // Lấy enemy từ pool thay vì Instantiate
+        GameObject enemy;
+        if (ObjPoolManager.Instance != null)
+        {
+            enemy = ObjPoolManager.Instance.GetFromPool(
+                enemyDetails.enemyPrefab, spawnWorldPos, Quaternion.identity,
+                state.Room.instantiatedRoom?.transform);
+        }
+        else
+        {
+            enemy = Instantiate(enemyDetails.enemyPrefab, spawnWorldPos, Quaternion.identity, state.Room.instantiatedRoom?.transform);
+            enemy.name = enemyDetails.enemyPrefab.name;
+        }
 
         if (enemy != null)
         {
-            // Configure before temporarily deactivating
+            // Configure health theo level
             var vitality = enemy.GetComponent<EnemyVitality>();
             if (vitality != null)
             {
@@ -131,8 +144,17 @@ public class EnemySpawner : MonoBehaviour
                 vitality.Health = health;
             }
 
-            // Attach context for cleanup
-            var context = enemy.AddComponent<SpawnContext>();
+            // Rebuild room grid cache cho pathfinding (enemy có thể spawn ở phòng khác lần trước)
+            var emMovement = enemy.GetComponent<EnemyMovement>();
+            if (emMovement != null)
+            {
+                emMovement.RebuildRoomGridCache();
+            }
+
+            // Tái sử dụng SpawnContext nếu đã có (pooled enemy), hoặc thêm mới
+            var context = enemy.GetComponent<SpawnContext>();
+            if (context == null)
+                context = enemy.AddComponent<SpawnContext>();
             context.SourceRoom = state.Room;
             state.AliveCount++;
 

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class AudioManager : Persistance<AudioManager>
+public class AudioManager : Persistence<AudioManager>
 {
     [Header("References")]
     [Tooltip("Optional: assign a SoundLibrary ScriptableObject. If null, will try to load from Resources/SoundLibrary")]

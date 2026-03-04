@@ -7,6 +7,8 @@ public class Projectile : MonoBehaviour
 {
     [Header("Config")]
     [SerializeField] private float speed;
+    [Tooltip("Thời gian sống tối đa (giây). Tự trả về pool nếu không va chạm gì.")]
+    private float projectileLifetime = 5f;
     public float Speed { get; set; }
     public Vector3 Direction { get; set; }
 
@@ -15,6 +17,7 @@ public class Projectile : MonoBehaviour
     private Vector2 knockbackDir;
     private float knockbackForce;
     private GameObject ownerRoot;
+    private float aliveTimer;
 
     // Start is called before the first frame update
     void Start()
@@ -25,10 +28,22 @@ public class Projectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Direction * (speed *Time.deltaTime), Space.World);
+        transform.Translate(Direction * (speed * Time.deltaTime), Space.World);
+
+        // Auto-return khi hết lifetime (tránh bay mãi ngoài màn hình)
+        aliveTimer += Time.deltaTime;
+        if (aliveTimer >= projectileLifetime)
+        {
+            ReturnBullet();
+        }
     }
 
-    public void Initialize(GameObject owner, float speed, int damage, Vector2 knockbackDir, float knockbackForce)
+    /// <summary>
+    /// Khởi tạo projectile. Gọi mỗi lần bắn (cả lần đầu và khi tái sử dụng từ pool).
+    /// </summary>
+    /// <param name="lifetime">Thời gian sống (giây). Truyền từ RangeWeaponDataSO.projectileLifetime.
+    /// Nếu <= 0, dùng giá trị mặc định trên prefab.</param>
+    public void Initialize(GameObject owner, float speed, int damage, Vector2 knockbackDir, float knockbackForce, float lifetime = -1f)
     {
         this.owner = owner;
         // store root of owner hierarchy to ignore collisions with any child collider
@@ -40,8 +55,15 @@ public class Projectile : MonoBehaviour
         this.damage = damage;
         this.knockbackDir = knockbackDir;
         this.knockbackForce = knockbackForce;
+
+        // Cập nhật lifetime từ SO (nếu được truyền)
+        if (lifetime > 0f)
+            projectileLifetime = lifetime;
+
+        // Reset lifetime timer khi tái sử dụng từ pool
+        aliveTimer = 0f;
+
         gameObject.SetActive(true);
-        Debug.Log($"[Projectile] Initialized. Owner={ownerRoot?.name} Speed={speed} Damage={damage}");
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

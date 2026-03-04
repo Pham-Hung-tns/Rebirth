@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class EnemyController : CharacterController
+public class EnemyController : CharacterController, IPoolable
 {
     [SerializeField] private EnemyVitality enemyVitality;
     [SerializeField] private EnemyWeapon enemyWeapon;
@@ -15,6 +15,10 @@ public class EnemyController : CharacterController
     [SerializeField] private List<AIState> states = new List<AIState>();
 
     public AIState currentState;
+    // Lưu state ban đầu để reset khi pool spawn
+    private AIState initialState;
+    private bool hasInitialState = false;
+
     private Transform player;
     
     private string currentAnim;
@@ -75,6 +79,7 @@ public class EnemyController : CharacterController
                 break;
         }
     }
+
     private void Start()
     {
         // Initialize all states assigned via the Inspector
@@ -91,6 +96,13 @@ public class EnemyController : CharacterController
         // Ensure current state is initialized even if not in the list
         if (currentState != null)
             currentState.Initialize(this);
+
+        // Lưu state ban đầu cho pooling reset
+        if (!hasInitialState && currentState != null)
+        {
+            initialState = currentState;
+            hasInitialState = true;
+        }
 
         // Ensure initial state's enter lifecycle is invoked if a state was set in the inspector
         if (currentState != null)
@@ -170,6 +182,75 @@ public class EnemyController : CharacterController
     {
         IsAttack = false;
     }
+
+    #region IPoolable - Reset khi tái sử dụng từ pool
+
+    /// <summary>
+    /// Reset toàn bộ state FSM khi enemy được lấy lại từ pool.
+    /// </summary>
+    public void OnPoolSpawn()
+    {
+        // Reset timers
+        CurrentTime = 0f;
+        TimeLimit = 0f;
+        IsAttack = false;
+        PatrolPosition = Vector3.zero;
+
+        // Reset sprite direction
+        if (Spr != null)
+            Spr.flipX = false;
+
+        // Re-initialize vitality (HP đã được reset bởi EnemyVitality.OnPoolSpawn)
+        // Re-initialize attack system
+        switch (enemyConfig.attackType)
+        {
+            case EnemyConfig.AttackType.Weapon:
+                if (enemyWeapon != null)
+                    enemyWeapon.Initialized(this, enemyConfig);
+                break;
+            case EnemyConfig.AttackType.Skill:
+                if (enemySkill != null)
+                    enemySkill.Initialized(this, enemyConfig);
+                break;
+            case EnemyConfig.AttackType.MeleeAttack:
+                if (enemyMeleeAttack != null)
+                    enemyMeleeAttack.Initialized(this, enemyConfig);
+                break;
+        }
+
+        // Reset FSM: quay về state ban đầu
+        if (hasInitialState && initialState != null)
+        {
+            // Re-initialize all states (set controller reference)
+            if (states != null)
+            {
+                for (int i = 0; i < states.Count; i++)
+                {
+                    var s = states[i];
+                    if (s != null)
+                        s.Initialize(this);
+                }
+            }
+
+            currentState = initialState;
+            currentState.Initialize(this);
+            currentState.EnterState();
+        }
+    }
+
+    /// <summary>
+    /// Cleanup khi trả enemy về pool.
+    /// </summary>
+    public void OnPoolDespawn()
+    {
+        // Exit current state
+        currentState?.ExitState();
+
+        // Stop all coroutines trên enemy
+        StopAllCoroutines();
+    }
+
+    #endregion
 
     // Gizmos
     public void OnDrawGizmos()
