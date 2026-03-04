@@ -57,7 +57,20 @@ public class RoomContentSpawner
 
             Vector3 spawnWorldPos = GetRandomSpawnWorldPosition(room);
 
-            GameObject enemy = Object.Instantiate(enemyDetails.enemyPrefab, spawnWorldPos, Quaternion.identity, room.instantiatedRoom.transform);
+            // Lấy enemy từ pool (nếu có), fallback Instantiate cho editor mode
+            GameObject enemy;
+            if (ObjPoolManager.Instance != null)
+            {
+                enemy = ObjPoolManager.Instance.GetFromPool(
+                    enemyDetails.enemyPrefab, spawnWorldPos, Quaternion.identity,
+                    room.instantiatedRoom.transform);
+            }
+            else
+            {
+                enemy = Object.Instantiate(enemyDetails.enemyPrefab, spawnWorldPos, Quaternion.identity, room.instantiatedRoom.transform);
+                enemy.name = enemyDetails.enemyPrefab.name;
+            }
+
             if (enemy != null)
             {
                 enemy.name = $"{enemyDetails.name}_{enemiesSpawned}";
@@ -70,14 +83,16 @@ public class RoomContentSpawner
                     vitality.Health = health;
                 }
 
-                // Ensure EnemyMovement (if present) receives the room tilemaps so pathfinding uses the correct room
+                // Rebuild room grid cache cho pathfinding (enemy pooled cần cập nhật room mới)
                 EnemyMovement emMovement = enemy.GetComponent<EnemyMovement>();
-                if (emMovement != null && room.instantiatedRoom != null)
+                if (emMovement != null)
                 {
+                    // Set tilemaps trước khi rebuild
                     if (emMovement.GroundTilemap == null && room.instantiatedRoom.groundTilemap != null)
                         emMovement.GroundTilemap = room.instantiatedRoom.groundTilemap;
                     if (emMovement.CollisionTilemap == null && room.instantiatedRoom.collisionTilemap != null)
                         emMovement.CollisionTilemap = room.instantiatedRoom.collisionTilemap;
+                    emMovement.RebuildRoomGridCache();
                 }
 
                 // Temporarily deactivate enemy so it doesn't act immediately; activate after short delay

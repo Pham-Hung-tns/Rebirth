@@ -56,8 +56,8 @@ public class RangeWeapon : Weapon
                 Vector2 knockbackDir = bullet.Direction;
                 float knockbackForce = 0f; // Range weapons không có knockback mặc định
                 
-                // Initialize projectile with damage and knockback info from WeaponDataSO
-                bullet.Initialize(Character.Owner, rangeData.projectileSpeed, baseDamage, knockbackDir, knockbackForce);
+                // Initialize projectile with damage, knockback, and lifetime from WeaponDataSO
+                bullet.Initialize(Character.Owner, rangeData.projectileSpeed, baseDamage, knockbackDir, knockbackForce, rangeData.projectileLifetime);
             }
         }
     }

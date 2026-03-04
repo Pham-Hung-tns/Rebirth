@@ -384,7 +384,7 @@ public class TechTreeEditor : Editor
 
 public class TechTreeAssetPostprocessor : AssetPostprocessor
 {
-    // [UnityEditor.Callbacks.OnOpenAsset]
+    [UnityEditor.Callbacks.OnOpenAsset]
     public static bool OnOpenAsset(int instanceID, int line)
     {
         UnityEngine.Object obj = EditorUtility.InstanceIDToObject(instanceID);

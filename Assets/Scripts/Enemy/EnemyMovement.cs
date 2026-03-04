@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 // Simple A* pathfinding implementation using Tilemaps (CanMove / Wall)
 // Lightweight and suitable for small room-sized graphs on mobile.
-public class EnemyMovement : MonoBehaviour
+public class EnemyMovement : MonoBehaviour, IPoolable
 {
     private Tilemap groundTilemap; // CanMove
     private Tilemap collisionTilemap; // Wall (optional)
@@ -430,4 +430,83 @@ public class EnemyMovement : MonoBehaviour
         if (CollisionTilemap != null && CollisionTilemap.HasTile(cell)) return false;
         return true;
     }
+
+    #region IPoolable - Reset pathfinding state khi tái sử dụng
+
+    /// <summary>
+    /// Reset pathfinding state và rebuild room grid cache cho phòng mới.
+    /// </summary>
+    public void OnPoolSpawn()
+    {
+        // Clear current path
+        currentPath = null;
+        currentPathIndex = 0;
+        lastPathRequestTime = -999f;
+        isChasing = false;
+        lastDirectionChangeTime = -999f;
+
+        // Reset room grid cache (sẽ rebuild từ phòng mới)
+        hasRoomGrid = false;
+        groundTilemap = null;
+        collisionTilemap = null;
+    }
+
+    /// <summary>
+    /// Cleanup khi trả về pool.
+    /// </summary>
+    public void OnPoolDespawn()
+    {
+        currentPath = null;
+        currentPathIndex = 0;
+        isChasing = false;
+    }
+
+    /// <summary>
+    /// Rebuild room grid cache từ parent InstantiatedRoom hiện tại.
+    /// Gọi sau khi set parent room và trước khi active enemy.
+    /// </summary>
+    public void RebuildRoomGridCache()
+    {
+        var room = GetComponentInParent<InstantiatedRoom>();
+        if (room == null) return;
+
+        if (GroundTilemap == null && room.groundTilemap != null)
+            GroundTilemap = room.groundTilemap;
+        if (CollisionTilemap == null && room.collisionTilemap != null)
+            CollisionTilemap = room.collisionTilemap;
+
+        // Build grid cache
+        if (GroundTilemap != null && room.room != null)
+        {
+            templateLower = room.room.templateLowerBounds;
+            Vector2Int templateUpper = room.room.templateUpperBounds;
+            gridWidth = templateUpper.x - templateLower.x + 1;
+            gridHeight = templateUpper.y - templateLower.y + 1;
+            gridSize = gridWidth * gridHeight;
+            walkable = new bool[gridSize];
+            gScoreArr = new int[gridSize];
+            fScoreArr = new int[gridSize];
+            parentArr = new int[gridSize];
+            closedArr = new byte[gridSize];
+            heap = new int[gridSize + 4];
+
+            for (int y = 0; y < gridHeight; y++)
+            {
+                for (int x = 0; x < gridWidth; x++)
+                {
+                    int wx = x + templateLower.x;
+                    int wy = y + templateLower.y;
+                    var cell = new Vector3Int(wx, wy, 0);
+                    bool can = GroundTilemap.HasTile(cell);
+                    if (can && CollisionTilemap != null && CollisionTilemap.HasTile(cell))
+                        can = false;
+                    walkable[x + y * gridWidth] = can;
+                }
+            }
+
+            hasRoomGrid = true;
+        }
+    }
+
+    #endregion
 }
