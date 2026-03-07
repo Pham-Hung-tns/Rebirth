@@ -76,12 +76,12 @@ MonoBehaviour:
   roomNodeTypeList: {fileID: 11400000, guid: 43c428595f68af740ad8212b1ec23409, type: 2}
   rect:
     serializedVersion: 2
-    x: 527
-    y: 191.20001
+    x: 522
+    y: 194.20001
     width: 160
     height: 75
   isLeftClickDragging: 0
-  isSelected: 0
+  isSelected: 1
 --- !u!114 &11400000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,7 +92,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90266507d4fcefd418e0899c3107498b, type: 3}
-  m_Name: RoomNodeGraph_1-2
+  m_Name: RoomNodeGraph 1-1
   m_EditorClassIdentifier: 
   roomNodeTypeList: {fileID: 0}
   roomNodeList:

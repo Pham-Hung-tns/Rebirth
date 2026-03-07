@@ -18,7 +18,7 @@ public class TestDungeonBuilderEditor
         }
 
         // Tìm DungeonLevelSO - thử từ Resources trước, nếu không có thì cho phép chọn
-        DungeonLevelSO dungeonLevel = Resources.Load<DungeonLevelSO>("DungeonLevel_1-2");
+        DungeonLevelSO dungeonLevel = Resources.Load<DungeonLevelSO>("DungeonLevel 1-2");
         if (dungeonLevel == null)
         {
             // Tìm tất cả DungeonLevelSO trong project
@@ -73,7 +73,7 @@ public class TestDungeonBuilderEditor
             return;
         }
 
-        DungeonLevelSO dungeonLevel = Resources.Load<DungeonLevelSO>("DungeonLevel_1-2");
+        DungeonLevelSO dungeonLevel = Resources.Load<DungeonLevelSO>("DungeonLevel 1-2");
         if (dungeonLevel == null)
         {
             Debug.LogError("Không tìm thấy DungeonLevelSO trong Resources!");
