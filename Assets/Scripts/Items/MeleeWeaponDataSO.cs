@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Melee Weapon", menuName = "Items/Melee Weapon")]
+[CreateAssetMenu(fileName = "New Melee Weapon", menuName = "Scriptable Objects/Items/Melee Weapon")]
 public class MeleeWeaponDataSO : WeaponDataSO
 {
     [Header("Melee Specific")]

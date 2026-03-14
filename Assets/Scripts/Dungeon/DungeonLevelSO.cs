@@ -49,6 +49,21 @@ public class DungeonLevelSO : ScriptableObject
 
     public List<RoomNodeGraphSO> roomNodeGraphList;
 
+    #region Header CHEST ITEM FOR LEVEL
+
+    [Space(10)]
+    [Header("CHEST ITEM FOR LEVEL")]
+
+    #endregion Header CHEST ITEM FOR LEVEL
+
+    #region Tooltip
+
+    [Tooltip("ChestItem ScriptableObject chứa danh sách item có thể rơi ra từ chest ở level này")]
+
+    #endregion Tooltip
+
+    public ChestItem chestItem;
+
     #region Validation
 
 #if UNITY_EDITOR

@@ -219,10 +219,10 @@ public class TestDungeonBuilderEditor
         }
     }
 
-    private static EnemyDetailsSO SelectRandomEnemy(Room room, DungeonLevelSO level)
+    private static EnemyConfig SelectRandomEnemy(Room room, DungeonLevelSO level)
     {
         if (room.enemiesByLevelList == null) return null;
-        SpawnableObjectsByLevel<EnemyDetailsSO> byLevel = room.enemiesByLevelList.Find(e => e.dungeonLevel == level);
+        SpawnableObjectsByLevel<EnemyConfig> byLevel = room.enemiesByLevelList.Find(e => e.dungeonLevel == level);
         if (byLevel == null || byLevel.spawnableObjectRatioList == null || byLevel.spawnableObjectRatioList.Count == 0)
             return null;
 
@@ -266,7 +266,7 @@ public class TestDungeonBuilderEditor
         return worldPos;
     }
 
-    private static int GetHealthForLevel(EnemyDetailsSO details, DungeonLevelSO level, int fallback)
+    private static int GetHealthForLevel(EnemyConfig details, DungeonLevelSO level, int fallback)
     {
         if (details.healthByLevel != null)
         {

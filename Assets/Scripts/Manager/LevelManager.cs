@@ -29,7 +29,7 @@ public class LevelManager : Singleton<LevelManager>
     private int amountOfEnemies;
     private GameObject currentDungeonGO;
 
-    private List<PickableItem> itemsInTheLevel = new List<PickableItem>();
+
 
 
     protected override void Awake()
@@ -116,7 +116,12 @@ public class LevelManager : Singleton<LevelManager>
             
             if (chestPrefab != null)
             {
-                Instantiate(chestPrefab, chestPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+                GameObject chestGO = Instantiate(chestPrefab, chestPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+                Chest chest = chestGO.GetComponent<Chest>();
+                if (chest != null && currentDungeonLevel != null && currentDungeonLevel.chestItem != null)
+                {
+                    chest.SetChestItemData(currentDungeonLevel.chestItem);
+                }
             }
         }
     }
@@ -216,11 +221,7 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
-    public GameObject RandomItemInEachChest()
-    {
-        int randomIndex = UnityEngine.Random.Range(0, itemsInTheLevel.Count);
-        return itemsInTheLevel[randomIndex].gameObject;
-    }
+
 
     private void EnemyKilledBack(Transform enemyPos)
     {

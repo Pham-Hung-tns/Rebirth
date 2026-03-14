@@ -115,7 +115,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnEnemy(SpawnState state)
     {
-        EnemyDetailsSO enemyDetails = SelectRandomEnemy(state.Room, state.DungeonLevel);
+        EnemyConfig enemyDetails = SelectRandomEnemy(state.Room, state.DungeonLevel);
         if (enemyDetails == null || enemyDetails.enemyPrefab == null) return;
 
         Vector3 spawnWorldPos = GetRandomSpawnWorldPosition(state.Room);
@@ -166,10 +166,10 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    private EnemyDetailsSO SelectRandomEnemy(Room room, DungeonLevelSO level)
+    private EnemyConfig SelectRandomEnemy(Room room, DungeonLevelSO level)
     {
         if (room.enemiesByLevelList == null) return null;
-        SpawnableObjectsByLevel<EnemyDetailsSO> byLevel = room.enemiesByLevelList.Find(e => e.dungeonLevel == level);
+        SpawnableObjectsByLevel<EnemyConfig> byLevel = room.enemiesByLevelList.Find(e => e.dungeonLevel == level);
         if (byLevel == null || byLevel.spawnableObjectRatioList == null || byLevel.spawnableObjectRatioList.Count == 0)
             return null;
 
@@ -199,7 +199,7 @@ public class EnemySpawner : MonoBehaviour
         return world;
     }
 
-    private int GetHealthForLevel(EnemyDetailsSO details, DungeonLevelSO level, int fallback)
+    private int GetHealthForLevel(EnemyConfig details, DungeonLevelSO level, int fallback)
     {
         if (details.healthByLevel != null)
         {

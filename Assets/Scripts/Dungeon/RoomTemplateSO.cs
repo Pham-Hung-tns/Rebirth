@@ -87,7 +87,7 @@ public class RoomTemplateSO : ScriptableObject
     //[Tooltip("Populate the list with all the enemies that can be spawned in this room by dungeon level, including the ratio (random) of this enemy type that will be spawned")]
 
     //#endregion Tooltip
-    public List<SpawnableObjectsByLevel<EnemyDetailsSO>> enemiesByLevelList;
+    public List<SpawnableObjectsByLevel<EnemyConfig>> enemiesByLevelList;
 
     #region Tooltip
 

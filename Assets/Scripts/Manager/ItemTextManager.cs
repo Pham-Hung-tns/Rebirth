@@ -1,7 +1,7 @@
 ﻿
 using UnityEngine;
 
-public class ItemTextManager : Singleton<ItemTextManager>
+public class ItemTextManager : Persistence<ItemTextManager>
 {
 
     [SerializeField] private ItemText itemTextPrefab;

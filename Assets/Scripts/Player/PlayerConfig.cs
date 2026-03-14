@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu]
+[CreateAssetMenu(fileName = "NewPlayerConfig", menuName = "Scriptable Objects/Player/Player Config")]
 public class PlayerConfig : ScriptableObject
 {
     [Header("Information")]

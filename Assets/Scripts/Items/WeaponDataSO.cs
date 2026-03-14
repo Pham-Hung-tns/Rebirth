@@ -33,8 +33,8 @@ public class WeaponDataSO : ItemDataSO
     public float maxChargeTime = 2f; // Thời gian tụ lực tối đa
     public float minChargeDamageMultiplier = 0.5f; // Sát thương khi chưa tụ lực
     public float maxChargeDamageMultiplier = 2.0f; // Sát thương khi tụ lực full
-    public override void PickUp()
+    public override void PickUp(GameObject player)
     {
-        LevelManager.Instance.SelectedPlayer.GetComponent<PlayerWeapon>().EquipWeapon(weapon);
+        player.GetComponent<PlayerWeapon>().EquipWeapon(weapon);
     }
 }
