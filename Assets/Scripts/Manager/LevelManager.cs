@@ -263,7 +263,16 @@ public class LevelManager : Singleton<LevelManager>
             Vector3 bonusOffset = UnityEngine.Random.insideUnitCircle.normalized * roomTemplate.bonusSpreadRadius;
             Vector3 spawnPos = enemyPos.position + bonusOffset;
             
-            Instantiate(roomTemplate.bonusPrefabs[bonusRandom], spawnPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+            GameObject bonus;
+            if (ObjPoolManager.Instance != null)
+            {
+                bonus = ObjPoolManager.Instance.GetFromPool(roomTemplate.bonusPrefabs[bonusRandom], spawnPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+            }
+            else
+            {
+                bonus = Instantiate(roomTemplate.bonusPrefabs[bonusRandom], spawnPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+            }
+            bonus.SetActive(true);
         }
     }
 
