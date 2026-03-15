@@ -209,45 +209,6 @@
             ]
         },
         {
-            "name": "Weapon",
-            "id": "9cc2d124-371a-40b2-a08d-e83141b2ecd3",
-            "actions": [
-                {
-                    "name": "Shoot",
-                    "type": "Button",
-                    "id": "41c19535-0927-4f7e-ab31-343eb8cd1a14",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": true
-                }
-            ],
-            "bindings": [
-                {
-                    "name": "",
-                    "id": "e7b4ff83-0d8a-4f26-94a4-9b4ece40cc06",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Shoot",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "f2d6cc87-8e98-4191-980f-2e3368fb9202",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Shoot",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                }
-            ]
-        },
-        {
             "name": "Interaction",
             "id": "32d373ba-13ab-444f-acf9-52d72cd86d90",
             "actions": [

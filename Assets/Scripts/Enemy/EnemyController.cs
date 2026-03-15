@@ -142,7 +142,6 @@ public class EnemyController : CharacterController, IPoolable
         currentState = nextState;
         CurrentTime = 0f; // reset state timer
         currentState.EnterState();
-        Debug.Log("Current State: " + currentState);
     }
 
     // Move enemy to new direction, flip sprite and rotate weapon

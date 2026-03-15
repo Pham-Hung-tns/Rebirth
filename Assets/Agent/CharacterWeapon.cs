@@ -50,6 +50,24 @@ public class CharacterWeapon : MonoBehaviour
         
     }
 
+    /// <summary>
+    /// Reset toàn bộ weapon state về ban đầu — dùng khi pool re-use.
+    /// </summary>
+    protected void ResetWeaponState()
+    {
+        if (weaponPosition != null)
+        {
+            weaponPosition.localPosition = _defaultLocalPosition;
+            weaponPosition.localRotation = Quaternion.identity;
+            weaponPosition.localScale = Vector3.one;
+        }
+
+        _isFacingRight = true;
+        _lastAttackTime = 0f;
+        _isCharging = false;
+        _chargeStartTime = 0f;
+    }
+
     protected void RotateWeaponToAgent(Vector3 dir)
     {
         // --- 1. XÁC ĐỊNH TRẠNG THÁI (QUAN TRỌNG) ---

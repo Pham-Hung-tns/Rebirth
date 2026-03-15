@@ -19,6 +19,15 @@ public class EnemyWeapon : CharacterWeapon, IAttackable
   
     public override void CreateWeapon(Weapon initalWeapon)
     {
+        // Xóa weapon cũ (nếu có) trước khi tạo mới — tránh duplicate khi pool re-use
+        for (int i = weaponPosition.childCount - 1; i >= 0; i--)
+        {
+            Destroy(weaponPosition.GetChild(i).gameObject);
+        }
+
+        // Reset weapon transform và combat state về trạng thái ban đầu
+        ResetWeaponState();
+
         currentWeapon = Instantiate(initalWeapon, weaponPosition.position, Quaternion.identity, 
             weaponPosition);
         equippedWeapons[weaponIndex] = currentWeapon;

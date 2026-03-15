@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 
-public class DamageManager : Singleton<DamageManager>
+public class DamageManager : Persistence<DamageManager>
 {
     [SerializeField] private ShowDamageText dmgTextPrefab;
 

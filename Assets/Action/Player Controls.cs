@@ -231,45 +231,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""Weapon"",
-            ""id"": ""9cc2d124-371a-40b2-a08d-e83141b2ecd3"",
-            ""actions"": [
-                {
-                    ""name"": ""Shoot"",
-                    ""type"": ""Button"",
-                    ""id"": ""41c19535-0927-4f7e-ab31-343eb8cd1a14"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": true
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""e7b4ff83-0d8a-4f26-94a4-9b4ece40cc06"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Shoot"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""f2d6cc87-8e98-4191-980f-2e3368fb9202"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Shoot"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
-        },
-        {
             ""name"": ""Interaction"",
             ""id"": ""32d373ba-13ab-444f-acf9-52d72cd86d90"",
             ""actions"": [
@@ -892,9 +853,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_PickItem = m_Player.FindAction("PickItem", throwIfNotFound: true);
         m_Player_ChangeItem = m_Player.FindAction("ChangeItem", throwIfNotFound: true);
-        // Weapon
-        m_Weapon = asset.FindActionMap("Weapon", throwIfNotFound: true);
-        m_Weapon_Shoot = m_Weapon.FindAction("Shoot", throwIfNotFound: true);
         // Interaction
         m_Interaction = asset.FindActionMap("Interaction", throwIfNotFound: true);
         m_Interaction_PickItem = m_Interaction.FindAction("PickItem", throwIfNotFound: true);
@@ -1046,52 +1004,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
-
-    // Weapon
-    private readonly InputActionMap m_Weapon;
-    private List<IWeaponActions> m_WeaponActionsCallbackInterfaces = new List<IWeaponActions>();
-    private readonly InputAction m_Weapon_Shoot;
-    public struct WeaponActions
-    {
-        private @PlayerControls m_Wrapper;
-        public WeaponActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Shoot => m_Wrapper.m_Weapon_Shoot;
-        public InputActionMap Get() { return m_Wrapper.m_Weapon; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(WeaponActions set) { return set.Get(); }
-        public void AddCallbacks(IWeaponActions instance)
-        {
-            if (instance == null || m_Wrapper.m_WeaponActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_WeaponActionsCallbackInterfaces.Add(instance);
-            @Shoot.started += instance.OnShoot;
-            @Shoot.performed += instance.OnShoot;
-            @Shoot.canceled += instance.OnShoot;
-        }
-
-        private void UnregisterCallbacks(IWeaponActions instance)
-        {
-            @Shoot.started -= instance.OnShoot;
-            @Shoot.performed -= instance.OnShoot;
-            @Shoot.canceled -= instance.OnShoot;
-        }
-
-        public void RemoveCallbacks(IWeaponActions instance)
-        {
-            if (m_Wrapper.m_WeaponActionsCallbackInterfaces.Remove(instance))
-                UnregisterCallbacks(instance);
-        }
-
-        public void SetCallbacks(IWeaponActions instance)
-        {
-            foreach (var item in m_Wrapper.m_WeaponActionsCallbackInterfaces)
-                UnregisterCallbacks(item);
-            m_Wrapper.m_WeaponActionsCallbackInterfaces.Clear();
-            AddCallbacks(instance);
-        }
-    }
-    public WeaponActions @Weapon => new WeaponActions(this);
 
     // Interaction
     private readonly InputActionMap m_Interaction;
@@ -1280,10 +1192,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnPickItem(InputAction.CallbackContext context);
         void OnChangeItem(InputAction.CallbackContext context);
-    }
-    public interface IWeaponActions
-    {
-        void OnShoot(InputAction.CallbackContext context);
     }
     public interface IInteractionActions
     {

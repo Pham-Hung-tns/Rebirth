@@ -16,7 +16,15 @@ public class BonusBase : MonoBehaviour
             if(Vector3.Distance(transform.position, player.position) <= 0.1f)
             {
                 GetBonus();
-                Destroy(gameObject);
+                player = null;
+                if (ObjPoolManager.Instance != null)
+                {
+                    ObjPoolManager.Instance.ReturnToPool(gameObject);
+                }
+                else
+                {
+                    Destroy(gameObject);
+                }
             }
         }
         else return;
@@ -24,7 +32,7 @@ public class BonusBase : MonoBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(Settings.playerTag))
         {
             player = collision.transform;
         }

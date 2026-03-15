@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Range Weapon", menuName = "Items/Range Weapon")]
+[CreateAssetMenu(fileName = "New Range Weapon", menuName = "Scriptable Objects/Items/Range Weapon")]
 public class RangeWeaponDataSO : WeaponDataSO
 {
 

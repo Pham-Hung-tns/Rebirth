@@ -26,10 +26,10 @@ public class LevelManager : Singleton<LevelManager>
 
     private Room currentRoom;
     private DungeonLevelSO currentDungeonLevel;
-    private int amountOfEnemies;
+
     private GameObject currentDungeonGO;
 
-    private List<PickableItem> itemsInTheLevel = new List<PickableItem>();
+
 
 
     protected override void Awake()
@@ -94,32 +94,7 @@ public class LevelManager : Singleton<LevelManager>
         playerConfig.currentEnergy = playerConfig.MaxEnergy;
     }
 
-    private void CreateChestWhenCompleted()
-    {
-        if (currentRoom == null || currentRoom.instantiatedRoom == null)
-            return;
 
-        // Chọn vị trí ngẫu nhiên từ spawn positions của room
-        if (currentRoom.spawnPositionArray != null && currentRoom.spawnPositionArray.Length > 0)
-        {
-            Vector2Int randomSpawnPos = currentRoom.spawnPositionArray[UnityEngine.Random.Range(0, currentRoom.spawnPositionArray.Length)];
-            Vector3 chestPos = currentRoom.instantiatedRoom.grid.CellToWorld(new Vector3Int(randomSpawnPos.x, randomSpawnPos.y, 0));
-            
-            // Lấy chest prefab từ resources hoặc GameResources
-            GameObject chestPrefab = Resources.Load<GameObject>("Chest");
-            if (chestPrefab == null)
-            {
-                GameResources gameResources = Resources.Load<GameResources>("GameResources");
-                if (gameResources != null && gameResources.chestItemPrefab != null)
-                    chestPrefab = gameResources.chestItemPrefab;
-            }
-            
-            if (chestPrefab != null)
-            {
-                Instantiate(chestPrefab, chestPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
-            }
-        }
-    }
 
     private void PortalEventCallBack()
     {
@@ -168,7 +143,7 @@ public class LevelManager : Singleton<LevelManager>
             {
                 // Final level completed -> clear dungeon, reset player, clear pools and return to home
                 db.ClearDungeonRuntime();
-                Debug.Log("LevelManager: Final level completed. Returning to Home Scene.");
+
                 ResetPlayerStats();
                 ClearAllObjectPools();
                 ReturnToHomeScene();
@@ -216,11 +191,7 @@ public class LevelManager : Singleton<LevelManager>
         }
     }
 
-    public GameObject RandomItemInEachChest()
-    {
-        int randomIndex = UnityEngine.Random.Range(0, itemsInTheLevel.Count);
-        return itemsInTheLevel[randomIndex].gameObject;
-    }
+
 
     private void EnemyKilledBack(Transform enemyPos)
     {
@@ -228,19 +199,6 @@ public class LevelManager : Singleton<LevelManager>
 
         // Tạo bonus khi enemy chết
         CreateBonus(enemyPos);
-        
-        // Đếm số enemy còn lại trong room
-        EnemyVitality[] remainingEnemies = currentRoom.instantiatedRoom.GetComponentsInChildren<EnemyVitality>();
-        amountOfEnemies = remainingEnemies.Length;
-        
-        // Nếu không còn enemy trong room
-        if (amountOfEnemies <= 0)
-        {
-            OnRoomCompleted?.Invoke();
-            
-            // Tạo chest ở vị trí ngẫu nhiên trong room
-            CreateChestWhenCompleted();
-        }
     }
 
 
@@ -262,7 +220,16 @@ public class LevelManager : Singleton<LevelManager>
             Vector3 bonusOffset = UnityEngine.Random.insideUnitCircle.normalized * roomTemplate.bonusSpreadRadius;
             Vector3 spawnPos = enemyPos.position + bonusOffset;
             
-            Instantiate(roomTemplate.bonusPrefabs[bonusRandom], spawnPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+            GameObject bonus;
+            if (ObjPoolManager.Instance != null)
+            {
+                bonus = ObjPoolManager.Instance.GetFromPool(roomTemplate.bonusPrefabs[bonusRandom], spawnPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+            }
+            else
+            {
+                bonus = Instantiate(roomTemplate.bonusPrefabs[bonusRandom], spawnPos, Quaternion.identity, currentRoom.instantiatedRoom.transform);
+            }
+            bonus.SetActive(true);
         }
     }
 
@@ -288,30 +255,77 @@ public class LevelManager : Singleton<LevelManager>
 
     private void OnEnable()
     {
-        // Room.OnPlayerEnterTheRoom += PlayerEnterRoom;
         EnemyVitality.OnEnemyKilledEvent += EnemyKilledBack;
         Portal.OnNextDungeon += PortalEventCallBack;
         StaticEventHandler.OnRoomEnemiesDefeated += HandleRoomCleared;
+        StaticEventHandler.OnRoomChanged += HandleRoomChangedForLevelManager;
     }
 
     private void OnDisable()
     {
-        // Room.OnPlayerEnterTheRoom -= PlayerEnterRoom;
         EnemyVitality.OnEnemyKilledEvent -= EnemyKilledBack;
         Portal.OnNextDungeon -= PortalEventCallBack;
         StaticEventHandler.OnRoomEnemiesDefeated -= HandleRoomCleared;
+        StaticEventHandler.OnRoomChanged -= HandleRoomChangedForLevelManager;
+    }
+
+    private void HandleRoomChangedForLevelManager(RoomChangedEventArgs args)
+    {
+        currentRoom = args.room;
     }
 
     private void HandleRoomCleared(Room room)
     {
-        // Update current room reference
-        currentRoom = room;
-        
-        // Đếm số enemy trong room mới
-        if (room != null && room.instantiatedRoom != null)
+        // Thông báo UI khi room đã được dọn sạch enemy
+        OnRoomCompleted?.Invoke();
+
+        // Spawn chest khi room cleared
+        SpawnChestInRoom(room);
+    }
+
+    private void SpawnChestInRoom(Room room)
+    {
+        if (room == null || room.instantiatedRoom == null)
+            return;
+
+        if (room.spawnPositionArray == null || room.spawnPositionArray.Length == 0)
+            return;
+
+        // Roll xác suất spawn chest (25-50%)
+        float chance = UnityEngine.Random.Range(0.25f, 0.5f);
+        if (UnityEngine.Random.value > chance)
         {
-            EnemyVitality[] enemies = room.instantiatedRoom.GetComponentsInChildren<EnemyVitality>();
-            amountOfEnemies = enemies.Length;
+            return;
+        }
+
+        // Lấy chest prefab từ DungeonLevelSO
+        if (currentDungeonLevel == null || currentDungeonLevel.chestPrefab == null)
+        {
+
+            return;
+        }
+
+        GameObject chestPrefab = currentDungeonLevel.chestPrefab;
+
+        // Chọn vị trí spawn ngẫu nhiên
+        Vector2Int spawnCell = room.spawnPositionArray[UnityEngine.Random.Range(0, room.spawnPositionArray.Length)];
+        Vector3 spawnPos = new Vector3(
+            spawnCell.x + room.lowerBounds.x - room.templateLowerBounds.x,
+            spawnCell.y + room.lowerBounds.y - room.templateLowerBounds.y,
+            0f
+        );
+        spawnPos += new Vector3(0.5f, 0.5f, 0f);
+
+        // Instantiate chest
+        GameObject chestGO = Instantiate(chestPrefab, spawnPos, Quaternion.identity, room.instantiatedRoom.transform);
+        if (chestGO != null)
+        {
+            Chest chest = chestGO.GetComponent<Chest>();
+            if (chest != null && currentDungeonLevel != null && currentDungeonLevel.chestItem != null)
+            {
+                chest.SetChestItemData(currentDungeonLevel.chestItem);
+            }
+
         }
     }
 
@@ -333,7 +347,7 @@ public class LevelManager : Singleton<LevelManager>
         playerConfig.currentEnergy = playerConfig.MaxEnergy;
         playerConfig.timeCooldownArmor = 0;
 
-        Debug.Log("LevelManager: Player stats reset to default values.");
+
     }
 
     private void ClearAllObjectPools()
@@ -341,13 +355,13 @@ public class LevelManager : Singleton<LevelManager>
         if (ObjPoolManager.Instance != null)
         {
             ObjPoolManager.Instance.ClearAllPool();
-            Debug.Log("LevelManager: All object pools cleared.");
+
         }
     }
 
     private void ReturnToHomeScene()
     {
-        Debug.Log("LevelManager: Loading Home Scene.");
+
         DestroyPlayer();
         UnityEngine.SceneManagement.SceneManager.LoadScene(Settings.homeScene);
     }
@@ -358,7 +372,7 @@ public class LevelManager : Singleton<LevelManager>
         {
             Destroy(SelectedPlayer);
             SelectedPlayer = null;
-            Debug.Log("LevelManager: Player destroyed.");
+
         }
     }
 }

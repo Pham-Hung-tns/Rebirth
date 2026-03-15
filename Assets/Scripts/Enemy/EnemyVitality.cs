@@ -9,6 +9,7 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
     private float enemyHealth;
     private float initialHealth; // Lưu HP ban đầu để reset khi pool spawn
     private Coroutine coroutine;
+    private bool isDead; // Guard chống fire OnEnemyKilledEvent nhiều lần
 
     public float Health { get => enemyHealth; set => enemyHealth = value; }
 
@@ -37,7 +38,6 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
             }
         }
 
-        Debug.Log("Enemy Take Damage with knockback");
         AudioManager.Instance.PlaySFX("Enemy_Damage");
         enemyHealth -= amount;
         DamageManager.Instance.ShowDmg(amount, transform);
@@ -48,8 +48,9 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
         }
         coroutine = StartCoroutine(IEChangeColor());
 
-        if(enemyHealth <= 0)
+        if(enemyHealth <= 0 && !isDead)
         {
+            isDead = true; // Đảm bảo chỉ fire 1 lần duy nhất
             OnEnemyKilledEvent?.Invoke(transform);
             OnChangeState?.Invoke();
 
@@ -73,6 +74,7 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
     public void OnPoolSpawn()
     {
         enemyHealth = initialHealth;
+        isDead = false;
 
         // Stop coroutine đang chạy từ lần sử dụng trước
         if (coroutine != null)

@@ -51,7 +51,7 @@ public class RoomContentSpawner
         int enemiesSpawned = 0;
         for (int i = 0; i < totalToSpawn; i++)
         {
-            EnemyDetailsSO enemyDetails = SelectRandomEnemy(room, dungeonLevel);
+            EnemyConfig enemyDetails = SelectRandomEnemy(room, dungeonLevel);
             if (enemyDetails == null || enemyDetails.enemyPrefab == null)
                 continue;
 
@@ -129,20 +129,12 @@ public class RoomContentSpawner
         if (room.spawnPositionArray == null || room.spawnPositionArray.Length == 0)
             return 0;
 
-        // T�m chest prefab
-        GameObject chestPrefab = Resources.Load<GameObject>("Chest");
-        if (chestPrefab == null)
-        {
-            GameResources gameResources = Resources.Load<GameResources>("GameResources");
-            if (gameResources != null && gameResources.chestItemPrefab != null)
-            {
-                chestPrefab = gameResources.chestItemPrefab;
-            }
-        }
+        // Lấy chest prefab từ DungeonLevelSO
+        GameObject chestPrefab = dungeonLevel?.chestPrefab;
 
         if (chestPrefab == null)
         {
-            Debug.LogWarning("Kh�ng t�m th?y chest prefab");
+            Debug.LogWarning("Không tìm thấy chest prefab trong DungeonLevelSO");
             return 0;
         }
 
@@ -153,9 +145,14 @@ public class RoomContentSpawner
 
         // Ch?n v? tr� spawn
         Vector3 spawnWorldPos = GetRandomSpawnWorldPosition(room);
-        GameObject chest = Object.Instantiate(chestPrefab, spawnWorldPos, Quaternion.identity, room.instantiatedRoom.transform);
-        if (chest != null)
+        GameObject chestGO = Object.Instantiate(chestPrefab, spawnWorldPos, Quaternion.identity, room.instantiatedRoom.transform);
+        if (chestGO != null)
         {
+            Chest chest = chestGO.GetComponent<Chest>();
+            if (chest != null && dungeonLevel != null && dungeonLevel.chestItem != null)
+            {
+                chest.SetChestItemData(dungeonLevel.chestItem);
+            }
             Debug.Log($"Spawned chest trong room {room.id}");
             return 1;
         }
@@ -166,12 +163,12 @@ public class RoomContentSpawner
     /// <summary>
     /// Ch?n enemy ng?u nhi�n d?a tr�n weighted ratio
     /// </summary>
-    private static EnemyDetailsSO SelectRandomEnemy(Room room, DungeonLevelSO level)
+    private static EnemyConfig SelectRandomEnemy(Room room, DungeonLevelSO level)
     {
         if (room.enemiesByLevelList == null)
             return null;
 
-        SpawnableObjectsByLevel<EnemyDetailsSO> byLevel = room.enemiesByLevelList.Find(e => e.dungeonLevel == level);
+        SpawnableObjectsByLevel<EnemyConfig> byLevel = room.enemiesByLevelList.Find(e => e.dungeonLevel == level);
         if (byLevel == null || byLevel.spawnableObjectRatioList == null || byLevel.spawnableObjectRatioList.Count == 0)
             return null;
 
@@ -221,7 +218,7 @@ public class RoomContentSpawner
     /// <summary>
     /// L?y health d?a theo level
     /// </summary>
-    private static int GetHealthForLevel(EnemyDetailsSO details, DungeonLevelSO level, int fallback)
+    private static int GetHealthForLevel(EnemyConfig details, DungeonLevelSO level, int fallback)
     {
         if (details.healthByLevel != null)
         {

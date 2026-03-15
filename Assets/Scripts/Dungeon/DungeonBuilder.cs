@@ -734,18 +734,18 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
     /// <summary>
     /// Deep copy spawnable objects by level list
     /// </summary>
-    private List<SpawnableObjectsByLevel<EnemyDetailsSO>> CopySpawnableObjectByLevelList(List<SpawnableObjectsByLevel<EnemyDetailsSO>> oldList)
+    private List<SpawnableObjectsByLevel<EnemyConfig>> CopySpawnableObjectByLevelList(List<SpawnableObjectsByLevel<EnemyConfig>> oldList)
     {
         if (oldList == null) return null;
 
-        var newList = new List<SpawnableObjectsByLevel<EnemyDetailsSO>>();
+        var newList = new List<SpawnableObjectsByLevel<EnemyConfig>>();
         foreach (var levelEntry in oldList)
         {
             if (levelEntry == null) continue;
-            var copy = new SpawnableObjectsByLevel<EnemyDetailsSO>
+            var copy = new SpawnableObjectsByLevel<EnemyConfig>
             {
                 dungeonLevel = levelEntry.dungeonLevel,
-                spawnableObjectRatioList = new List<SpawnableObjectRatio<EnemyDetailsSO>>()
+                spawnableObjectRatioList = new List<SpawnableObjectRatio<EnemyConfig>>()
             };
 
             if (levelEntry.spawnableObjectRatioList != null)
@@ -753,7 +753,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
                 foreach (var ratio in levelEntry.spawnableObjectRatioList)
                 {
                     if (ratio == null) continue;
-                    copy.spawnableObjectRatioList.Add(new SpawnableObjectRatio<EnemyDetailsSO>
+                    copy.spawnableObjectRatioList.Add(new SpawnableObjectRatio<EnemyConfig>
                     {
                         dungeonObject = ratio.dungeonObject,
                         ratio = ratio.ratio

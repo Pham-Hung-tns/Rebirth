@@ -32,6 +32,7 @@ public static class Settings
     public static readonly int PLAYER_RUN = Animator.StringToHash("Player_Run");
     public static readonly int PLAYER_SKILL = Animator.StringToHash("Player_Skill");
     public const float baseSpeedForPlayerAnimations = 8f;
+    #endregion
 
     // Animator parameters - Enemy
     #region ANIMATOR ENEMY PARAMETERS
@@ -40,16 +41,6 @@ public static class Settings
     public static readonly int WANDER_STATE = Animator.StringToHash("Enemy_Wander");
     public static readonly int ATTACK_STATE = Animator.StringToHash("Enemy_Attack");
     public static readonly int CHASE_STATE = Animator.StringToHash("Enemy_Chase");
-    #endregion
-
-
-    // // Animator parameters - Door
-    // public static readonly int open = Animator.StringToHash("Open");
-    // public static readonly int close = Animator.StringToHash("Close");
-
-    // Animator parameters - DamageableDecoration
-    public static readonly int destroy = Animator.StringToHash("destroy");
-    public static readonly string stateDestroyed = "Destroyed";
     #endregion
 
     #region ANIMATOR WEAPON PARAMETERS
@@ -89,20 +80,6 @@ public static class Settings
     public const int targetFrameRateToSpreadPathfindingOver = 60;
     public const float playerMoveDistanceToRebuildPath = 3f;
     public const float enemyPathRebuildCooldown = 2f;
-    #endregion
-
-
-    #region UI PARAMETERS
-    public const float uiHeartSpacing = 16f;
-    public const float uiAmmoIconSpacing = 4f;
-    #endregion
-
-    #region CONTACT DAMAGE PARAMETERS
-    public const float contactDamageCollisionResetDelay = 0.5f;
-    #endregion
-
-    #region HIGHSCORES
-    public const int numberOfHighScoresToSave = 100;
     #endregion
 
 }

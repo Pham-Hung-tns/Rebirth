@@ -20,8 +20,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: db033d4c9bb22f54eadf2768623c3932, type: 2}
   - {fileID: 11400000, guid: f80fb87e95ddddb4a995cb4b7933eb45, type: 2}
   - {fileID: 11400000, guid: aecfe6d025357f9419a7191513e47573, type: 2}
-  - {fileID: 11400000, guid: a95f86aea7edb72489d759d0ad367127, type: 2}
-  - {fileID: 11400000, guid: a57fd80d0c097d74da3c6ac4ac18437d, type: 2}
   - {fileID: 11400000, guid: a5507522127051a4fb41fad1be2c4338, type: 2}
   roomNodeGraphList:
   - {fileID: 11400000, guid: f125c686a31e40e498287d7eb98eb8f7, type: 2}
+  chestPrefab: {fileID: 2543308805713309664, guid: 01cfebaddbfc2374f9f8162bb716df9b, type: 3}
+  chestItem: {fileID: 11400000, guid: e4fe5870eefea654388af08b95ed267e, type: 2}

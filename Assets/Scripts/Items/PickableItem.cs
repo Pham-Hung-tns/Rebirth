@@ -11,6 +11,7 @@ public class PickableItem : MonoBehaviour
     private ItemText nameText;
     private bool isPlayerInRange;
     private Color textColor;
+    private GameObject player;
     private void Awake()
     {
         actions = new PlayerControls();
@@ -18,20 +19,21 @@ public class PickableItem : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(Settings.playerTag))
         {
             ShowNameOfTheItem();
-            UIManager.Instance.ShowPickupButton(true);
+            //UIManager.Instance.ShowPickupButton(true);
             isPlayerInRange = true;
+            player = collision.gameObject;
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(Settings.playerTag))
         {
             isPlayerInRange = false;
-            UIManager.Instance.ShowPickupButton(false);
+            //UIManager.Instance.ShowPickupButton(false);
             Destroy(nameText.gameObject);
         }
     }
@@ -40,8 +42,8 @@ public class PickableItem : MonoBehaviour
     {
         if(isPlayerInRange && actions.Interaction.PickItem.IsPressed())
         {
-            item.PickUp();
-            Destroy(gameObject);
+            item.PickUp(player);
+            ObjPoolManager.Instance.ReturnToPool(gameObject);
         }
     }
 

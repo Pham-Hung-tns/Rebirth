@@ -95,6 +95,10 @@ public class PlayerController : CharacterController
     
     private void OnEnable()
     {
+        // Reset input và speed để tránh player tự di chuyển sau portal transition
+        _moveInput = Vector2.zero;
+        _movement.ResetSpeed();
+
         // Đăng ký nhận lệnh từ Input Reader
         inputReader.MoveEvent += OnMove;
         inputReader.AttackEvent += OnAttack;
