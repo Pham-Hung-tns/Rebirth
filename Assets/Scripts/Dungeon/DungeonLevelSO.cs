@@ -49,12 +49,20 @@ public class DungeonLevelSO : ScriptableObject
 
     public List<RoomNodeGraphSO> roomNodeGraphList;
 
-    #region Header CHEST ITEM FOR LEVEL
+    #region Header CHEST CONFIG FOR LEVEL
 
     [Space(10)]
-    [Header("CHEST ITEM FOR LEVEL")]
+    [Header("CHEST CONFIG FOR LEVEL")]
 
-    #endregion Header CHEST ITEM FOR LEVEL
+    #endregion Header CHEST CONFIG FOR LEVEL
+
+    #region Tooltip
+
+    [Tooltip("Prefab chest sẽ được spawn khi room cleared")]
+
+    #endregion Tooltip
+
+    public GameObject chestPrefab;
 
     #region Tooltip
 

@@ -51,10 +51,28 @@ MonoBehaviour:
     doorwayCopyTileHeight: 8
     isConnected: 0
     isUnavailable: 0
-  spawnPositionArray: []
-  enemiesByLevelList: []
-  roomEnemySpawnParametersList: []
-  bonusPrefabs: []
-  minBonusPerKill: 1
-  maxBonusPerKill: 3
+  spawnPositionArray:
+  - {x: -4, y: -8}
+  - {x: -6, y: -3}
+  - {x: 5, y: -13}
+  - {x: 5, y: -7}
+  - {x: -1, y: -7}
+  enemiesByLevelList:
+  - dungeonLevel: {fileID: 11400000, guid: e017a8a6a0a0d1143b016540e1032893, type: 2}
+    spawnableObjectRatioList:
+    - dungeonObject: {fileID: 11400000, guid: 2f03bfdd31cdd504eb13249b03969ae3, type: 2}
+      ratio: 100
+  roomEnemySpawnParametersList:
+  - dungeonLevel: {fileID: 11400000, guid: e017a8a6a0a0d1143b016540e1032893, type: 2}
+    minTotalEnemiesToSpawn: 3
+    maxTotalEnemiesToSpawn: 5
+    minConcurrentEnemies: 1
+    maxConcurrentEnemies: 2
+    minSpawnInterval: 1
+    maxSpawnInterval: 2
+  bonusPrefabs:
+  - {fileID: 6734112594655707089, guid: ff61c26ee043c1f458a3469dcb6abc4f, type: 3}
+  - {fileID: 6170948718114675620, guid: 001834a750e5fc14eb334913fc40367d, type: 3}
+  minBonusPerKill: 2
+  maxBonusPerKill: 5
   bonusSpreadRadius: 2

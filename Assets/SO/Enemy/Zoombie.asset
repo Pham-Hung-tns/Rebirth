@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8909334218c00f943a0cd09afb0b53e3, type: 3}
   m_Name: Zoombie
   m_EditorClassIdentifier: 
-  Health: 10
+  enemyPrefab: {fileID: 4288501162753985557, guid: c2fdfe728100b7a48bf5b120c7f6bdb6, type: 3}
+  Health: 2
+  healthByLevel: []
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1024

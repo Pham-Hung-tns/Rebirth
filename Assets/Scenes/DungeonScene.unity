@@ -350,9 +350,9 @@ RectTransform:
   - {fileID: 1848487577}
   - {fileID: 1707871889}
   - {fileID: 1376026605}
-  - {fileID: 1550571800}
   - {fileID: 1465994619}
   - {fileID: 534600771}
+  - {fileID: 1550571800}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -901,7 +901,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3631926583882451053, guid: 48cd5eb332809bf4bb06ac99966f014a, type: 3}
       propertyPath: m_RootOrder
-      value: 15
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 3631926583882451053, guid: 48cd5eb332809bf4bb06ac99966f014a, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1135,6 +1135,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cmVC: {fileID: 694959814}
+--- !u!1 &722086936
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 722086938}
+  - component: {fileID: 722086937}
+  m_Layer: 0
+  m_Name: EnemySpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &722086937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722086936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aed6b98e3b3360444980817253d47556, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &722086938
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 722086936}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &806686463 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1185380252854901287, guid: bbfd2015c9b49f54ca826f1dfb57ef3a, type: 3}
@@ -1510,6 +1554,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2546964813773207066, guid: 6fa2ec923763deb4a942330cb88e73e7, type: 3}
+      propertyPath: chestItemPrefab
+      value: 
+      objectReference: {fileID: 2543308805713309664, guid: 01cfebaddbfc2374f9f8162bb716df9b, type: 3}
     - target: {fileID: 5331943025798252976, guid: 6fa2ec923763deb4a942330cb88e73e7, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -2183,7 +2231,7 @@ RectTransform:
   - {fileID: 1209103475}
   - {fileID: 1220642828}
   m_Father: {fileID: 183877061}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -2417,7 +2465,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 183877061}
-  m_RootOrder: 13
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}

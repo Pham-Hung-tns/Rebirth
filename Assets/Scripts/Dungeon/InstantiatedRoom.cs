@@ -58,35 +58,24 @@ public class InstantiatedRoom : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         // if player hasn't entered the room then return
-        if (collision.tag != Settings.playerTag) return;
+        if (collision.tag != "movement") return;
 
         Debug.Log($"[InstantiatedRoom] Player entered room trigger: roomId={room?.id} (previouslyVisited={room?.isPreviouslyVisited}) - Collider={collision.name}");
 
         // if room has already been visited then return
         if (room.isPreviouslyVisited)
         {
-            Debug.Log($"[InstantiatedRoom] Room {room.id} was already visited - skipping spawn and lock.");
+            Debug.Log($"[InstantiatedRoom] Room {room.id} was already visited - skipping.");
             return;
         }
 
         // Set room as visited
         room.isPreviouslyVisited = true;
 
-        // Get current dungeon level
-        DungeonLevelSO dungeonLevel = LevelManager.Instance.GetCurrentDungeonLevel();
-        if (dungeonLevel == null)
-        {
-            Debug.LogWarning($"[InstantiatedRoom] Current dungeon level is null for room {room.id} - aborting spawn.");
-            return;
-        }
-
-        Debug.Log($"[InstantiatedRoom] Spawning content for room {room.id} at level {dungeonLevel.name}.");
-
-        // Spawn enemies and chests
-        RoomContentSpawner.SpawnEnemiesInRoom(room, dungeonLevel);
-        RoomContentSpawner.SpawnChestsInRoom(room, dungeonLevel);
-
-        // Call room changed event
+        // Fire room changed event - EnemySpawner will handle:
+        // 1. Lock doors
+        // 2. Spawn enemies (coroutine-based wave spawning)
+        // 3. Unlock doors + spawn chests when all enemies defeated
         Debug.Log($"[InstantiatedRoom] Calling StaticEventHandler.CallRoomChangedEvent for room {room.id}.");
         StaticEventHandler.CallRoomChangedEvent(room);
     }

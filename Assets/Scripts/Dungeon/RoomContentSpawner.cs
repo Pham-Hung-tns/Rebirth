@@ -129,20 +129,12 @@ public class RoomContentSpawner
         if (room.spawnPositionArray == null || room.spawnPositionArray.Length == 0)
             return 0;
 
-        // T�m chest prefab
-        GameObject chestPrefab = Resources.Load<GameObject>("Chest");
-        if (chestPrefab == null)
-        {
-            GameResources gameResources = Resources.Load<GameResources>("GameResources");
-            if (gameResources != null && gameResources.chestItemPrefab != null)
-            {
-                chestPrefab = gameResources.chestItemPrefab;
-            }
-        }
+        // Lấy chest prefab từ DungeonLevelSO
+        GameObject chestPrefab = dungeonLevel?.chestPrefab;
 
         if (chestPrefab == null)
         {
-            Debug.LogWarning("Kh�ng t�m th?y chest prefab");
+            Debug.LogWarning("Không tìm thấy chest prefab trong DungeonLevelSO");
             return 0;
         }
 

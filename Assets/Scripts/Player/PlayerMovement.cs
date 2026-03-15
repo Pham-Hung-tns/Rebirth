@@ -38,6 +38,11 @@ public class PlayerMovement : MonoBehaviour
         return currentSpeed;
     }
 
+    public void ResetSpeed()
+    {
+        currentSpeed = 0f;
+    }
+
     public void RotationPlayer(Vector2 direction)
     {
         var result = Vector3.Cross(Vector2.up, direction.normalized);

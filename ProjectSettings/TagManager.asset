@@ -12,6 +12,7 @@ TagManager:
   - decoration2Tilemap
   - frontTilemap
   - minimapTilemap
+  - movement
   layers:
   - Default
   - TransparentFX

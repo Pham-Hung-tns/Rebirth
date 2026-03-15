@@ -77,8 +77,6 @@ public class GameResources : MonoBehaviour
     [Space(10)]
     [Header("CHESTS")]
     #endregion
-    [Tooltip("Chest item prefab")]
-    public GameObject chestItemPrefab;
     public Sprite heartIcon;
     public Sprite bulletIcon;
 
@@ -107,7 +105,7 @@ public class GameResources : MonoBehaviour
         HelperUtilities.ValidateCheckNullValue(this, nameof(heartPrefab), heartPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(ammoIconPrefab), ammoIconPrefab);
         HelperUtilities.ValidateCheckNullValue(this, nameof(scorePrefab), scorePrefab);
-        HelperUtilities.ValidateCheckNullValue(this, nameof(chestItemPrefab), chestItemPrefab);
+
         HelperUtilities.ValidateCheckNullValue(this, nameof(heartIcon), heartIcon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(bulletIcon), bulletIcon);
         HelperUtilities.ValidateCheckNullValue(this, nameof(minimapSkullPrefab), minimapSkullPrefab);

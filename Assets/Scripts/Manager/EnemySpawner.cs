@@ -24,43 +24,36 @@ public class EnemySpawner : MonoBehaviour
     private void HandleRoomChanged(RoomChangedEventArgs args)
     {
         var room = args.room;
-        Debug.Log($"[EnemySpawner] HandleRoomChanged called for roomId={room?.id}");
 
         if (room == null || room.roomNodeType == null)
         {
-            Debug.Log("[EnemySpawner] Aborting HandleRoomChanged: room is null or room.roomNodeType is null");
             return;
         }
 
         if (room.roomNodeType.isCorridor || room.roomNodeType.isEntrance)
         {
-            Debug.Log($"[EnemySpawner] Aborting HandleRoomChanged: room {room.id} is corridor or entrance");
             return;
         }
 
         if (room.isClearedOfEnemies)
         {
-            Debug.Log($"[EnemySpawner] Aborting HandleRoomChanged: room {room.id} is already cleared of enemies");
             return;
         }
 
         DungeonLevelSO currentLevel = LevelManager.Instance?.GetCurrentDungeonLevel();
         if (currentLevel == null)
         {
-            Debug.Log("[EnemySpawner] Aborting HandleRoomChanged: current dungeon level is null");
             return;
         }
 
         RoomEnemySpawnParameters spawnParams = room.GetRoomEnemySpawnParameters(currentLevel);
         if (spawnParams == null)
         {
-            Debug.Log($"[EnemySpawner] Aborting HandleRoomChanged: spawnParams null for room {room.id} at level {currentLevel.name}");
             return;
         }
 
         if (room.spawnPositionArray == null || room.spawnPositionArray.Length == 0)
         {
-            Debug.Log($"[EnemySpawner] Aborting HandleRoomChanged: room {room.id} has no spawn positions");
             return;
         }
 
@@ -70,7 +63,6 @@ public class EnemySpawner : MonoBehaviour
             activeSpawns[room] = state;
 
             // Lock doors and switch to battle music when combat starts
-            Debug.Log($"[EnemySpawner] Conditions met. Locking doors for room {room.id} and starting spawn routine.");
             room.instantiatedRoom?.LockDoors();
             AudioManager.Instance.PlaySFX("Door_Close");
             AudioManager.Instance.PlayMusic("Battle");
@@ -108,6 +100,7 @@ public class EnemySpawner : MonoBehaviour
         room.instantiatedRoom?.UnlockDoors(Settings.doorUnlockDelay);
         AudioManager.Instance.PlaySFX("Door_Open");
         AudioManager.Instance.PlayMusic("Theme");
+
 
         StaticEventHandler.CallRoomEnemiesDefeated(room);
         activeSpawns.Remove(room);
@@ -162,7 +155,7 @@ public class EnemySpawner : MonoBehaviour
             enemy.SetActive(false);
             float delay = Random.Range(0.5f, 1f);
             SpawnActivationHelper.Instance.ActivateAfterDelay(enemy, delay);
-            Debug.Log($"[EnemySpawner] Spawned enemy {enemy.name} (delayed active {delay:F2}s) in room {state.Room.id}");
+
         }
     }
 
@@ -194,7 +187,12 @@ public class EnemySpawner : MonoBehaviour
     private Vector3 GetRandomSpawnWorldPosition(Room room)
     {
         Vector2Int cell = room.spawnPositionArray[Random.Range(0, room.spawnPositionArray.Length)];
-        Vector3 world = room.instantiatedRoom.grid.CellToWorld(new Vector3Int(cell.x + room.lowerBounds.x, cell.y + room.lowerBounds.y, 0));
+        // Dùng công thức giống RoomContentSpawner: spawnCell + (lowerBounds - templateLowerBounds)
+        Vector3 world = new Vector3(
+            cell.x + room.lowerBounds.x - room.templateLowerBounds.x,
+            cell.y + room.lowerBounds.y - room.templateLowerBounds.y,
+            0f
+        );
         world += new Vector3(0.5f, 0.5f, 0f);
         return world;
     }
