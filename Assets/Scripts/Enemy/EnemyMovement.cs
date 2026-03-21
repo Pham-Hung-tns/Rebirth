@@ -108,10 +108,10 @@ public class EnemyMovement : MonoBehaviour, IPoolable
         }
     }
 
-    // Public: request a path to world target (throttled by Settings.enemyPathRebuildCooldown)
+    // Public: request a path to world target (throttled by Settings.ENEMY_PATH_REBUILD_COOLDOWN)
     public void RequestPath(Vector3 worldTarget)
     {
-        if (Time.time - lastPathRequestTime < Settings.enemyPathRebuildCooldown)
+        if (Time.time - lastPathRequestTime < Settings.ENEMY_PATH_REBUILD_COOLDOWN)
             return;
         lastPathRequestTime = Time.time;
 

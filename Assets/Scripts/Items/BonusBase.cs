@@ -32,7 +32,7 @@ public class BonusBase : MonoBehaviour
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag(Settings.playerTag))
+        if (collision.CompareTag(Settings.PLAYER_TAG))
         {
             player = collision.transform;
         }

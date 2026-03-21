@@ -38,7 +38,7 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
             }
         }
 
-        AudioManager.Instance.PlaySFX("Enemy_Damage");
+        AudioManager.Instance.PlaySFX(SFXClip.EnemyHit);
         enemyHealth -= amount;
         DamageManager.Instance.ShowDmg(amount, transform);
         if(coroutine != null)

@@ -303,7 +303,7 @@ public class RoomNodeSO : ScriptableObject
             return false;
 
         // If adding a corridor check that this node has < the maximum permitted child corridors
-        if (roomNodeGraph.GetRoomNode(childID).roomNodeType.isCorridor && childRoomNodeIDList.Count >= Settings.maxChildCorridors)
+        if (roomNodeGraph.GetRoomNode(childID).roomNodeType.isCorridor && childRoomNodeIDList.Count >= Settings.MAX_CHILD_CORRIDORS)
             return false;
 
         // if the child room is an entrance return false - the entrance must always be the top level parent node

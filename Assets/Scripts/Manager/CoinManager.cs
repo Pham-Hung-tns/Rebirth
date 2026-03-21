@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CoinManager : Singleton<CoinManager>
+public class CoinManager : Persistence<CoinManager>
 {
     public int totalCoins { get; private set; }
 
@@ -18,7 +18,7 @@ public class CoinManager : Singleton<CoinManager>
     public void AddCoin(int amount)
     {
         totalCoins += amount;
-
+        UIEvents.OnCoinChanged?.Invoke(totalCoins);
     }
 
     public void RemoveCoin(int amount) 
@@ -26,7 +26,7 @@ public class CoinManager : Singleton<CoinManager>
         if (totalCoins >= amount)
         {
             totalCoins -= amount;
-
+            UIEvents.OnCoinChanged?.Invoke(totalCoins);
         }
     }
 }

@@ -1,0 +1,244 @@
+# Plan Tái Cấu Trúc Quản Lý UI
+
+## Persistence Model
+
+| Manager | Type | Lý do |
+|---------|------|-------|
+| [GameManager](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/GameManager.cs#6-37) | **Persistence** | Game state, player data xuyên scene |
+| `AudioManager` | **Persistence** | Nhạc chơi liên tục |
+| `CoinManager` | **Persistence** ⚠️ cần fix | Coin persist giữa Home ↔ Dungeon |
+| [UIManager](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UIManager.cs#7-194) | **Singleton** (scene-bound) | Mỗi scene có UI riêng, destroy khi chuyển scene |
+| [MenuManager](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/MenuManager.cs#7-263) | **Singleton** (scene-bound) | Chỉ dùng ở HomeScene |
+| [UISystem](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UISystem.cs#9-69) | MonoBehaviour (scene-bound) | Audio panel UI, mỗi scene instance riêng |
+
+> [!NOTE]
+> `CoinManager` hiện là [Singleton](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/Singleton.cs#3-12) → bị destroy khi chuyển scene. Cần chuyển sang [Persistence](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/Singleton.cs#13-21).
+
+---
+
+## Kiến trúc hiện tại → Sau tái cấu trúc
+
+````carousel
+```mermaid
+graph TB
+    subgraph "HIỆN TẠI"
+        direction TB
+        subgraph "Start Scene"
+            UISystem1["UISystem\n(audio + scene nav ❌)"]
+        end
+        subgraph "Home Scene"
+            UISystem2["UISystem"]
+            MenuMgr_old["MenuManager\n- ShowUIWeapon (dup ❌)\n- Update() poll coin ❌"]
+            UIMgr_old["UIManager\n- Subscribe 2 nguồn ❌"]
+            Mobile_old["Mobile buttons\nLuôn bật ❌"]
+        end
+        subgraph "Dungeon Scene"
+            UISystem3["UISystem"]
+            UIMgr_old2["UIManager\n- Subscribe 2 nguồn ❌"]
+            Mobile_old2["JoyStick + Buttons\nLuôn bật ❌"]
+        end
+    end
+```
+<!-- slide -->
+```mermaid
+graph TB
+    subgraph "SAU TÁI CẤU TRÚC"
+        direction TB
+        subgraph "Start Scene"
+            UISystem_S["UISystem (audio)"]
+            SceneNav_S["SceneNavigator"]
+        end
+        subgraph "Home Scene"
+            UISystem_H["UISystem (audio)"]
+            SceneNav_H["SceneNavigator"]
+            MenuMgr_new["MenuManager\n(character + upgrade)"]
+            UIMgr_H["UIManager\n(UIEvents only ✅)"]
+            Platform_H["PlatformUIController\n📱/💻 adaptive"]
+        end
+        subgraph "Dungeon Scene"
+            UISystem_D["UISystem (audio)"]
+            SceneNav_D["SceneNavigator"]
+            UIMgr_D["UIManager\n(UIEvents only ✅)"]
+            Platform_D["PlatformUIController\n📱/💻 adaptive"]
+        end
+
+        UIEvents_new["UIEvents (bus duy nhất)"]
+        UIMgr_H -.-> UIEvents_new
+        UIMgr_D -.-> UIEvents_new
+    end
+```
+````
+
+---
+
+## Phase 1: Loại bỏ Duplicate Event Subscriptions
+
+#### [MODIFY] [UIManager.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UIManager.cs)
+
+Xóa 4 direct subscriptions trong `OnEnable/OnDisable`, chỉ giữ UIEvents:
+
+```diff
+ private void OnEnable()
+ {
+-    LevelManager.OnRoomCompleted += RoomCompleted;
+-    LevelManager.OnPlayerInRoomBoss += ShowHealthUIBoss;
+-    PlayerWeapon.OnShowUIWeaponEvent += ShowUIWeapon;
+-    PlayerVitality.OnPlayerDeathEvent += ShowGameOverPanel;
+     UIEvents.OnPlayerStatsChanged += OnPlayerStatsChanged;
+     // ... giữ nguyên UIEvents subscriptions
+ }
+```
+
+> [!IMPORTANT]
+> Verify rằng [LevelManager](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/LevelManager.cs#8-379), `PlayerWeapon`, `PlayerVitality` đã fire UIEvents tương ứng. Nếu chưa → thêm `UIEvents.OnXxx?.Invoke()`.
+
+---
+
+## Phase 2: Tách Trách Nhiệm
+
+#### [NEW] [SceneNavigator.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/SceneNavigator.cs)
+
+Tách scene navigation ra khỏi [UISystem](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UISystem.cs#9-69):
+
+```csharp
+public class SceneNavigator : MonoBehaviour
+{
+    public void StartGame()
+    {
+        if (Time.timeScale == 0) return;
+        SceneManager.LoadScene("HomeScene");
+    }
+    public void ReturnToStart()
+    {
+        GameManager.Instance.playerPrefab = null;
+        SceneManager.LoadScene("StartScene");
+    }
+    public void QuitGame() => Application.Quit();
+}
+```
+
+#### [MODIFY] [UISystem.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UISystem.cs)
+
+Xóa [StartGame()](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UISystem.cs#58-64), [ReturnHomeScene()](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UISystem.cs#52-57), [QuitGame()](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UISystem.cs#64-68) → đã chuyển sang `SceneNavigator`. Chỉ giữ audio logic.
+
+#### [MODIFY] [MenuManager.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/MenuManager.cs)
+
+- Xóa [ShowUIWeapon()](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/MenuManager.cs#95-103) + fields (`weaponPanel`, `weaponImage`, `energyConsumptionText`)
+- Xóa [Update()](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Player/PlayerController.cs#45-61) polling coin
+- Xóa `PlayerWeapon.OnShowUIWeaponEvent += ShowUIWeapon` trong [EnableMovement()](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/MenuManager.cs#74-94)
+- Subscribe `UIEvents.OnCoinChanged` để update coin text event-driven
+
+---
+
+## Phase 3: Thống nhất UIEvents Bus
+
+#### [MODIFY] [CoinManager.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/CoinManager.cs)
+
+- Chuyển từ [Singleton](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/Singleton.cs#3-12) → [Persistence](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/Singleton.cs#13-21) (persist data giữa scenes)
+- Fire `UIEvents.OnCoinChanged` khi coin thay đổi
+
+```diff
+-public class CoinManager : Singleton<CoinManager>
++public class CoinManager : Persistence<CoinManager>
+ {
+     public void AddCoin(float amount) {
+         totalCoins += amount;
++        UIEvents.OnCoinChanged?.Invoke(totalCoins);
+     }
+     public void RemoveCoin(float amount) {
+         totalCoins -= amount;
++        UIEvents.OnCoinChanged?.Invoke(totalCoins);
+     }
+ }
+```
+
+---
+
+## Phase 4: Device-Adaptive UI
+
+#### [NEW] [PlatformUIController.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/PlatformUIController.cs)
+
+Detect device → toggle mobile-only controls:
+
+```csharp
+public class PlatformUIController : MonoBehaviour
+{
+    [SerializeField] private GameObject[] mobileOnlyElements;
+    [SerializeField] private GameObject[] desktopOnlyElements;
+
+    public static bool IsMobile { get; private set; }
+
+    private void Awake()
+    {
+#if UNITY_EDITOR
+        IsMobile = UnityEditor.EditorUserBuildSettings.activeBuildTarget
+            is UnityEditor.BuildTarget.Android
+            or UnityEditor.BuildTarget.iOS;
+#else
+        IsMobile = Application.isMobilePlatform;
+#endif
+        ApplyPlatformUI();
+    }
+
+    private void ApplyPlatformUI()
+    {
+        foreach (var el in mobileOnlyElements)
+            if (el != null) el.SetActive(IsMobile);
+        foreach (var el in desktopOnlyElements)
+            if (el != null) el.SetActive(!IsMobile);
+    }
+
+    public void OverridePlatform(bool forceMobile)
+    {
+        IsMobile = forceMobile;
+        ApplyPlatformUI();
+    }
+}
+```
+
+**Mobile-only elements** (kéo vào Inspector):
+- `MoveButton` (JoyStick)
+- `FireButton`
+- `UseSkillButton`
+- `ChangeWeaponButton`
+
+#### [MODIFY] [MenuManager.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/MenuManager.cs)
+
+[EnableMovement()](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/MenuManager.cs#74-94) — bỏ bật mobile buttons (do `PlatformUIController` quản lý):
+
+```diff
+ public void EnableMovement()
+ {
+     // ... character selection logic
+-    moveButton.SetActive(true);
+-    fireButton.SetActive(true);
+-    useSkillButton.SetActive(true);
+-    changeWeaponButton.SetActive(true);
+     statPanel.SetActive(true);
+ }
+```
+
+Xóa fields: `moveButton`, `fireButton`, `useSkillButton`, `changeWeaponButton`.
+
+---
+
+## Tổng kết files thay đổi
+
+| File | Action | Phase |
+|------|--------|-------|
+| [UIManager.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UIManager.cs) | MODIFY — xóa direct subscriptions | 1 |
+| `SceneNavigator.cs` | **NEW** — scene navigation | 2 |
+| [UISystem.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/UISystem.cs) | MODIFY — xóa scene nav methods | 2 |
+| [MenuManager.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/MenuManager.cs) | MODIFY — xóa duplicates, polling, mobile btn refs | 2 + 4 |
+| [CoinManager.cs](file:///d:/GameTopDown/GameTopDown/Assets/Scripts/Manager/CoinManager.cs) | MODIFY — Persistence + fire UIEvents | 3 |
+| `PlatformUIController.cs` | **NEW** — device detection | 4 |
+
+## Verification
+
+| Test | Expected |
+|------|----------|
+| Build Android | Joystick + buttons hiển thị |
+| Build Windows | Joystick + buttons ẩn |
+| Chuyển scene Home → Dungeon | UIManager mới tạo, UI references valid |
+| Coin update | Event-driven, không poll |
+| Room completed event | Fire 1 lần (không duplicate) |

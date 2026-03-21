@@ -26,13 +26,14 @@ public class Door : MonoBehaviour
         isLocked = true;
         if (doorCollider != null) doorCollider.enabled = true;
         if (animator != null) animator.SetBool("isClose", true);
-
+        AudioManager.Instance.PlaySFX(SFXClip.DoorClose);
         Debug.Log($"[Door] {gameObject.name} LockDoor called. Animator isClose=true. Collider enabled={doorCollider != null && doorCollider.enabled}");
     }
 
     public void UnlockDoor(float delay = 0f)
     {
         Debug.Log($"[Door] {gameObject.name} UnlockDoor called with delay={delay}.");
+        AudioManager.Instance.PlaySFX(SFXClip.DoorOpen);
         if (gameObject.activeInHierarchy)
             StartCoroutine(UnlockRoutine(delay));
     }

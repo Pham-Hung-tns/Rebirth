@@ -14,6 +14,10 @@ public class InputReader : ScriptableObject, IPlayerActions
     public event UnityAction<bool> SkillEvent;
     public event UnityAction PickupEvent;
     public event UnityAction ChangeItemEvent;
+    public event UnityAction InteractEvent;
+
+    // --- Flag khóa Input tấn công/di chuyển khi mở UI ---
+    public bool EnableCombatInput { get; set; } = true;
 
     private PlayerControls _gameInput;
 
@@ -23,46 +27,59 @@ public class InputReader : ScriptableObject, IPlayerActions
         {
             _gameInput = new PlayerControls();
             _gameInput.Player.SetCallbacks(this);
+            _gameInput.Player.Enable();
         }
-        _gameInput.Player.Enable();
+        
+        UIEvents.OnUIStateChanged += SetCombatInputState;
     }
 
     private void OnDisable()
     {
-        _gameInput.Player.Disable();
+        if (_gameInput != null)
+        {
+            _gameInput.Player.Disable();
+        }
+
+        UIEvents.OnUIStateChanged -= SetCombatInputState;
+    }
+
+    private void SetCombatInputState(bool isUIOpen)
+    {
+        EnableCombatInput = !isUIOpen;
     }
 
     // Triển khai interface từ New Input System
     public void OnMove(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (!EnableCombatInput)
         {
-            MoveEvent?.Invoke(context.ReadValue<Vector2>());
+            // Bắt buộc vector di chuyển về 0 để nhân vật dừng lại
+            MoveEvent?.Invoke(Vector2.zero);
+            return;
         }
 
-        // Khi thả phím
-        if (context.canceled)
+        if (context.phase == InputActionPhase.Performed || context.phase == InputActionPhase.Canceled)
         {
-            MoveEvent?.Invoke(Vector2.zero);
+            MoveEvent?.Invoke(context.ReadValue<Vector2>());
         }
     }
 
     public void OnAttack(InputAction.CallbackContext context)
     {
+        if (!EnableCombatInput) return;
+
         if (context.phase == InputActionPhase.Performed)
             AttackEvent?.Invoke(true);
-
-        if(context.phase == InputActionPhase.Canceled)
+        else if (context.phase == InputActionPhase.Canceled)
             AttackEvent?.Invoke(false);
     }
 
     public void OnSkill(InputAction.CallbackContext context)
     {
-        if (context.phase == InputActionPhase.Performed)
-            SkillEvent?.Invoke(true);
+        if (!EnableCombatInput) return;
 
-        if (context.phase == InputActionPhase.Canceled)
-            SkillEvent?.Invoke(false);
+        if (context.phase == InputActionPhase.Performed)
+            SkillEvent?.Invoke(true); // Assuming SkillEvent expects a bool, based on its declaration
     }
 
     public void OnPickItem(InputAction.CallbackContext context)
@@ -75,6 +92,12 @@ public class InputReader : ScriptableObject, IPlayerActions
     {
         if (context.phase == InputActionPhase.Performed)
             ChangeItemEvent?.Invoke();
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+            InteractEvent?.Invoke();
     }
 
     // Allow external callers (eg. UI controllers) to enable/disable the gameplay action map

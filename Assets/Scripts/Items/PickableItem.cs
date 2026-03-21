@@ -19,7 +19,7 @@ public class PickableItem : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag(Settings.playerTag))
+        if (collision.CompareTag(Settings.PLAYER_TAG))
         {
             ShowNameOfTheItem();
             //UIManager.Instance.ShowPickupButton(true);
@@ -30,7 +30,7 @@ public class PickableItem : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag(Settings.playerTag))
+        if (collision.CompareTag(Settings.PLAYER_TAG))
         {
             isPlayerInRange = false;
             //UIManager.Instance.ShowPickupButton(false);

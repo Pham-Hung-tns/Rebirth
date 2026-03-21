@@ -57,7 +57,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
         dungeonBuildSuccessful = false;
         int dungeonBuildAttempts = 0;
 
-        while (!dungeonBuildSuccessful && dungeonBuildAttempts < Settings.maxDungeonBuildAttempts)
+        while (!dungeonBuildSuccessful && dungeonBuildAttempts < Settings.MAX_DUNGEON_BUILD_ATTEMPTS)
         {
             dungeonBuildAttempts++;
 
@@ -68,7 +68,7 @@ public class DungeonBuilder : SingletonMonobehaviour<DungeonBuilder>
             dungeonBuildSuccessful = false;
 
             // Loop until dungeon successfully built or more than max attempts for node graph
-            while (!dungeonBuildSuccessful && dungeonRebuildAttemptsForNodeGraph <= Settings.maxDungeonRebuildAttemptsForRoomGraph)
+            while (!dungeonBuildSuccessful && dungeonRebuildAttemptsForNodeGraph <= Settings.MAX_DUNGEON_REBUILD_ATTEMPTS_FOR_ROOM_GRAPH)
             {
                 // Clear dungeon room gameobjects and dungeon room dictionary
                 ClearDungeon();

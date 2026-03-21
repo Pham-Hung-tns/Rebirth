@@ -38,4 +38,15 @@ public static class UIEvents
 
     // Show game over
     public static Action OnShowGameOver;
+    
+    // Bắt đầu một đoạn hội thoại mới, truyền trực tiếp NPCInteractable
+    public static Action<NPCInteractable> OnStartDialogue;
+
+    // Bật/tắt trạng thái mở Popup
+    // (True: đang có Panel mở -> Khóa Input Player, False: Đã tắt hết Panel -> Mở lại Input)
+    public static Action<bool> OnUIStateChanged;
+
+    // Quản lý Stack UI
+    public static Action<GameObject, bool> OnPushPopup;
+    public static Action<GameObject> OnPopPopup;
 }

@@ -28,10 +28,10 @@ public class Chest : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (openChest) return;
-        if (collision.CompareTag(Settings.playerTag))
+        if (collision.CompareTag(Settings.PLAYER_TAG))
         {
-            //TODO: Add sound effect for opening chest
-            //AudioManager.Instance.PlaySFX("Chest_Open");
+            
+            AudioManager.Instance.PlaySFX(SFXClip.ChestOpen);
             ShowItem();
             animator.SetTrigger("Open");
         }

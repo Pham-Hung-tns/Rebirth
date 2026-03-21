@@ -410,7 +410,6 @@ GameObject:
   - component: {fileID: 9141284531230830358}
   - component: {fileID: 5245972844232239822}
   - component: {fileID: 8036680112849361990}
-  - component: {fileID: 2224640384918632268}
   - component: {fileID: 2846387004246204559}
   - component: {fileID: 2125394416}
   - component: {fileID: 6403880325886193370}
@@ -510,7 +509,7 @@ MonoBehaviour:
   animator: {fileID: 8036680113977354321}
   inputReader: {fileID: 11400000, guid: c90b6976fc9abb141a7cb659dc4ce59d, type: 2}
   playerData: {fileID: 11400000, guid: 528d00568d51eb64ca23298be53a5d94, type: 2}
-  _movement: {fileID: 2224640384918632268}
+  _movement: {fileID: 2798636151557092641}
   _vitality: {fileID: 2846387004246204559}
   _combat: {fileID: 8036680112849361990}
   _detection: {fileID: 4246420208324608301}
@@ -528,18 +527,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weaponPosition: {fileID: 9141284531428713868}
   rotationSpeed: 100
---- !u!114 &2224640384918632268
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8036680113951382889}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4216fd3ff0a058a4889f701f0a2b1dee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &2846387004246204559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -646,6 +633,7 @@ GameObject:
   - component: {fileID: 8036680113977354335}
   - component: {fileID: 8036680113977354320}
   - component: {fileID: 8036680113977354321}
+  - component: {fileID: 2798636151557092641}
   m_Layer: 0
   m_Name: Sprite
   m_TagString: Untagged
@@ -707,7 +695,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 561647781
-  m_SortingLayer: 8
+  m_SortingLayer: 9
   m_SortingOrder: 100
   m_Sprite: {fileID: 21300000, guid: c5e39c314f2e65f4bb963ab5c1c2c75a, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -741,6 +729,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &2798636151557092641
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8036680113977354334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4216fd3ff0a058a4889f701f0a2b1dee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9141284531428713869
 GameObject:
   m_ObjectHideFlags: 0
