@@ -36,7 +36,7 @@ public class PlayerVisualManager : MonoBehaviour
 
     private void UpdateVisualComponents(string sceneName)
     {
-        bool isInDungeon = sceneName == "DungeonScene";
+        bool isInDungeon = sceneName == Settings.GAME_SCENE;
 
         if (fogVision != null)
             fogVision.SetActive(isInDungeon);

@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0202a3095b7477a4091d56344f0af6b3, type: 3}
+  m_Name: GameVietRaTheGioiGraph
+  m_EditorClassIdentifier: 
+  <FileName>k__BackingField: GameVietRaTheGioi
+  <Groups>k__BackingField: []
+  <Nodes>k__BackingField:
+  - <ID>k__BackingField: 1bd4fb55-117d-4cac-bc48-26094c10ef84
+    <Name>k__BackingField: 01
+    <Text>k__BackingField: "Ch\xE0o m\u1EEBng t\u1EDBi v\u1EDBi Rebirth"
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialogue
+      <NodeID>k__BackingField: b0c2dc0e-580d-4334-b03b-7b369b01b6e6
+    <GroupID>k__BackingField: 
+    <DialogueType>k__BackingField: 0
+    <Position>k__BackingField: {x: 153.6, y: 188.8}
+  - <ID>k__BackingField: b0c2dc0e-580d-4334-b03b-7b369b01b6e6
+    <Name>k__BackingField: 02
+    <Text>k__BackingField: "Ng\u01B0\u1EDDi Vi\u1EC7t m\xECnh kh\xF4ng c\xF3 d\u1EDF"
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: "R\xF5 r\xE0ng"
+      <NodeID>k__BackingField: 8529a713-4569-4abc-a367-7002f23d6ed9
+    - <Text>k__BackingField: Huh?
+      <NodeID>k__BackingField: d8a9139a-472f-43e6-b18a-ce7a68d25d60
+    <GroupID>k__BackingField: 
+    <DialogueType>k__BackingField: 1
+    <Position>k__BackingField: {x: 488, y: 188.8}
+  - <ID>k__BackingField: d8a9139a-472f-43e6-b18a-ce7a68d25d60
+    <Name>k__BackingField: 03
+    <Text>k__BackingField: "Mang v\u0103n h\xF3a Vi\u1EC7t, truy\u1EC1n th\u1ED1ng
+      Vi\u1EC7t,  b\u1EA3n s\u1EAFc Vi\u1EC7t,\nc\xE2u chuy\u1EC7n Vi\u1EC7t ra th\u1EBF
+      gi\u1EDBi"
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: Next Dialogue
+      <NodeID>k__BackingField: 
+    <GroupID>k__BackingField: 
+    <DialogueType>k__BackingField: 0
+    <Position>k__BackingField: {x: 855.2, y: 425.6}
+  - <ID>k__BackingField: 8529a713-4569-4abc-a367-7002f23d6ed9
+    <Name>k__BackingField: DialogueName
+    <Text>k__BackingField: "Anh \u0111i v\u1EDBi t\xF4i ch\u1EE9?"
+    <Choices>k__BackingField:
+    - <Text>k__BackingField: "\u0110i th\xF4i"
+      <NodeID>k__BackingField: 
+    - <Text>k__BackingField: "Suy ngh\u0129 sau"
+      <NodeID>k__BackingField: 
+    <GroupID>k__BackingField: 
+    <DialogueType>k__BackingField: 1
+    <Position>k__BackingField: {x: 855.2, y: 95.2}
+  <OldGroupNames>k__BackingField: []
+  <OldUngroupedNodeNames>k__BackingField:
+  - 01
+  - 02
+  - 03
+  - DialogueName
+  <OldGroupedNodeNames>k__BackingField:
+    list: []

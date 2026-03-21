@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(PlayerVitality))]
 [RequireComponent(typeof(PlayerWeapon))]
 //[RequireComponent(typeof(PlayerSkill))]
@@ -24,6 +23,7 @@ public class PlayerController : CharacterController
     //private PlayerSkill _skill;
 
     private Vector2 _moveInput;
+    private NPCInteractable _currentInteractable; // Thêm biến lưu NPC đang ở gần
 
     public PlayerConfig PlayerData { get => playerData; set => playerData = value; }
 
@@ -45,7 +45,7 @@ public class PlayerController : CharacterController
     private void Update()
     {
         // Controller ra lệnh cho Movement module di chuyển mỗi khung hình
-        _movement.CalculateSpeed(_moveInput);
+        //_movement.CalculateSpeed(_moveInput);
         // Nếu có enemy trong tầm, ưu tiên quay mặt về phía enemy thay vì dựa vào input di chuyển
         Vector2 facingDirection = _moveInput;
         if (_detection != null && _detection.EnemyTarget != null)
@@ -73,6 +73,8 @@ public class PlayerController : CharacterController
         ChangeAnimationState(_moveInput != Vector2.zero ? Settings.PLAYER_RUN : Settings.PLAYER_IDLE);
     }
 
+    
+
     protected override void OnAttack(bool canAttack)
     {
         // Delegate attack input to PlayerWeapon; weapon classes manage their own animations
@@ -91,6 +93,21 @@ public class PlayerController : CharacterController
         ChangeAnimationState(Settings.PLAYER_SKILL);
     }
 
+    // Gán NPC đang ở gần
+    public void SetInteractable(NPCInteractable interactable)
+    {
+        _currentInteractable = interactable;
+    }
+
+    // Bắt sự kiện Interact từ InputReader
+    private void OnInteract()
+    {
+        if (_currentInteractable != null)
+        {
+            _currentInteractable.Interact();
+        }
+    }
+
 
     
     private void OnEnable()
@@ -103,6 +120,7 @@ public class PlayerController : CharacterController
         inputReader.MoveEvent += OnMove;
         inputReader.AttackEvent += OnAttack;
         inputReader.SkillEvent += OnSkill;
+        inputReader.InteractEvent += OnInteract;
     }
 
     private void OnDisable()
@@ -110,5 +128,8 @@ public class PlayerController : CharacterController
         inputReader.MoveEvent -= OnMove;
         inputReader.AttackEvent -= OnAttack;
         inputReader.SkillEvent -= OnSkill;
+        inputReader.InteractEvent -= OnInteract;
     }
+
+
 }

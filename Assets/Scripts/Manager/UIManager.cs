@@ -49,6 +49,7 @@ public class UIManager : Singleton<UIManager>
     protected override void Awake()
     {
         base.Awake();
+        FindObjectOfType<PlatformUIController>()?.ShowMobileControls();
     }
 
     private Coroutine skillCooldownCoroutine;
@@ -104,8 +105,8 @@ public class UIManager : Singleton<UIManager>
     private void ShowUIWeapon(Weapon weapon)
     {
         if (weapon == null) return;
-        if (weaponPanel != null && !weaponPanel.activeSelf)
-            weaponPanel.SetActive(true);
+        // if (weaponPanel != null && !weaponPanel.activeSelf)
+        //     weaponPanel.SetActive(true);
         if (weaponImage != null) weaponImage.sprite = weapon.WeaponData.icon;
         if (energyConsumptionText != null) energyConsumptionText.text = weapon.WeaponData.energy.ToString();
     }
@@ -117,7 +118,7 @@ public class UIManager : Singleton<UIManager>
 
     public void ReturnHome()
     {
-        SceneManager.LoadScene(Settings.homeScene);
+        SceneManager.LoadScene(Settings.HOME_SCENE);
     }
 
     public void ShowPickupButton(bool isActive)
@@ -156,11 +157,7 @@ public class UIManager : Singleton<UIManager>
 
     private void OnEnable()
     {
-        LevelManager.OnRoomCompleted += RoomCompleted;
-        LevelManager.OnPlayerInRoomBoss += ShowHealthUIBoss;
-        PlayerWeapon.OnShowUIWeaponEvent += ShowUIWeapon;
-        PlayerVitality.OnPlayerDeathEvent += ShowGameOverPanel;
-        // Subscribe to centralized UI events
+        // Subscribe to centralized UI events bus only (no direct subscriptions)
         UIEvents.OnPlayerStatsChanged += OnPlayerStatsChanged;
         UIEvents.OnCoinChanged += OnCoinChanged;
         UIEvents.OnShowWeapon += ShowUIWeapon;
@@ -175,10 +172,6 @@ public class UIManager : Singleton<UIManager>
 
     private void OnDisable()
     {
-        LevelManager.OnRoomCompleted -= RoomCompleted;
-        LevelManager.OnPlayerInRoomBoss -= ShowHealthUIBoss;
-        PlayerWeapon.OnShowUIWeaponEvent -= ShowUIWeapon;
-        PlayerVitality.OnPlayerDeathEvent -= ShowGameOverPanel;
         UIEvents.OnPlayerStatsChanged -= OnPlayerStatsChanged;
         UIEvents.OnCoinChanged -= OnCoinChanged;
         UIEvents.OnShowWeapon -= ShowUIWeapon;

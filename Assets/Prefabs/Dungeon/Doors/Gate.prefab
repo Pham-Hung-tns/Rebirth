@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7840556373436709383}
   - component: {fileID: 5965025126899634866}
   - component: {fileID: 7683961489788337699}
-  - component: {fileID: 3065966125121119250}
+  - component: {fileID: 935942248}
   m_Layer: 0
   m_Name: Gate
   m_TagString: Untagged
@@ -73,8 +73,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1069915683
-  m_SortingLayer: 10
+  m_SortingLayerID: -1382275305
+  m_SortingLayer: 4
   m_SortingOrder: 0
   m_Sprite: {fileID: -1594807805, guid: 13206ce5c0155524f8b9066ce518f830, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -134,7 +134,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1.7877232, y: 1.0462742}
   m_EdgeRadius: 0
---- !u!114 &3065966125121119250
+--- !u!114 &935942248
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,7 +143,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 7839524553702533687}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ea8432e17664aa4795944871ead93b9, type: 3}
+  m_Script: {fileID: 11500000, guid: d524de037322c484db3efee430b880e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   fade: {fileID: 0}

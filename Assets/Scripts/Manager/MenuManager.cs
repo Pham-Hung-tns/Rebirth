@@ -19,9 +19,6 @@ public class MenuManager : Singleton<MenuManager>
     [SerializeField] private TextMeshProUGUI maxEnergyStat;
     [SerializeField] private TextMeshProUGUI maxArmorStat;
     [SerializeField] private GameObject statPanel;
-    [SerializeField] private GameObject weaponPanel;
-    [SerializeField] private Image weaponImage;
-    [SerializeField] private TextMeshProUGUI energyConsumptionText;
 
     [Header("Coin")]
     [SerializeField] private TextMeshProUGUI coinUI;
@@ -34,11 +31,6 @@ public class MenuManager : Singleton<MenuManager>
     [SerializeField] Button unlockButton;
     [SerializeField] Button upgradeButton;
     [SerializeField] Button chooseButton;
-    [SerializeField] GameObject moveButton;
-    [SerializeField] GameObject fireButton;
-    //[SerializeField] GameObject pickupButton;
-    [SerializeField] GameObject useSkillButton;
-    [SerializeField] GameObject changeWeaponButton;
 
     [Header("Skill Tree UI")]
     [SerializeField] private GameObject skillTreePanel;
@@ -81,25 +73,14 @@ public class MenuManager : Singleton<MenuManager>
         currentPlayer.GetComponent<PlayerController>().enabled = true;
         currentPlayer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
         playerSelected = true;
-        moveButton.SetActive(true);
-        fireButton.SetActive(true);
-        useSkillButton.SetActive(true);
-        changeWeaponButton.SetActive(true);
-        //pickupButton.SetActive(true);
+
+        // Bật mobile controls nếu platform là mobile (do PlatformUIController quản lý list)
+        FindObjectOfType<PlatformUIController>()?.ShowMobileControls();
+
         statPanel.SetActive(true);
         currentPlayer.GetComponent<ClickHandle>().enabled = false;
-
-        PlayerWeapon.OnShowUIWeaponEvent += ShowUIWeapon;
     }
 
-    private void ShowUIWeapon(Weapon weapon)
-    {
-        if (weapon == null) return;
-        if (weaponPanel != null && !weaponPanel.activeSelf)
-            weaponPanel.SetActive(true);
-        if (weaponImage != null) weaponImage.sprite = weapon.WeaponData.icon;
-        if (energyConsumptionText != null) energyConsumptionText.text = weapon.WeaponData.energy.ToString();
-    }
     // show stat of current player
     public void ShowStats(SelectCharacter player)
     {
@@ -180,9 +161,21 @@ public class MenuManager : Singleton<MenuManager>
     {
         playerPanel.SetActive(false);
     }
-    private void Update()
+
+    private void OnCoinChanged(float totalCoins)
     {
-        coinUI.text = CoinManager.Instance.totalCoins.ToString();
+        if (coinUI != null)
+            coinUI.text = totalCoins.ToString("0.00");
+    }
+
+    private void OnEnable()
+    {
+        UIEvents.OnCoinChanged += OnCoinChanged;
+    }
+
+    private void OnDisable()
+    {
+        UIEvents.OnCoinChanged -= OnCoinChanged;
     }
 
     // Skill Tree UI Methods

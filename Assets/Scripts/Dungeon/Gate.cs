@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MenuDoor : MonoBehaviour
+public class Gate : MonoBehaviour
 {
     private Animator animator;
     [SerializeField] private CanvasGroup fade;
@@ -14,11 +14,14 @@ public class MenuDoor : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Player"))
+        if (collision.CompareTag(Settings.PLAYER_TAG))
         {
-            animator.SetTrigger("Open");
+            animator.SetTrigger(Settings.GATE_OPEN);
+            var pc = collision.GetComponent<PlayerController>();
+            if (pc != null)
+                pc.enabled = false;
+            AudioManager.Instance.PlaySFX(SFXClip.DoorOpen);
             StartCoroutine(IELoadDungeon());
-            collision.gameObject.GetComponent<Rigidbody2D>().isKinematic = true;
         }
     }
 
@@ -28,6 +31,7 @@ public class MenuDoor : MonoBehaviour
         StartCoroutine(Helper.IEFade(fade, 1f, 2f));
         yield return new WaitForSeconds(2f);
         StartCoroutine(Helper.IEFade(fade, 0f, 1f));
-        SceneManager.LoadScene("DungeonScene");
+        SceneManager.LoadScene(Settings.GAME_SCENE);
+        
     }
 }

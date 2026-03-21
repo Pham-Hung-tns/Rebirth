@@ -124,27 +124,27 @@ public class InstantiatedRoom : MonoBehaviour
         Tilemap[] tilemaps = roomGameobject.GetComponentsInChildren<Tilemap>();
         foreach (Tilemap tilemap in tilemaps)
         {
-            if (tilemap.gameObject.tag == Settings.groundTilemapTag)
+            if (tilemap.gameObject.tag == Settings.GROUND_TILEMAP_TAG)
             {
                 groundTilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == Settings.decoration1TilemapTag)
+            else if (tilemap.gameObject.tag == Settings.DECORATION1_TILEMAP_TAG)
             {
                 decoration1Tilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == Settings.decoration2TilemapTag)
+            else if (tilemap.gameObject.tag == Settings.DECORATION2_TILEMAP_TAG)
             {
                 decoration2Tilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == Settings.frontTilemapTag)
+            else if (tilemap.gameObject.tag == Settings.FRONT_TILEMAP_TAG)
             {
                 frontTilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == Settings.collisionTilemapTag)
+            else if (tilemap.gameObject.tag == Settings.COLLISION_TILEMAP_TAG)
             {
                 collisionTilemap = tilemap;
             }
-            else if (tilemap.gameObject.tag == Settings.minimapTilemapTag)
+            else if (tilemap.gameObject.tag == Settings.MINIMAP_TILEMAP_TAG)
             {
                 minimapTilemap = tilemap;
             }
@@ -293,7 +293,7 @@ public class InstantiatedRoom : MonoBehaviour
             for (int y = 0; y < (room.templateUpperBounds.y - room.templateLowerBounds.y + 1); y++)
             {
                 // Set default movement penalty for grid sqaures
-                aStarMovementPenalty[x, y] = Settings.defaultAStarMovementPenalty;
+                aStarMovementPenalty[x, y] = Settings.DEFAULT_ASTAR_MOVEMENT_PENALTY;
 
                 // Add obstacles for collision tiles the enemy can't walk on
                 TileBase tile = collisionTilemap.GetTile(new Vector3Int(x + room.templateLowerBounds.x, y + room.templateLowerBounds.y, 0));
@@ -311,7 +311,7 @@ public class InstantiatedRoom : MonoBehaviour
                 // a grid location is specified in the Settings).
                 if (tile == GameResources.Instance.preferredEnemyPathTile)
                 {
-                    aStarMovementPenalty[x, y] = Settings.preferredPathAStarMovementPenalty;
+                    aStarMovementPenalty[x, y] = Settings.PREFERRED_PATH_ASTAR_MOVEMENT_PENALTY;
                 }
 
             }
@@ -335,7 +335,7 @@ public class InstantiatedRoom : MonoBehaviour
             // if the doorway prefab isn't null and the doorway is connected
             if (doorway.doorPrefab != null && doorway.isConnected)
             {
-                float tileDistance = Settings.tileSizePixels / Settings.pixelsPerUnit;
+                float tileDistance = Settings.TILE_SIZE_PIXELS / Settings.PIXELS_PER_UNIT;
 
                 GameObject door = null;
 
@@ -501,7 +501,7 @@ public class InstantiatedRoom : MonoBehaviour
             for (int y = 0; y < (room.templateUpperBounds.y - room.templateLowerBounds.y + 1); y++)
             {
                 // Set default movement penalty for grid sqaures
-                aStarItemObstacles[x, y] = Settings.defaultAStarMovementPenalty;
+                aStarItemObstacles[x, y] = Settings.DEFAULT_ASTAR_MOVEMENT_PENALTY;
             }
         }
     }

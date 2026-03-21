@@ -28,7 +28,7 @@ public class CharacterWeapon : MonoBehaviour
 
     // Biến lưu vị trí gốc để biết đường mà đảo ngược
     private Vector3 _defaultLocalPosition;
-    private bool _isFacingRight = true; // Mặc định ban đầu là nhìn về bên phải
+    protected bool _isFacingRight = true; // Mặc định ban đầu là nhìn về bên phải
     protected virtual void Awake()
     {
         // Lưu lại vị trí setup ban đầu (ví dụ: x=0.5, y=0.2)
@@ -68,51 +68,44 @@ public class CharacterWeapon : MonoBehaviour
         _chargeStartTime = 0f;
     }
 
-    protected void RotateWeaponToAgent(Vector3 dir)
+    protected void FlipWeapon(Vector3 dir)
     {
         // --- 1. XÁC ĐỊNH TRẠNG THÁI (QUAN TRỌNG) ---
-        // Thay vì dùng góc, ta dùng trực tiếp giá trị x của hướng di chuyển.
-
-        // Nếu x < 0 (Rõ ràng đang sang trái) -> Ghi nhận là nhìn Trái
+        // Nếu x < -0.01f (Rõ ràng đang sang trái) -> Ghi nhận là nhìn Trái
         if (dir.x < -0.01f)
         {
             _isFacingRight = false;
         }
-        // Nếu x > 0 (Rõ ràng đang sang phải) -> Ghi nhận là nhìn Phải
+        // Nếu x > 0.01f (Rõ ràng đang sang phải) -> Ghi nhận là nhìn Phải
         else if (dir.x > 0.01f)
         {
             _isFacingRight = true;
         }
-        // Nếu x == 0 (Chỉ đi Lên hoặc Xuống) -> Code sẽ KHÔNG chạy vào if/else này
-        // => Biến _isFacingRight giữ nguyên giá trị cũ. 
-        // => Vũ khí sẽ không bị lật qua lật lại khi bắn thẳng lên trời/xuống đất.
 
-
-        // --- 2. XỬ LÝ XOAY MƯỢT (ROTATION) ---
-        float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
-        weaponPosition.rotation = Quaternion.Slerp(weaponPosition.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-
-        // --- 3. XỬ LÝ VỊ TRÍ & LẬT HÌNH (DỰA TRÊN BIẾN TRẠNG THÁI) ---
+        // --- 2. XỬ LÝ VỊ TRÍ & LẬT HÌNH (DỰA TRÊN BIẾN TRẠNG THÁI) ---
         if (!_isFacingRight)
         {
             // --- Đang trạng thái TRÁI ---
-            // Lật ngược súng (Scale Y = -1)
             weaponPosition.localScale = new Vector3(1, -1, 1);
-
-            // Gương vị trí (-x)
             weaponPosition.localPosition = new Vector3(-_defaultLocalPosition.x, _defaultLocalPosition.y, _defaultLocalPosition.z);
         }
         else
         {
             // --- Đang trạng thái PHẢI ---
-            // Trả về bình thường (Scale Y = 1)
             weaponPosition.localScale = new Vector3(1, 1, 1);
-
-            // Trả về vị trí gốc (+x)
             weaponPosition.localPosition = _defaultLocalPosition;
         }
+    }
+
+    protected void RotateWeaponToAgent(Vector3 dir)
+    {
+        // 1. Lật vũ khí trước
+        FlipWeapon(dir);
+
+        // 2. Xử lý xoay mượt (Rotation)
+        float targetAngle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        Quaternion targetRotation = Quaternion.Euler(0, 0, targetAngle);
+        weaponPosition.rotation = Quaternion.Slerp(weaponPosition.rotation, targetRotation, rotationSpeed * Time.deltaTime);
     }
 
 

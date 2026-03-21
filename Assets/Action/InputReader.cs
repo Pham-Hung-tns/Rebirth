@@ -14,6 +14,7 @@ public class InputReader : ScriptableObject, IPlayerActions
     public event UnityAction<bool> SkillEvent;
     public event UnityAction PickupEvent;
     public event UnityAction ChangeItemEvent;
+    public event UnityAction InteractEvent;
 
     private PlayerControls _gameInput;
 
@@ -75,6 +76,12 @@ public class InputReader : ScriptableObject, IPlayerActions
     {
         if (context.phase == InputActionPhase.Performed)
             ChangeItemEvent?.Invoke();
+    }
+
+    public void OnInteract(InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Performed)
+            InteractEvent?.Invoke();
     }
 
     // Allow external callers (eg. UI controllers) to enable/disable the gameplay action map

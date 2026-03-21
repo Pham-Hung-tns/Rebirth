@@ -50,7 +50,7 @@ public class Spike : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag(Settings.playerTag))
+        if (collision.CompareTag(Settings.PLAYER_TAG))
         {
             PlayerVitality obj = collision.GetComponent<PlayerVitality>();
             if(obj != null)

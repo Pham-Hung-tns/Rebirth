@@ -36,6 +36,7 @@ public class PlayerWeapon : CharacterWeapon
         equippedWeapons[weaponIndex].Character = this;
         //ShowCurrentWeaponName();
         OnShowUIWeaponEvent?.Invoke(currentWeapon);
+        UIEvents.OnShowWeapon?.Invoke(currentWeapon);
     }
 
     public void EquipWeapon(Weapon weapon)
@@ -79,29 +80,9 @@ public class PlayerWeapon : CharacterWeapon
         ResetWeaponForChange();
         ShowCurrentWeaponName();
         OnShowUIWeaponEvent?.Invoke(currentWeapon);
+        UIEvents.OnShowWeapon?.Invoke(currentWeapon);
     }
 
-
-    //public void StopShooting()
-    //{
-    //    CancelInvoke(nameof(Shoot));
-    //    CancelInvoke(nameof(AutoFire));
-    //    return; 
-    //}
-
-    //public void Shoot()
-    //{
-    //    Debug.Log("Shoot weapon");
-    //    //if (currentWeapon == null)
-    //    //    return;
-    //    //if (CanUseWeapon())
-    //    //{
-    //    //    currentWeapon.UseWeapon();
-    //    //    playerVitality.TryConsumeEnergy(currentWeapon.WeaponData.energy);
-    //    //}
-    //    //else
-    //    //    return;
-    //}
 
     public int GetDamageCritical()
     {
@@ -116,17 +97,25 @@ public class PlayerWeapon : CharacterWeapon
 
     public void RotateWeapon()
     {
-        if (movementDirection != Vector2.zero && currentWeapon != null)
-        {
-            RotateWeaponToAgent(movementDirection);
-        }
+        if (currentWeapon == null) return;
 
+        // Ưu tiên xoay về phía enemy nếu tìm thấy
         if (detection != null && detection.EnemyTarget != null)
         {
             Vector3 dirToEnemy = detection.EnemyTarget.transform.position - transform.position;
             RotateWeaponToAgent(dirToEnemy);
         }
+        // Nếu không có enemy và đang di chuyển, chỉ lật trái/phải (luôn nằm ngang)
+        else if (movementDirection != Vector2.zero)
+        {
+            // Xác định hướng nhìn ngang (1 hoặc -1)
+            float lookX = _isFacingRight ? 1f : -1f;
+            if (movementDirection.x < -0.01f) lookX = -1f;
+            else if (movementDirection.x > 0.01f) lookX = 1f;
 
+            // Gọi RotateToAgent với vector nằm ngang để súng luôn nằm ngang và flip đúng
+            RotateWeaponToAgent(new Vector3(lookX, 0, 0));
+        }
     }
     private void ShowCurrentWeaponName()
     {

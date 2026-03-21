@@ -64,8 +64,8 @@ public class EnemySpawner : MonoBehaviour
 
             // Lock doors and switch to battle music when combat starts
             room.instantiatedRoom?.LockDoors();
-            AudioManager.Instance.PlaySFX("Door_Close");
-            AudioManager.Instance.PlayMusic("Battle");
+            AudioManager.Instance.PlaySFX(SFXClip.DoorClose);
+            AudioManager.Instance.PlayMusic(MusicTrack.Battle);
 
             StartCoroutine(SpawnRoutine(state));
         }
@@ -97,9 +97,9 @@ public class EnemySpawner : MonoBehaviour
         room.isClearedOfEnemies = true;
 
         // Unlock doors and restore ambient/theme music
-        room.instantiatedRoom?.UnlockDoors(Settings.doorUnlockDelay);
-        AudioManager.Instance.PlaySFX("Door_Open");
-        AudioManager.Instance.PlayMusic("Theme");
+        room.instantiatedRoom?.UnlockDoors(Settings.DOOR_UNLOCK_DELAY);
+        AudioManager.Instance.PlaySFX(SFXClip.DoorOpen);
+        AudioManager.Instance.PlayMusic(MusicTrack.BackGround);
 
 
         StaticEventHandler.CallRoomEnemiesDefeated(room);

@@ -112,7 +112,7 @@ public class LevelManager : Singleton<LevelManager>
             var entrancePos = entrance.instantiatedRoom.transform.position;
             SelectedPlayer.transform.position = entrancePos;
         }
-        AudioManager.Instance.PlayMusic("Theme");
+        AudioManager.Instance.PlayMusic(MusicTrack.BackGround);
     }
 
     private void ContinueNextLevel()
@@ -278,6 +278,7 @@ public class LevelManager : Singleton<LevelManager>
     {
         // Thông báo UI khi room đã được dọn sạch enemy
         OnRoomCompleted?.Invoke();
+        UIEvents.OnRoomCompleted?.Invoke();
 
         // Spawn chest khi room cleared
         SpawnChestInRoom(room);
@@ -363,7 +364,7 @@ public class LevelManager : Singleton<LevelManager>
     {
 
         DestroyPlayer();
-        UnityEngine.SceneManagement.SceneManager.LoadScene(Settings.homeScene);
+        UnityEngine.SceneManagement.SceneManager.LoadScene(Settings.HOME_SCENE);
     }
 
     private void DestroyPlayer()

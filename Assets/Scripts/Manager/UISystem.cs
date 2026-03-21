@@ -1,11 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
+/// <summary>
+/// Audio control UI — bật/tắt/điều chỉnh âm lượng.
+/// Hoạt động ở mọi scene (instance riêng mỗi scene).
+/// </summary>
 public class UISystem : MonoBehaviour
 {
     [Header("Audio Panel")]
@@ -13,6 +12,7 @@ public class UISystem : MonoBehaviour
     [SerializeField] private Slider musicSlider, sfxSlider;
     [SerializeField] private GameObject pauseButton;
     [SerializeField] private Button musicButton, sfxButton;
+
     private void Start()
     {
        musicButton.image.color = AudioManager.Instance.MusicSource.mute == true ? Color.black : Color.white;
@@ -37,32 +37,14 @@ public class UISystem : MonoBehaviour
     }
     public void ToggleSFX()
     {
-        
         sfxButton.image.color = AudioManager.Instance.ToggleSFX() == true ? Color.black : Color.white;
     }
     public void AdjustMusic()
     {
-        AudioManager.Instance.AdjustMusicVolume(musicSlider.value);
+        AudioManager.Instance.SetMusicVolume(musicSlider.value);
     }
     public void AdjustSFX()
     {
-        AudioManager.Instance.AdjustSFXVolume(sfxSlider.value);
-    }
-
-    public void ReturnHomeScene()
-    {
-        GameManager.Instance.playerPrefab = null;
-        SceneManager.LoadScene("StartScene");
-    }
-
-    public void StartGame()
-    {
-        if (Time.timeScale == 0)
-            return;
-        SceneManager.LoadScene("HomeScene");
-    }
-    public void QuitGame()
-    {
-        Application.Quit();
+        AudioManager.Instance.SetSFXVolume(sfxSlider.value);
     }
 }

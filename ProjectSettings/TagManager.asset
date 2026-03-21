@@ -65,6 +65,9 @@ TagManager:
   - name: Gate
     uniqueID: 2912691991
     locked: 0
+  - name: Door
+    uniqueID: 1069915683
+    locked: 0
   - name: Props
     uniqueID: 1249629529
     locked: 0
@@ -79,9 +82,6 @@ TagManager:
     locked: 0
   - name: Gun & Bow
     uniqueID: 1957423847
-    locked: 0
-  - name: Door
-    uniqueID: 1069915683
     locked: 0
   - name: Font
     uniqueID: 4112656661

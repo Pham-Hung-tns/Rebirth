@@ -1,117 +1,55 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
-public class AudioManager : Persistence<AudioManager>
+public class AudioManager : Singleton<AudioManager>
 {
     [Header("References")]
-    [Tooltip("Optional: assign a SoundLibrary ScriptableObject. If null, will try to load from Resources/SoundLibrary")]
+    [Tooltip("Assign SoundLibrary ScriptableObject. Nếu để trống, sẽ tự tìm trong Resources/SoundLibrary.")]
     [SerializeField] private SoundLibrary soundLibrary;
 
     [Header("Sources")]
     [SerializeField] private AudioSource musicSource;
     [SerializeField] private AudioSource sfxSource;
 
-    // scene-level override clips (designers can drag clip here to override library defaults)
-    [Header("Scene Overrides (optional)")]
-    [SerializeField] private List<Sound> sceneMusics = new List<Sound>();
-    [SerializeField] private List<Sound> sceneSfxs = new List<Sound>();
+    public AudioSource MusicSource => musicSource;
+    public AudioSource SfxSource  => sfxSource;
 
-    public AudioSource MusicSource { get => musicSource; set => musicSource = value; }
-    public AudioSource SfxSource { get => sfxSource; set => sfxSource = value; }
+    // ── Lifecycle ──────────────────────────────────────────────────────────────
 
     protected override void Awake()
     {
         base.Awake();
-
-        if (soundLibrary == null)
-        {
-            soundLibrary = Resources.Load<SoundLibrary>("SoundLibrary");
-            if (soundLibrary == null)
-            {
-                Debug.LogWarning("AudioManager: No SoundLibrary assigned and none found in Resources/SoundLibrary. Designer should create one.");
-            }
-        }
-
-        if (musicSource == null || sfxSource == null)
-        {
-            // Try to find or create audio sources on the same GameObject
-            var sources = gameObject.GetComponentsInChildren<AudioSource>();
-            if (sources != null)
-            {
-                if (musicSource == null && sources.Length > 0) musicSource = sources[0];
-                if (sfxSource == null && sources.Length > 1) sfxSource = sources.Length > 1 ? sources[1] : sources[0];
-            }
-        }
+        TryLoadLibrary();
+        TryAutoAssignSources();
     }
 
     private void Start()
     {
-        // Auto-play startup music from library if configured
-        string startup = soundLibrary != null ? soundLibrary.startupMusicName : null;
-        if (!string.IsNullOrEmpty(startup))
-        {
-            PlayMusic(startup);
-        }
+        if (soundLibrary != null && soundLibrary.startupTrack != MusicTrack.None)
+            PlayMusic(soundLibrary.startupTrack);
     }
 
-    // Play music by name. Search scene overrides first, then library.
-    public void PlayMusic(string name)
+    // ── Music ──────────────────────────────────────────────────────────────────
+
+    /// <summary>Phát nhạc theo enum (cách được khuyến nghị).</summary>
+    public void PlayMusic(MusicTrack track)
     {
-        Sound s = sceneMusics.Find(x => x.name == name);
-        if (s == null && soundLibrary != null)
-            s = soundLibrary.musics.Find(x => x.name == name);
-
-        if (s != null && s.clip != null && musicSource != null)
-        {
-            musicSource.clip = s.clip;
-            musicSource.Play();
-        }
-        else
-        {
-            Debug.LogWarning($"PlayMusic: music '{name}' not found or no AudioSource assigned.");
-        }
+        if (!ValidateLibraryAndSource(musicSource, "PlayMusic")) return;
+        var clip = soundLibrary.GetMusic(track);
+        if (clip != null) PlayMusicClip(clip);
     }
 
+    /// <summary>Phát nhạc trực tiếp bằng AudioClip (dùng khi cần override cụ thể).</summary>
     public void PlayMusic(AudioClip clip)
     {
         if (clip == null || musicSource == null) return;
-        musicSource.clip = clip;
-        musicSource.Play();
+        PlayMusicClip(clip);
     }
 
-    // Stop currently playing music
     public void StopMusic()
     {
         if (musicSource == null) return;
         musicSource.Stop();
         musicSource.clip = null;
-    }
-
-    // Play SFX by registered name (search scene overrides then library)
-    public void PlaySFX(string name)
-    {
-        Sound s = sceneSfxs.Find(x => x.name == name);
-        if (s == null && soundLibrary != null)
-            s = soundLibrary.sfxs.Find(x => x.name == name);
-
-        if (s != null && s.clip != null && sfxSource != null)
-        {
-            sfxSource.PlayOneShot(s.clip);
-        }
-        else
-        {
-            Debug.LogWarning($"PlaySFX: sfx '{name}' not found or no AudioSource assigned.");
-        }
-    }
-
-    // Play SFX from a direct AudioClip
-    public void PlaySFX(AudioClip clip)
-    {
-        if (clip == null || sfxSource == null) return;
-        sfxSource.PlayOneShot(clip);
     }
 
     public bool ToggleMusic()
@@ -121,6 +59,28 @@ public class AudioManager : Persistence<AudioManager>
         return musicSource.mute;
     }
 
+    public void SetMusicVolume(float volume)
+    {
+        if (musicSource != null) musicSource.volume = Mathf.Clamp01(volume);
+    }
+
+    // ── SFX ───────────────────────────────────────────────────────────────────
+
+    /// 
+    public void PlaySFX(SFXClip sfx)
+    {
+        if (!ValidateLibraryAndSource(sfxSource, "PlaySFX")) return;
+        var clip = soundLibrary.GetSFX(sfx);
+        if (clip != null) sfxSource.PlayOneShot(clip);
+    }
+
+    ///
+    public void PlaySFX(AudioClip clip)
+    {
+        if (clip == null || sfxSource == null) return;
+        sfxSource.PlayOneShot(clip);
+    }
+
     public bool ToggleSFX()
     {
         if (sfxSource == null) return false;
@@ -128,13 +88,47 @@ public class AudioManager : Persistence<AudioManager>
         return sfxSource.mute;
     }
 
-    public void AdjustMusicVolume(float volume)
+    public void SetSFXVolume(float volume)
     {
-        if (musicSource != null) musicSource.volume = volume;
+        if (sfxSource != null) sfxSource.volume = Mathf.Clamp01(volume);
     }
 
-    public void AdjustSFXVolume(float volume)
+    // ── Private helpers ────────────────────────────────────────────────────────
+
+    private void PlayMusicClip(AudioClip clip)
     {
-        if (sfxSource != null) sfxSource.volume = volume;
+        musicSource.clip = clip;
+        musicSource.Play();
+    }
+
+    private void TryLoadLibrary()
+    {
+        if (soundLibrary != null) return;
+        soundLibrary = Resources.Load<SoundLibrary>("SoundLibrary");
+        if (soundLibrary == null)
+            Debug.LogWarning("[AudioManager] Không tìm thấy SoundLibrary. Hãy tạo và gán vào Inspector hoặc đặt vào Resources/SoundLibrary.");
+    }
+
+    private void TryAutoAssignSources()
+    {
+        if (musicSource != null && sfxSource != null) return;
+        var sources = gameObject.GetComponentsInChildren<AudioSource>();
+        if (musicSource == null && sources.Length > 0) musicSource = sources[0];
+        if (sfxSource   == null && sources.Length > 1) sfxSource   = sources[1];
+    }
+
+    private bool ValidateLibraryAndSource(AudioSource source, string caller)
+    {
+        if (soundLibrary == null)
+        {
+            Debug.LogWarning($"[AudioManager.{caller}] SoundLibrary chưa được gán.");
+            return false;
+        }
+        if (source == null)
+        {
+            Debug.LogWarning($"[AudioManager.{caller}] AudioSource chưa được gán.");
+            return false;
+        }
+        return true;
     }
 }
