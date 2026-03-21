@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySkill : MonoBehaviour, IAttackable
+public class CastSkillCombat : MonoBehaviour, ICombatBehavior
 {
     private EnemyController enemyController;
-    [SerializeField] private EnemySkill skillPrefab;
+    [SerializeField] private CastSkillCombat skillPrefab;
     
     public event System.Action OnAttackComplete;
 
@@ -23,7 +23,7 @@ public class EnemySkill : MonoBehaviour, IAttackable
         if (skillPrefab == null) return;
         
         // Instantiate và execute skill
-        EnemySkill skillInstance = Instantiate(skillPrefab, transform.position, Quaternion.identity);
+        CastSkillCombat skillInstance = Instantiate(skillPrefab, transform.position, Quaternion.identity);
         skillInstance.ExecuteSkill();
         
         // Notify complete (có thể customize để đợi animation)
@@ -54,6 +54,11 @@ public class EnemySkill : MonoBehaviour, IAttackable
     {
         // Logic tấn công của skill
         // Ví dụ: spawn projectile, vẽ AoE damage, v.v.
+    }
+
+    public void HandleAiming(Vector2 direction)
+    {
+        // Tùy chỉnh việc xoay enemy khi cast phép
     }
 
     [SerializeField] public float skillDuration = 1f; // Thời lượng skill (animation duration)

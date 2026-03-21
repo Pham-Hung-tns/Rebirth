@@ -17,7 +17,7 @@ public class Weapon : MonoBehaviour
     [SerializeField] protected Animator animator;
 
     private int currentState;
-    public CharacterWeapon Character { get; set; }
+    public WieldedWeaponCombat Character { get; set; }
     public WeaponDataSO WeaponData => weaponData;
 
     public virtual void DestroyWeapon()

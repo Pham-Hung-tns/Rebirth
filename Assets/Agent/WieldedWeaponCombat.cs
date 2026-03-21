@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CharacterWeapon : MonoBehaviour
+public class WieldedWeaponCombat : MonoBehaviour
 {
     private GameObject owner; // Tham chiếu đến Player hoặc Enemy cha
 

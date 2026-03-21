@@ -2,9 +2,10 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class PlayerWeapon : CharacterWeapon
+public class PlayerWeapon : WieldedWeaponCombat, ICombatBehavior
 {
     public static event Action<Weapon> OnShowUIWeaponEvent;
+    public event System.Action OnAttackComplete;
     
     private PlayerConfig playerConfig;
     private PlayerVitality playerVitality;
@@ -15,17 +16,28 @@ public class PlayerWeapon : CharacterWeapon
     private SpriteRenderer spriteRenderer;
     private DetectionEnemy detection;
 
-    private Vector2 movementDirection;
-    public Vector2 MovementDirection { get => movementDirection; set => movementDirection = value; }
-    //public Weapon InitialWeapon { get => initialWeapon; set => initialWeapon = value; }
-
-
-    public void Initialize(PlayerConfig _data, SpriteRenderer _sp, PlayerVitality _vitality, DetectionEnemy _detection)
+    protected override void Awake()
     {
-        playerConfig = _data;
-        spriteRenderer = _sp;
-        playerVitality = _vitality;
-        detection = _detection;
+        base.Awake();
+        PlayerController pc = GetComponent<PlayerController>();
+        if (pc != null)
+        {
+            playerConfig = pc.PlayerData;
+            spriteRenderer = pc.Spr;
+        }
+        playerVitality = GetComponent<PlayerVitality>();
+        detection = GetComponent<DetectionEnemy>();
+    }
+
+    private void Start()
+    {
+        if (playerConfig != null && playerConfig.initialWeapon != null)
+            CreateWeapon(playerConfig.initialWeapon);
+    }
+
+    public void HandleAiming(Vector2 direction)
+    {
+        RotateWeapon(direction);
     }
 
     public override void CreateWeapon(Weapon weaponPrefab)
@@ -95,7 +107,7 @@ public class PlayerWeapon : CharacterWeapon
         return Mathf.RoundToInt(damage);
     }
 
-    public void RotateWeapon()
+    public void RotateWeapon(Vector2 currentFacingDirection)
     {
         if (currentWeapon == null) return;
 
@@ -106,12 +118,12 @@ public class PlayerWeapon : CharacterWeapon
             RotateWeaponToAgent(dirToEnemy);
         }
         // Nếu không có enemy và đang di chuyển, chỉ lật trái/phải (luôn nằm ngang)
-        else if (movementDirection != Vector2.zero)
+        else if (currentFacingDirection != Vector2.zero)
         {
             // Xác định hướng nhìn ngang (1 hoặc -1)
             float lookX = _isFacingRight ? 1f : -1f;
-            if (movementDirection.x < -0.01f) lookX = -1f;
-            else if (movementDirection.x > 0.01f) lookX = 1f;
+            if (currentFacingDirection.x < -0.01f) lookX = -1f;
+            else if (currentFacingDirection.x > 0.01f) lookX = 1f;
 
             // Gọi RotateToAgent với vector nằm ngang để súng luôn nằm ngang và flip đúng
             RotateWeaponToAgent(new Vector3(lookX, 0, 0));

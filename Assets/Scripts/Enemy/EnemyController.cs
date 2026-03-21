@@ -6,8 +6,8 @@ public class EnemyController : CharacterController, IPoolable
 {
     [SerializeField] private EnemyVitality enemyVitality;
     [SerializeField] private EnemyWeapon enemyWeapon;
-    [SerializeField] private EnemySkill enemySkill;
-    [SerializeField] private EnemyMeleeAttack enemyMeleeAttack;
+    [SerializeField] private CastSkillCombat enemySkill;
+    [SerializeField] private MeleeAnimationCombat enemyMeleeAttack;
     [SerializeField] private EnemyConfig enemyConfig;
     [SerializeField] private EnemyMovement enemyMovement;
 
@@ -30,8 +30,8 @@ public class EnemyController : CharacterController, IPoolable
     
     public EnemyMovement EnemyMovement { get => enemyMovement; set => enemyMovement = value; }
     public EnemyWeapon EnemyWeapon { get => enemyWeapon; set => enemyWeapon = value; }
-    public EnemySkill EnemySkill { get => enemySkill; set => enemySkill = value; }
-    public EnemyMeleeAttack EnemyMeleeAttack { get => enemyMeleeAttack; set => enemyMeleeAttack = value; }
+    public CastSkillCombat EnemySkill { get => enemySkill; set => enemySkill = value; }
+    public MeleeAnimationCombat EnemyMeleeAttack { get => enemyMeleeAttack; set => enemyMeleeAttack = value; }
     public EnemyConfig EnemyConfig { get => enemyConfig; set => enemyConfig = value; }
     public Vector3 PatrolPosition { get => patrolPosition; set => patrolPosition = value; }
     public float CurrentTime { get => currentTime; set => currentTime = value; }
@@ -40,19 +40,19 @@ public class EnemyController : CharacterController, IPoolable
     public bool IsAttack { get => isAttack; set => isAttack = value; }
     
     // Property để access attack system hiện tại
-    public IAttackable CurrentAttackSystem
+    public ICombatBehavior CurrentAttackSystem
     {
         get
         {
             switch (enemyConfig.attackType)
             {
                 case EnemyConfig.AttackType.Skill:
-                    return enemySkill as IAttackable;
+                    return enemySkill as ICombatBehavior;
                 case EnemyConfig.AttackType.MeleeAttack:
-                    return enemyMeleeAttack as IAttackable;
+                    return enemyMeleeAttack as ICombatBehavior;
                 case EnemyConfig.AttackType.Weapon:
                 default:
-                    return enemyWeapon as IAttackable;
+                    return enemyWeapon as ICombatBehavior;
             }
         }
     }
@@ -156,8 +156,8 @@ public class EnemyController : CharacterController, IPoolable
         {
             Spr.flipX = false;
         }
-        if (enemyConfig.initialWeapon != null)
-            EnemyWeapon.RotateWeaponToPlayer(dir);
+        
+        CurrentAttackSystem?.HandleAiming(dir);
     }
 
 

@@ -7,7 +7,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerVitality))]
-[RequireComponent(typeof(PlayerWeapon))]
+//[RequireComponent(typeof(PlayerWeapon))]
 //[RequireComponent(typeof(PlayerSkill))]
 
 public class PlayerController : CharacterController
@@ -18,7 +18,7 @@ public class PlayerController : CharacterController
 
     [SerializeField] private PlayerMovement _movement;
     [SerializeField] private PlayerVitality _vitality;
-    [SerializeField] private PlayerWeapon _combat;
+    private ICombatBehavior _combat;
     [SerializeField] private DetectionEnemy _detection;
     //private PlayerSkill _skill;
 
@@ -32,14 +32,13 @@ public class PlayerController : CharacterController
         // Dependency Injection: Đẩy dữ liệu vào các module con
         _movement.Initialize(rigidBody2D, Spr, PlayerData);
         _vitality.Initialize(PlayerData);
-        _combat.Initialize(PlayerData, Spr, _vitality, _detection);
+        _combat = GetComponent<ICombatBehavior>();
         // _skill.Initialize(...);
     }
 
     private void Start()
     {
-        if(PlayerData.initialWeapon != null)
-            _combat.CreateWeapon(PlayerData.initialWeapon);
+        // Weapon / Combat initialization happens internally in their own Start methods
     }
 
     private void Update()
@@ -56,7 +55,7 @@ public class PlayerController : CharacterController
 
         _movement.RotationPlayer(facingDirection);
 
-        _combat.RotateWeapon();
+        _combat?.HandleAiming(facingDirection);
     }
 
     private void FixedUpdate()
@@ -69,7 +68,6 @@ public class PlayerController : CharacterController
     protected override void OnMove(Vector2 direction)
     {
         _moveInput = direction;
-        _combat.MovementDirection = direction;
         ChangeAnimationState(_moveInput != Vector2.zero ? Settings.PLAYER_RUN : Settings.PLAYER_IDLE);
     }
 
@@ -77,14 +75,14 @@ public class PlayerController : CharacterController
 
     protected override void OnAttack(bool canAttack)
     {
-        // Delegate attack input to PlayerWeapon; weapon classes manage their own animations
-        if (canAttack == true)
+        // Delegate attack input to IAttackable component
+        if (canAttack)
         {
-            _combat.StartAttack();
+            _combat?.StartAttack();
         }
         else
         {
-            _combat.ReleaseAttack();
+            _combat?.ReleaseAttack();
         }
     }
 

@@ -26,6 +26,7 @@ public class MenuManager : Singleton<MenuManager>
     [SerializeField] private TextMeshProUGUI upgradeCharacterText;
     private SelectCharacter currentPlayer;
     private bool playerSelected;
+    public bool IsPlayerSelected => playerSelected;
 
     [Header("Button")]
     [SerializeField] Button unlockButton;

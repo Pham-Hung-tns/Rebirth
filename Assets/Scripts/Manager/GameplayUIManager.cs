@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
 
-public class UIManager : Singleton<UIManager>
+public class GameplayUIManager : Singleton<GameplayUIManager>
 {
     [Header("Player UI")]
     [SerializeField] private Image healthBarImage;
@@ -72,7 +72,7 @@ public class UIManager : Singleton<UIManager>
     private void OnCoinChanged(float totalCoins)
     {
         if (coinUI != null)
-            coinUI.text = totalCoins.ToString("0.00");
+            coinUI.text = totalCoins.ToString("0");
     }
 
     public void FadeNewDungeon(float value)

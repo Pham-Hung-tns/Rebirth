@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyMeleeAttack : MonoBehaviour, IAttackable
+public class MeleeAnimationCombat : MonoBehaviour, ICombatBehavior
 {
     private EnemyController enemyController;
     private EnemyConfig enemyConfig;
@@ -70,5 +70,10 @@ public class EnemyMeleeAttack : MonoBehaviour, IAttackable
             enemyController.OnAttackComplete();
         }
         OnAttackComplete?.Invoke();
+    }
+
+    public void HandleAiming(Vector2 direction)
+    {
+        // Đã có xử lý Flip Sprite trong EnemyController
     }
 }

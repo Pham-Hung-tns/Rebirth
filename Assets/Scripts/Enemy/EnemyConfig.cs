@@ -57,7 +57,7 @@ public class EnemyConfig : ScriptableObject
     public Weapon initialWeapon;
     
     [Header("Skill")]
-    public EnemySkill initialSkill;
+    public CastSkillCombat initialSkill;
 }
 
 [Serializable]

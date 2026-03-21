@@ -509,7 +509,7 @@ MonoBehaviour:
   animator: {fileID: 8036680113977354321}
   inputReader: {fileID: 11400000, guid: c90b6976fc9abb141a7cb659dc4ce59d, type: 2}
   playerData: {fileID: 11400000, guid: 528d00568d51eb64ca23298be53a5d94, type: 2}
-  _movement: {fileID: 0}
+  _movement: {fileID: 2798636151557092641}
   _vitality: {fileID: 2846387004246204559}
   _combat: {fileID: 8036680112849361990}
   _detection: {fileID: 4246420208324608301}

@@ -670,7 +670,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8777068296620847742, guid: 34e8b7cf197b0bb4aa13ed4ea226f995, type: 3}
       propertyPath: m_Name
-      value: ItemTextManager
+      value: Item Text Manager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 34e8b7cf197b0bb4aa13ed4ea226f995, type: 3}
@@ -2169,7 +2169,7 @@ GameObject:
   - component: {fileID: 696487893}
   - component: {fileID: 696487892}
   m_Layer: 0
-  m_Name: MenuManager
+  m_Name: Menu Characters Manager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2602,7 +2602,7 @@ Transform:
   - {fileID: 1811681699}
   - {fileID: 2052163416}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &801501701
 GameObject:
@@ -2687,7 +2687,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &801501705
 MonoBehaviour:
@@ -2947,7 +2947,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4277488659147179051, guid: 4bb08e1812355be4b9bd9d2f5ae42686, type: 3}
       propertyPath: m_Name
-      value: AudioManager
+      value: Audio Manager
       objectReference: {fileID: 0}
     - target: {fileID: 4277488659147179053, guid: 4bb08e1812355be4b9bd9d2f5ae42686, type: 3}
       propertyPath: m_RootOrder
@@ -3064,7 +3064,7 @@ PrefabInstance:
       objectReference: {fileID: 320819705}
     - target: {fileID: 7620911745187769902, guid: bfb123e432eb68f4e9341341c0d387d9, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7620911745187769902, guid: bfb123e432eb68f4e9341341c0d387d9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3258,7 +3258,7 @@ RectTransform:
   - {fileID: 1199093551}
   - {fileID: 320819708}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -3338,7 +3338,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3693382537779949397, guid: d64bab760fe535143bc936646a5acd28, type: 3}
       propertyPath: m_Name
-      value: DamageManager
+      value: Damage Text Manager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d64bab760fe535143bc936646a5acd28, type: 3}
@@ -3959,244 +3959,244 @@ MonoBehaviour:
   - position: {x: -9.461065, y: 5.5028043, z: 0}
     color: {r: 0, g: 0, b: 0, a: 1}
     uv: {x: 0, y: 0}
-  - position: {x: -9.9585, y: -5.0146, z: 0}
+  - position: {x: -9.9661, y: -5.0018, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.9489, y: -5.1119, z: 0}
+  - position: {x: -9.9565, y: -5.0992, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.9204, y: -5.2056, z: 0}
+  - position: {x: -9.9281, y: -5.1929, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.8743, y: -5.2919, z: 0}
+  - position: {x: -9.8821, y: -5.2792, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.8122, y: -5.3676, z: 0}
+  - position: {x: -9.8201, y: -5.3549, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.7366, y: -5.4297, z: 0}
+  - position: {x: -9.7445, y: -5.4171, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.6504, y: -5.4759, z: 0}
+  - position: {x: -9.6583, y: -5.4634, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.5568, y: -5.5044, z: 0}
+  - position: {x: -9.5647, y: -5.492, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.4593, y: -5.5142, z: 0}
+  - position: {x: -9.4678, y: -5.5018, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.9739, y: -5.5214, z: 0}
+  - position: {x: -4.9863, y: -5.5166, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.8765, y: -5.512, z: 0}
+  - position: {x: -4.8888, y: -5.5073, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.7828, y: -5.4838, z: 0}
+  - position: {x: -4.7951, y: -5.4793, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.6964, y: -5.4378, z: 0}
+  - position: {x: -4.7086, y: -5.4335, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.6206, y: -5.376, z: 0}
+  - position: {x: -4.6327, y: -5.3718, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.5582, y: -5.3005, z: 0}
+  - position: {x: -4.5702, y: -5.2964, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.5118, y: -5.2143, z: 0}
+  - position: {x: -4.5237, y: -5.2103, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.4831, y: -5.1208, z: 0}
+  - position: {x: -4.4947, y: -5.1168, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.4731, y: -5.0197, z: 0}
+  - position: {x: -4.4846, y: -5.0196, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -4.4743, y: -4.657, z: 0}
+  - position: {x: -4.4824, y: -4.6614, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -1.7292, y: -4.8621, z: 0}
+  - position: {x: -1.7438, y: -4.8687, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -1.6923, y: -4.8635, z: 0}
+  - position: {x: -1.7054, y: -4.8701, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 0.9026, y: -4.8658, z: 0}
+  - position: {x: 0.9062, y: -4.8663, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 0.908, y: -4.9124, z: 0}
+  - position: {x: 0.9088, y: -4.8948, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 0.9381, y: -5.0055, z: 0}
+  - position: {x: 0.9366, y: -4.9886, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 0.9857, y: -5.091, z: 0}
+  - position: {x: 0.9822, y: -5.0752, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 1.0491, y: -5.1656, z: 0}
+  - position: {x: 1.0437, y: -5.1513, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 1.1258, y: -5.2264, z: 0}
+  - position: {x: 1.1189, y: -5.2139, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 1.2128, y: -5.2711, z: 0}
+  - position: {x: 1.2048, y: -5.2607, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 1.3069, y: -5.298, z: 0}
+  - position: {x: 1.2983, y: -5.2899, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 1.3971, y: -5.3061, z: 0}
+  - position: {x: 1.4004, y: -5.3003, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.5173, y: -5.2933, z: 0}
+  - position: {x: 15.5067, y: -5.2839, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.6146, y: -5.2836, z: 0}
+  - position: {x: 15.6041, y: -5.2742, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.7083, y: -5.2552, z: 0}
+  - position: {x: 15.6977, y: -5.2457, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.7946, y: -5.209, z: 0}
+  - position: {x: 15.784, y: -5.1996, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.8702, y: -5.147, z: 0}
+  - position: {x: 15.8596, y: -5.1375, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.9324, y: -5.0714, z: 0}
+  - position: {x: 15.9217, y: -5.0619, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.9786, y: -4.9851, z: 0}
+  - position: {x: 15.9679, y: -4.9756, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 16.0071, y: -4.8915, z: 0}
+  - position: {x: 15.9964, y: -4.8819, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 16.0168, y: -4.7934, z: 0}
+  - position: {x: 16.0061, y: -4.7842, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 16.0182, y: 5.5048, z: 0}
+  - position: {x: 16.0118, y: 5.4987, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 16.0086, y: 5.6022, z: 0}
+  - position: {x: 16.0023, y: 5.5961, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.9803, y: 5.6959, z: 0}
+  - position: {x: 15.974, y: 5.6898, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.9342, y: 5.7822, z: 0}
+  - position: {x: 15.9279, y: 5.7762, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.8722, y: 5.858, z: 0}
+  - position: {x: 15.866, y: 5.8519, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.7967, y: 5.9202, z: 0}
+  - position: {x: 15.7905, y: 5.9141, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.7105, y: 5.9665, z: 0}
+  - position: {x: 15.7043, y: 5.9605, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.6169, y: 5.9951, z: 0}
+  - position: {x: 15.6107, y: 5.9891, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 15.5193, y: 6.0049, z: 0}
+  - position: {x: 15.5134, y: 5.999, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 6.6664, y: 6.0241, z: 0}
+  - position: {x: 6.6712, y: 6.0266, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 6.6398, y: 7.5331, z: 0}
+  - position: {x: 6.6334, y: 7.5286, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 6.6285, y: 7.6303, z: 0}
+  - position: {x: 6.6214, y: 7.6257, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 6.5985, y: 7.7235, z: 0}
+  - position: {x: 6.5907, y: 7.7186, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 6.5509, y: 7.809, z: 0}
+  - position: {x: 6.5425, y: 7.8038, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 6.4543, y: 7.9131, z: 0}
+  - position: {x: 6.4504, y: 7.9028, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 5.4084, y: 8.7588, z: 0}
+  - position: {x: 5.3988, y: 8.764, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 5.3266, y: 8.8126, z: 0}
+  - position: {x: 5.3174, y: 8.8183, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 5.236, y: 8.8494, z: 0}
+  - position: {x: 5.2269, y: 8.8557, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 5.0939, y: 8.87, z: 0}
+  - position: {x: 5.0821, y: 8.8772, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 1.4866, y: 8.8693, z: 0}
+  - position: {x: 1.4885, y: 8.8776, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 1.3892, y: 8.8597, z: 0}
+  - position: {x: 1.3911, y: 8.868, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 1.2956, y: 8.8313, z: 0}
+  - position: {x: 1.2974, y: 8.8397, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: 1.2255, y: 8.7956, z: 0}
+  - position: {x: 1.2241, y: 8.8021, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -0.1585, y: 7.9476, z: 0}
+  - position: {x: -0.1487, y: 7.9474, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -0.2366, y: 7.8886, z: 0}
+  - position: {x: -0.2263, y: 7.8878, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -0.3016, y: 7.8155, z: 0}
+  - position: {x: -0.2908, y: 7.8142, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -0.3512, y: 7.7311, z: 0}
+  - position: {x: -0.3398, y: 7.7294, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -0.3833, y: 7.6387, z: 0}
+  - position: {x: -0.3713, y: 7.6368, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -0.3973, y: 7.5189, z: 0}
+  - position: {x: -0.3844, y: 7.5231, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -0.3903, y: 6.024, z: 0}
+  - position: {x: -0.385, y: 6.0247, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.4671, y: 6.0029, z: 0}
+  - position: {x: -9.4687, y: 5.9936, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.5644, y: 5.9931, z: 0}
+  - position: {x: -9.5661, y: 5.9837, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.658, y: 5.9645, z: 0}
+  - position: {x: -9.6596, y: 5.955, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.7443, y: 5.9182, z: 0}
+  - position: {x: -9.7458, y: 5.9086, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.8198, y: 5.8561, z: 0}
+  - position: {x: -9.8213, y: 5.8464, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.8818, y: 5.7804, z: 0}
+  - position: {x: -9.8833, y: 5.7706, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.9279, y: 5.694, z: 0}
+  - position: {x: -9.9292, y: 5.6842, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.9563, y: 5.6004, z: 0}
+  - position: {x: -9.9575, y: 5.5905, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
-  - position: {x: -9.9659, y: 5.5025, z: 0}
+  - position: {x: -9.967, y: 5.4936, z: 0}
     color: {r: 0, g: 0, b: 0, a: 0}
     uv: {x: 0, y: 0}
   m_Triangles: 00000200010000000e00020002000d00030002000e000d0003000d00040004000600050004000800060004000d00080006000800070008000a00090008000b000a0008000d000b000b000d000c000f001e001e000f001e001f000f001f0020000f00200021000f00210022000f00220023000f00230024000f00240025000f00250026000f00100027000f0026002700100027002800100028002900100029002a0010002a002b0010002b002c0010002c002d0010002d002e0010002e002f0010001100300010002f003000110012003100110030003100120031003200120013003300120032003300130014003400130033003400140034003500140035003600140036003700140037003800140038003900140039003a0014003a003b00140015003c0014003b003c0015003c003d0015003d003e0015003e003f0015003f004000150040004100150041004200150042004300150043004400150016004500150044004500160045004600160046004700160047004800160048004900160049004a0016004a004b0016004b004c0016004c004d00160017004e0016004d004e00170018004f0017004e004f0018004f00500018005000510018005100520018005200530018001900540018005300540019005400550019005500560019005600570019001a0058001900570058001a00580059001a0059005a001a005a005b001a001b005c001a005b005c001b005c005d001b005d005e001b005e005f001b005f0060001b00600061001b001c0062001b00610062001c001d0063001c00620063001d00630064001d00640065001d00650066001d00660067001d00670068001d00680069001d0069006a001d006a006b001e000f001d001e006b001d00
   m_LocalBounds:
-    m_Center: {x: 3.0261497, y: 1.6743, z: 0}
-    m_Extent: {x: 12.99205, y: 7.1956997, z: 0}
+    m_Center: {x: 3.0224004, y: 1.6804998, z: 0}
+    m_Extent: {x: 12.989401, y: 7.1970997, z: 0}
   m_PointLightInnerAngle: 360
   m_PointLightOuterAngle: 360
   m_PointLightInnerRadius: 0
@@ -4235,7 +4235,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1169959477
 GameObject:
@@ -5064,7 +5064,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7966111965141572667, guid: c23748a8f31f5d74aab73ac26c63f293, type: 3}
       propertyPath: m_Name
-      value: GameManager
+      value: Game Manager
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c23748a8f31f5d74aab73ac26c63f293, type: 3}
@@ -13056,7 +13056,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1674450173
 MonoBehaviour:
@@ -15523,7 +15523,7 @@ Transform:
   - {fileID: 449052675}
   - {fileID: 6380401}
   m_Father: {fileID: 0}
-  m_RootOrder: 13
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1850564810
 GameObject:
@@ -16811,7 +16811,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 768287980322341712, guid: 486c7660d634bd5448519bb24328669f, type: 3}
       propertyPath: m_Name
-      value: ObjectPoolManager
+      value: ObjectPooling Manager
       objectReference: {fileID: 0}
     - target: {fileID: 7817373292358254223, guid: 486c7660d634bd5448519bb24328669f, type: 3}
       propertyPath: m_RootOrder
@@ -16859,6 +16859,63 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 486c7660d634bd5448519bb24328669f, type: 3}
+--- !u!1001 &2884053865083829044
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2302757149404942823, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6736652385722160699, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
+      propertyPath: m_Name
+      value: UIPopup Manager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3492e7f32c3d2164a8814ac14842770a, type: 3}
 --- !u!1001 &4853795919925548956
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16965,7 +17022,7 @@ PrefabInstance:
       objectReference: {fileID: 965897059}
     - target: {fileID: 5621139410338980334, guid: 124b961ed727f804ab38bda662a73e6f, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 5621139410338980334, guid: 124b961ed727f804ab38bda662a73e6f, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17440,7 +17497,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7052310052892430257, guid: d9674e7607385e04e8ef2cc7ff09c663, type: 3}
       propertyPath: m_Name
-      value: CoinManager
+      value: Coin Manager
       objectReference: {fileID: 0}
     - target: {fileID: 7052310052892430263, guid: d9674e7607385e04e8ef2cc7ff09c663, type: 3}
       propertyPath: m_RootOrder

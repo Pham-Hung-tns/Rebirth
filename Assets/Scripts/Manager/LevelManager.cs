@@ -175,11 +175,11 @@ public class LevelManager : Singleton<LevelManager>
                 pc.enabled = false;
         }
 
-        UIManager.Instance.FadeNewDungeon(1);
+        UIEvents.OnFadeNewDungeon?.Invoke(1f);
         yield return new WaitForSeconds(2f);
         ContinueNextLevel();
-        UIManager.Instance.UpdateLevelText(GetCurrentLevelText());
-        UIManager.Instance.FadeNewDungeon(0f);
+        UIEvents.OnLevelTextUpdate?.Invoke(GetCurrentLevelText());
+        UIEvents.OnFadeNewDungeon?.Invoke(0f);
 
         // Re-enable player control after transition (if player still exists)
         yield return null; // wait one frame to ensure scene objects updated

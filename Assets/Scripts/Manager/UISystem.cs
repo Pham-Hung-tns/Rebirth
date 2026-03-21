@@ -22,14 +22,13 @@ public class UISystem : MonoBehaviour
     public void ShowAudioPanel()
     {
         pauseButton.SetActive(false);
-        audioPanel.SetActive(true);
-        Time.timeScale = 0;
+        UIEvents.OnPushPopup?.Invoke(audioPanel, true); // true = pause game
     }
+    
     public void HideAudioPanel()
     {
         pauseButton.SetActive(true);
-        audioPanel.SetActive(false);
-        Time.timeScale = 1;
+        UIEvents.OnPopPopup?.Invoke(audioPanel);
     }
     public void ToggleMusic()
     {

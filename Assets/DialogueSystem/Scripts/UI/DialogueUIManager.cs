@@ -16,6 +16,16 @@ public class DialogueUIManager : MonoBehaviour
     private DSDialogueSO currentDialogue;
     private NPCInteractable currentNPC;
 
+    private void OnEnable()
+    {
+        UIEvents.OnStartDialogue += StartDialogue;
+    }
+
+    private void OnDisable()
+    {
+        UIEvents.OnStartDialogue -= StartDialogue;
+    }
+
     private void Start()
     {
         // Ẩn bảng hội thoại khi mới bắt đầu
@@ -30,7 +40,7 @@ public class DialogueUIManager : MonoBehaviour
         if (npc == null || npc.NpcDialogue == null || npc.NpcDialogue.StartingDialogue == null) return;
         
         currentNPC = npc;
-        dialoguePanel.SetActive(true);
+        UIEvents.OnPushPopup?.Invoke(dialoguePanel, false); // Trải popup qua Event
 
         // Resume nếu NPC đã lưu lại Node đang dang dở, nếu không thì bắt đầu từ đầu
         DSDialogueSO nodeToShow = currentNPC.CurrentNode != null ? currentNPC.CurrentNode : npc.NpcDialogue.StartingDialogue;
@@ -137,7 +147,7 @@ public class DialogueUIManager : MonoBehaviour
     /// </summary>
     public void EndDialogue()
     {
-        dialoguePanel.SetActive(false);
+        UIEvents.OnPopPopup?.Invoke(dialoguePanel); // Gỡ khỏi UI Stack
         currentDialogue = null;
         currentNPC = null;
     }

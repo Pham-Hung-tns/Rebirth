@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyWeapon : CharacterWeapon, IAttackable
+public class EnemyWeapon : WieldedWeaponCombat, ICombatBehavior
 {
     private EnemyController enemyController;
     
@@ -65,9 +65,9 @@ public class EnemyWeapon : CharacterWeapon, IAttackable
         OnAttackComplete?.Invoke();
     }
 
-    public void RotateWeaponToPlayer(Vector3 dir)
+    public void HandleAiming(Vector2 dir)
     {
-        RotateWeaponToAgent(dir);
+        RotateWeaponToAgent((Vector3)dir);
     }
 
     public void DestroyWeapon()
