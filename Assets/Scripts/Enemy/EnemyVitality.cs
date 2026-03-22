@@ -8,8 +8,10 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
     public static event Action OnChangeState;
     private float enemyHealth;
     private float initialHealth; // Lưu HP ban đầu để reset khi pool spawn
-    private Coroutine coroutine;
     private bool isDead; // Guard chống fire OnEnemyKilledEvent nhiều lần
+
+    [Header("Juicing")]
+    [SerializeField] private FeedbackPlayer damageFeedback;
 
     public float Health { get => enemyHealth; set => enemyHealth = value; }
 
@@ -19,15 +21,11 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
         initialHealth = config.Health;
     }
 
-    private IEnumerator IEChangeColor()
-    {
-        //spr.color = Color.red;
-        yield return new WaitForSeconds(0.3f);
-        //spr.color = initialColor;
-    }
 
     public void TakeDamage(int amount, GameObject attacker, Vector2 knockbackDir, float knockbackForce)
     {
+        if (isDead) return;
+
         // Implement knockback
         if (knockbackForce > 0)
         {
@@ -41,12 +39,11 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
         AudioManager.Instance.PlaySFX(SFXClip.EnemyHit);
         enemyHealth -= amount;
         DamageManager.Instance.ShowDmg(amount, transform);
-        if(coroutine != null)
+        
+        if (damageFeedback != null)
         {
-            StopCoroutine(coroutine);
-            coroutine = null;
+            damageFeedback.PlayFeedbacks();
         }
-        coroutine = StartCoroutine(IEChangeColor());
 
         if(enemyHealth <= 0 && !isDead)
         {
@@ -76,13 +73,8 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
         enemyHealth = initialHealth;
         isDead = false;
 
-        // Stop coroutine đang chạy từ lần sử dụng trước
-        if (coroutine != null)
-        {
-            StopCoroutine(coroutine);
-            coroutine = null;
-        }
-
+        // Xóa stop coroutine IEChangeColor vì đã chuyển sang Feedback System
+        
         // Reset velocity nếu có rigidbody
         Rigidbody2D rb = GetComponent<Rigidbody2D>();
         if (rb != null)
@@ -97,10 +89,10 @@ public class EnemyVitality : MonoBehaviour, ITakeDamage, IPoolable
     /// </summary>
     public void OnPoolDespawn()
     {
-        if (coroutine != null)
+        // BlinkFeedback và các feedback khác tự dọn dẹp qua OnDisable / CompletePreviousFeedback
+        if (damageFeedback != null)
         {
-            StopCoroutine(coroutine);
-            coroutine = null;
+            damageFeedback.CompleteFeedbacks();
         }
     }
 

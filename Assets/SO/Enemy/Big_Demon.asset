@@ -12,7 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8909334218c00f943a0cd09afb0b53e3, type: 3}
   m_Name: Big_Demon
   m_EditorClassIdentifier: 
+  enemyPrefab: {fileID: 7604816148360305236, guid: 6de73f46b46685043bc26ea097b0d1be, type: 3}
   Health: 15
+  healthByLevel:
+  - dungeonLevel: {fileID: 11400000, guid: e017a8a6a0a0d1143b016540e1032893, type: 2}
+    health: 15
+  - dungeonLevel: {fileID: 11400000, guid: 710fb095fc9e08a48ba9ee939600e6e9, type: 2}
+    health: 20
+  - dungeonLevel: {fileID: 11400000, guid: fb73327b7bc6f29449c4638ad3ccbfdd, type: 2}
+    health: 40
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1024
@@ -23,13 +31,14 @@ MonoBehaviour:
   rangeCanLookAtPlayer: 0
   attackRange: 0.6
   damageAmount: 10
-  timeToWander: 3
-  timeToIdle: 5
+  leisureTime: 3
+  wanderingTime: 2
   speed: 10
   moveRange: {x: 10, y: 10, z: 0}
-  timeToAttack: 2
+  targetingTime: 2
+  chasingTime: 0
   attackType: 2
-  attackDelay: 0.5
+  attackDelay: 0.25
   knockbackDir: {x: 0, y: 0}
   knockbackForce: 5
   initialWeapon: {fileID: 0}

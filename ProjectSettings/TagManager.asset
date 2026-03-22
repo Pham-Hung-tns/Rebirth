@@ -71,7 +71,7 @@ TagManager:
   - name: Props
     uniqueID: 1249629529
     locked: 0
-  - name: Sword
+  - name: Melee Weapon
     uniqueID: 967134103
     locked: 0
   - name: Enemy
@@ -80,8 +80,14 @@ TagManager:
   - name: Player
     uniqueID: 561647781
     locked: 0
-  - name: Gun & Bow
+  - name: Blood
+    uniqueID: 1124162277
+    locked: 0
+  - name: Range Weapon
     uniqueID: 1957423847
+    locked: 0
+  - name: Emote
+    uniqueID: 1463888671
     locked: 0
   - name: Font
     uniqueID: 4112656661

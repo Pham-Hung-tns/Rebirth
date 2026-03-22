@@ -24,9 +24,9 @@ public class PlayerWeapon : WieldedWeaponCombat, ICombatBehavior
         {
             playerConfig = pc.PlayerData;
             spriteRenderer = pc.Spr;
+            detection = pc.Detection;
         }
         playerVitality = GetComponent<PlayerVitality>();
-        detection = GetComponent<DetectionEnemy>();
     }
 
     private void Start()
@@ -252,7 +252,7 @@ public class PlayerWeapon : WieldedWeaponCombat, ICombatBehavior
         {
             if (!CanUseWeapon())
             {
-                // If cannot use (no energy), stop auto-fire
+                AudioManager.Instance.PlaySFX(SFXClip.GunAttackNoEnergy);
                 CancelInvoke(nameof(AutoFire));
                 return;
             }

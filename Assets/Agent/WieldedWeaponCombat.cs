@@ -10,6 +10,10 @@ public class WieldedWeaponCombat : MonoBehaviour
     [SerializeField] protected Transform weaponPosition;
     [SerializeField] protected float rotationSpeed = 10f; // Tốc độ xoay súng/mũi đánh] 
 
+    [Header("Juicing")]
+    [Tooltip("Feedback phát ra tiếng khi bắt đầu gồng sức (ví dụ: tiếng kéo cung)")]
+    [SerializeField] protected FeedbackPlayer chargeFeedback;
+
     protected Weapon currentWeapon;
     protected int weaponIndex; // 0 - 1
     protected Weapon[] equippedWeapons = new Weapon[2];
@@ -66,6 +70,11 @@ public class WieldedWeaponCombat : MonoBehaviour
         _lastAttackTime = 0f;
         _isCharging = false;
         _chargeStartTime = 0f;
+
+        if (chargeFeedback != null)
+        {
+            chargeFeedback.CompleteFeedbacks();
+        }
     }
 
     protected void FlipWeapon(Vector3 dir)
@@ -126,6 +135,11 @@ public class WieldedWeaponCombat : MonoBehaviour
             _chargeStartTime = Time.time;
             // set animator to charging state
             currentWeapon.ChangeAnimationState(Settings.BOW_CHARGING);
+
+            if (chargeFeedback != null)
+            {
+                chargeFeedback.PlayFeedbacks();
+            }
         }
         else
         {
@@ -142,6 +156,11 @@ public class WieldedWeaponCombat : MonoBehaviour
         if (_isCharging)
         {
             _isCharging = false;
+
+            if (chargeFeedback != null)
+            {
+                chargeFeedback.CompleteFeedbacks();
+            }
 
             // Tính toán lực tụ được (từ 0 đến 1)
             float chargeDuration = Mathf.Clamp(Time.time - _chargeStartTime, 0, currentWeapon.WeaponData.maxChargeTime);

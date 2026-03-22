@@ -81,7 +81,7 @@ public class MeleeWeapon : Weapon
             return;
 
         // Play attack sound
-        PlayAttackSFX();
+        //PlayAttackSFX();
 
         // Determine damage (consider character critical for player)
         int baseDamage = Mathf.RoundToInt(meleeData.damage * damageMultiplier);

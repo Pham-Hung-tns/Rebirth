@@ -7,7 +7,8 @@ public class WeaponDataSO : ItemDataSO
     {
         Melee,
         Gun,
-        Staff
+        Staff,
+        Bow
     }
 
     public enum WeaponRarity

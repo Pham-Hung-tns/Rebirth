@@ -13,23 +13,30 @@ MonoBehaviour:
   m_Name: Zoombie
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 4288501162753985557, guid: c2fdfe728100b7a48bf5b120c7f6bdb6, type: 3}
-  Health: 2
-  healthByLevel: []
+  Health: 15
+  healthByLevel:
+  - dungeonLevel: {fileID: 11400000, guid: e017a8a6a0a0d1143b016540e1032893, type: 2}
+    health: 15
+  - dungeonLevel: {fileID: 11400000, guid: 710fb095fc9e08a48ba9ee939600e6e9, type: 2}
+    health: 25
+  - dungeonLevel: {fileID: 11400000, guid: fb73327b7bc6f29449c4638ad3ccbfdd, type: 2}
+    health: 50
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1024
   playerLayer:
     serializedVersion: 2
     m_Bits: 64
-  rangeCanDetectPlayer: 6
+  rangeCanDetectPlayer: 7
   rangeCanLookAtPlayer: 8
-  attackRange: 1.5
+  attackRange: 0
   damageAmount: 10
-  timeToWander: 3
-  timeToIdle: 5
-  speed: 10
+  leisureTime: 10
+  wanderingTime: 0
+  speed: 0
   moveRange: {x: 10, y: 10, z: 0}
-  timeToAttack: 2
+  targetingTime: 2
+  chasingTime: 0
   attackType: 0
   attackDelay: 0.5
   knockbackDir: {x: 0, y: 0}

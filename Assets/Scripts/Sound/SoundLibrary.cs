@@ -19,7 +19,9 @@ public enum SFXClip
 {
     None = 0,
     PlayerFootstep,
-    PlayerAttack,
+    GunAttack,
+    GunAttackNoEnergy,
+    BowAttack,
     EnemyHit,
     EnemyDie,
     DoorOpen,

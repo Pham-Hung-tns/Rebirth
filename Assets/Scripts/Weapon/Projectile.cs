@@ -87,7 +87,7 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        if (collision.CompareTag(Settings.COLLISION_TILEMAP_TAG))
+        if (collision.CompareTag(Settings.COLLISION_TILEMAP_TAG) || collision.CompareTag(Settings.FRONT_TILEMAP_TAG))
         {
             ReturnBullet();
             return;
