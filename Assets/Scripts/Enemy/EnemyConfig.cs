@@ -36,15 +36,18 @@ public class EnemyConfig : ScriptableObject
     public float damageAmount = 10f;
 
     [Header("Idle State")]
-    public float timeToWander;
+    public float leisureTime;
 
     [Header("Wander State")]
-    public float timeToIdle;
+    public float wanderingTime;
     public float speed;
     public Vector3 moveRange;
 
+    [Header("Look Target State")]
+    public float targetingTime;
+
     [Header("Chase State")]
-    public float timeToAttack;
+    public float chasingTime;
 
     [Header("Attack State")]
     public AttackType attackType = AttackType.Weapon;

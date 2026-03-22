@@ -14,6 +14,10 @@ public class EnemyController : CharacterController, IPoolable
     // List of states configured in the Inspector
     [SerializeField] private List<AIState> states = new List<AIState>();
 
+    [Header("Juicing")] 
+    [SerializeField] private FeedbackPlayer detectFeedback;
+
+    [Header ("First State")]
     public AIState currentState;
     // Lưu state ban đầu để reset khi pool spawn
     private AIState initialState;
@@ -38,6 +42,7 @@ public class EnemyController : CharacterController, IPoolable
     public float TimeLimit { get => timeLimit; set => timeLimit = value; }
     public Transform Player { get => player; set => player = value; }
     public bool IsAttack { get => isAttack; set => isAttack = value; }
+    public FeedbackPlayer DetectFeedback => detectFeedback;
     
     // Property để access attack system hiện tại
     public ICombatBehavior CurrentAttackSystem
@@ -127,7 +132,6 @@ public class EnemyController : CharacterController, IPoolable
         var previous = currentState;
         if (nextState == previous)
             return;
-
         // Exit previous if any
         previous?.ExitState();
 
@@ -182,7 +186,6 @@ public class EnemyController : CharacterController, IPoolable
         IsAttack = false;
     }
 
-    #region IPoolable - Reset khi tái sử dụng từ pool
 
     /// <summary>
     /// Reset toàn bộ state FSM khi enemy được lấy lại từ pool.
@@ -249,7 +252,6 @@ public class EnemyController : CharacterController, IPoolable
         StopAllCoroutines();
     }
 
-    #endregion
 
     // Gizmos
     public void OnDrawGizmos()

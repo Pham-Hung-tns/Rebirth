@@ -32,4 +32,8 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: c78b3a235e0b89b4ea47240f0b9c194d, type: 3}
   - sfx: 6
     clip: {fileID: 8300000, guid: 14b46158ae557ea4e82ad749894058fd, type: 3}
+  - sfx: 2
+    clip: {fileID: 8300000, guid: 7d7d440514cf1bd43bf524ec544d5978, type: 3}
+  - sfx: 3
+    clip: {fileID: 8300000, guid: 6f6a9512ca3b54e4c8abea19e9f4c2d9, type: 3}
   startupTrack: 1

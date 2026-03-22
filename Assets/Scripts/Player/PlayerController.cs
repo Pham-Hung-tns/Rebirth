@@ -26,6 +26,7 @@ public class PlayerController : CharacterController
     private NPCInteractable _currentInteractable; // Thêm biến lưu NPC đang ở gần
 
     public PlayerConfig PlayerData { get => playerData; set => playerData = value; }
+    public DetectionEnemy Detection => _detection;
 
     private void Awake()
     {

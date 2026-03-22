@@ -8,6 +8,9 @@ public class ShowDamageText : MonoBehaviour, IPoolable
     [SerializeField] private TextMeshProUGUI dmgText;
     [SerializeField] private float duration = 1.2f;
 
+    private int currentDamage;
+    private float animTimer = 0f;
+
     public void OnPoolSpawn()
     {
         // Chuẩn bị khi tái sử dụng từ Pool
@@ -21,15 +24,25 @@ public class ShowDamageText : MonoBehaviour, IPoolable
 
     public void SetDamageText(int value)
     {
-        dmgText.text = value.ToString();
+        currentDamage = value;
+        dmgText.text = currentDamage.ToString();
         StopAllCoroutines(); // Đảm bảo không đè Coroutine kịch bản cũ
         StartCoroutine(AnimateText());
     }
 
+    public void AddDamage(int additionalValue)
+    {
+        currentDamage += additionalValue;
+        dmgText.text = currentDamage.ToString();
+
+        // Combo-hit: Đẩy lùi thời gian animation lại một chút (max 0.3s) 
+        // để số giật nảy to lên lại và lâu biến mất hơn
+        animTimer = Mathf.Max(0f, animTimer - 0.3f);
+    }
+
     private IEnumerator AnimateText()
     {
-        float timer = 0f;
-        //float duration = 1.2f;
+        animTimer = 0f;
 
         Vector3 startPos = transform.position;
         Vector3 endPos = startPos + (Vector3.up * 1.5f); // Bay lên 1.5 units
@@ -40,10 +53,10 @@ public class ShowDamageText : MonoBehaviour, IPoolable
         
         transform.localScale = Vector3.zero;
 
-        while (timer < duration)
+        while (animTimer < duration)
         {
-            timer += Time.deltaTime;
-            float ratio = timer / duration;
+            animTimer += Time.deltaTime;
+            float ratio = animTimer / duration;
 
             // 1. Bay chầm chậm lên trên
             transform.position = Vector3.Lerp(startPos, endPos, ratio);
@@ -62,6 +75,11 @@ public class ShowDamageText : MonoBehaviour, IPoolable
             if (ratio > 0.5f)
             {
                 startColor.a = Mathf.Lerp(1f, 0f, (ratio - 0.5f) / 0.5f);
+                dmgText.color = startColor;
+            }
+            else
+            {
+                startColor.a = 1f; // Chắc chắn đục nếu ratio bị lùi về < 0.5 do AddDamage
                 dmgText.color = startColor;
             }
 

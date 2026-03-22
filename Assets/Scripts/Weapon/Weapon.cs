@@ -10,10 +10,6 @@ public class Weapon : MonoBehaviour
 
     [SerializeField] protected WeaponDataSO weaponData;
 
-    [Header("Audio")]
-    [SerializeField] protected AudioClip attackSFX;
-    [SerializeField] protected AudioClip chargeSFX;
-
     [SerializeField] protected Animator animator;
 
     private int currentState;
@@ -37,16 +33,5 @@ public class Weapon : MonoBehaviour
         currentState = newState;
     }
 
-    // Audio helpers
-    public void PlayAttackSFX()
-    {
-        if (attackSFX == null) return;
-        AudioManager.Instance.PlaySFX(attackSFX);
-    }
-
-    public void PlayChargeSFX()
-    {
-        if (chargeSFX == null) return;
-        AudioManager.Instance.PlaySFX(chargeSFX);
-    }
+    // Âm thanh giờ đây được Handle tự động bởi AudioFeedback (Kéo thẻ trên inspector)
 }

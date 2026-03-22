@@ -7,6 +7,9 @@ public class RangeWeapon : Weapon
     [SerializeField] private Projectile projectilePrefab;
     [SerializeField] protected Transform shootTrans;
 
+    [Header("Juicing")]
+    [SerializeField] private FeedbackPlayer fireFeedback;
+
     public override void DestroyWeapon()
     {
         Destroy(gameObject);
@@ -16,8 +19,11 @@ public class RangeWeapon : Weapon
     {
         if (!(weaponData is RangeWeaponDataSO rangeData)) return;
 
-        // Play attack sound
-        PlayAttackSFX();
+        // Juicing: Trigger feedbacks (Muzzle Flash, Camera Shake, Audio, etc.)
+        if (fireFeedback != null)
+        {
+            fireFeedback.PlayFeedbacks();
+        }
 
         float startAngle = -rangeData.spreadAngle / 2f;
         float angleStep = rangeData.projectileCount > 1 ? rangeData.spreadAngle / (rangeData.projectileCount - 1) : 0f;
@@ -60,15 +66,5 @@ public class RangeWeapon : Weapon
                 bullet.Initialize(Character.Owner, rangeData.projectileSpeed, baseDamage, knockbackDir, knockbackForce, rangeData.projectileLifetime);
             }
         }
-    }
-
-    public void StartCharge()
-    {
-        PlayChargeSFX();
-    }
-
-    public void StopCharge()
-    {
-        // optional: stop charge SFX if using looping audio
     }
 }

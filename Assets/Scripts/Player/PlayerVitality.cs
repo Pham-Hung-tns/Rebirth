@@ -12,6 +12,9 @@ public class PlayerVitality : MonoBehaviour, ITakeDamage
     private float timer;
     private Coroutine armorCooldownCoroutine;
 
+    [Header("Juicing")]
+    [SerializeField] private FeedbackPlayer damageFeedback;
+
     // Sử dụng Property để UI có thể lắng nghe sự thay đổi nếu cần
     public float CurrentHealth { get; private set; }
     public float CurrentArmor { get; private set; }
@@ -79,6 +82,11 @@ public class PlayerVitality : MonoBehaviour, ITakeDamage
             {
                 rb.AddForce(knockbackDir * knockbackForce, ForceMode2D.Impulse);
             }
+        }
+
+        if (damageFeedback != null)
+        {
+            damageFeedback.PlayFeedbacks();
         }
 
         if (CurrentHealth <= 0f)

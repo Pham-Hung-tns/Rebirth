@@ -55,7 +55,8 @@ public class Spike : MonoBehaviour
             PlayerVitality obj = collision.GetComponent<PlayerVitality>();
             if(obj != null)
             {
-                DungeonCM.Instance.ShakeCM(3f, 1f);
+                if (CameraManager.Instance != null)
+                    CameraManager.Instance.ShakeCM(3f, 1f);
                 obj.TakeDamage(1, this.gameObject, Vector2.zero, 0f);
             }
         }    

@@ -12,12 +12,6 @@ public class LevelManager : Singleton<LevelManager>
 
     public GameObject SelectedPlayer { get; set; }
 
-    [Header("Templates")]
-    //[SerializeField] private RoomTemplate roomTemplates;
-    //[SerializeField] private DungeonLibrary dungeonLibrary;
-    // public RoomTemplate RoomTemplates => roomTemplates;
-    //public DungeonLibrary DoorSO => dungeonLibrary;
-
     [Header("Dungeon Config")]
     [SerializeField] private DungeonLevelSO startingDungeonLevel;
     [SerializeField] private DungeonLevelSO[] dungeonLevels;
@@ -28,9 +22,6 @@ public class LevelManager : Singleton<LevelManager>
     private DungeonLevelSO currentDungeonLevel;
 
     private GameObject currentDungeonGO;
-
-
-
 
     protected override void Awake()
     {

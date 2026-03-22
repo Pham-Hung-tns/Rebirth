@@ -34,5 +34,5 @@ MonoBehaviour:
   upgradeCost: 30
   upgradeCostPercent: 30
   playerPrefab: {fileID: 8036680113951382889, guid: 9cf9e9263d19a8545a76cee07ef00420, type: 3}
-  initialWeapon: {fileID: 5234706041011484672, guid: 271c5deee500be9418e421ea37324094, type: 3}
+  initialWeapon: {fileID: 8736767362372929312, guid: baa395890fa20cd4d87607f63a71d116, type: 3}
   skillTree: {fileID: 11400000, guid: 467ca34ae0c3de047b0995bed4f8efad, type: 2}

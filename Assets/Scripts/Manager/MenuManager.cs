@@ -78,6 +78,12 @@ public class MenuManager : Singleton<MenuManager>
         // Bật mobile controls nếu platform là mobile (do PlatformUIController quản lý list)
         FindObjectOfType<PlatformUIController>()?.ShowMobileControls();
 
+        // Instruct the CameraManager to follow this newly selected player
+        if (CameraManager.Instance != null)
+        {
+            CameraManager.Instance.SetFollowTarget(currentPlayer.transform);
+        }
+
         statPanel.SetActive(true);
         currentPlayer.GetComponent<ClickHandle>().enabled = false;
     }

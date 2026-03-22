@@ -17,7 +17,6 @@ public class ChaseAction : AIAction
         // Set flag để EnemyMovement áp dụng fallback movement
         if (movement != null)
             movement.SetChasing(true);
-        
         enemyBrain.ChangeAnimationState(Settings.CHASE_STATE);
     }
 

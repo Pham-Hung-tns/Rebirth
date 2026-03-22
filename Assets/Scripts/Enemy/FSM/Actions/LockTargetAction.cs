@@ -5,13 +5,17 @@ using UnityEngine;
 public class LockTargetAction : AIAction
 {
     private Transform target;
+
     public override void OnEnter()
     {
         // setup attack (e.g. reset timers)
         target = enemyBrain.Player;
-        enemyBrain.TimeLimit = enemyBrain.EnemyConfig.timeToAttack;
+        enemyBrain.TimeLimit = enemyBrain.EnemyConfig.targetingTime;
         enemyBrain.Rb.velocity = Vector2.zero;
-
+        
+        if (enemyBrain.DetectFeedback != null)
+            enemyBrain.DetectFeedback.PlayFeedbacks();
+            
         enemyBrain.ChangeAnimationState(Settings.IDLE_STATE);
     }
 
@@ -23,5 +27,8 @@ public class LockTargetAction : AIAction
     public override void OnExit()
     {
         enemyBrain.Player = target;
+        
+        if (enemyBrain.DetectFeedback != null)
+            enemyBrain.DetectFeedback.CompleteFeedbacks();
     }
 }

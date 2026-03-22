@@ -1,7 +1,7 @@
 using Cinemachine;
 using UnityEngine;
 
-public class DungeonCM : Singleton<DungeonCM>
+public class CameraManager : Singleton<CameraManager>
 {
     public CinemachineVirtualCamera cmVC;
     private float timer;
@@ -11,12 +11,27 @@ public class DungeonCM : Singleton<DungeonCM>
     protected override void Awake()
     {
         base.Awake();
-        cmVC = GetComponent<CinemachineVirtualCamera>();
-
+        if (cmVC == null)
+        {
+            cmVC = Object.FindAnyObjectByType<CinemachineVirtualCamera>();
+        }
     }
+
     private void Start()
     {
-        cmVC.Follow = LevelManager.Instance.SelectedPlayer.transform;
+        // Tự động follow player nếu đang ở DungeonScene (có LevelManager)
+        if (LevelManager.Instance != null && LevelManager.Instance.SelectedPlayer != null)
+        {
+            SetFollowTarget(LevelManager.Instance.SelectedPlayer.transform);
+        }
+    }
+
+    public void SetFollowTarget(Transform target)
+    {
+        if (cmVC != null)
+        {
+            cmVC.Follow = target;
+        }
     }
     public void ShakeCM(float intensity, float shakeTimer)
     {
