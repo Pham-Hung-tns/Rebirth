@@ -9,6 +9,7 @@ public class PlayerConfig : ScriptableObject
     public int Level;
     public string Name;
     public Sprite Icon;
+    public string Story;
 
     [Space(5)]
     [Header("Movement Stats")]

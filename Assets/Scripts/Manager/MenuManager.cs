@@ -19,6 +19,9 @@ public class MenuManager : Singleton<MenuManager>
     [SerializeField] private TextMeshProUGUI maxEnergyStat;
     [SerializeField] private TextMeshProUGUI maxArmorStat;
     [SerializeField] private GameObject statPanel;
+    [SerializeField] private TextMeshProUGUI statHealth;
+    [SerializeField] private TextMeshProUGUI statEnergy;
+    [SerializeField] private TextMeshProUGUI statArmor;
 
     [Header("Coin")]
     [SerializeField] private TextMeshProUGUI coinUI;
@@ -73,6 +76,7 @@ public class MenuManager : Singleton<MenuManager>
         playerPanel.SetActive(false);
         currentPlayer.GetComponent<PlayerController>().enabled = true;
         currentPlayer.GetComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Dynamic;
+        currentPlayer.GetComponent<PlayerWeapon>().enabled = true;
         playerSelected = true;
 
         // Bật mobile controls nếu platform là mobile (do PlatformUIController quản lý list)
@@ -85,6 +89,9 @@ public class MenuManager : Singleton<MenuManager>
         }
 
         statPanel.SetActive(true);
+        statHealth.text = currentPlayer.PlayerConfig.MaxHealth.ToString();
+        statEnergy.text = currentPlayer.PlayerConfig.MaxEnergy.ToString();
+        statArmor.text = currentPlayer.PlayerConfig.MaxArmor.ToString();
         currentPlayer.GetComponent<ClickHandle>().enabled = false;
     }
 
@@ -96,6 +103,7 @@ public class MenuManager : Singleton<MenuManager>
         playerPanel.SetActive(true);
         icon.sprite = currentPlayer.PlayerConfig.Icon;
         playerName.text = currentPlayer.PlayerConfig.Name;
+        Story.text = currentPlayer.PlayerConfig.Story;
         currentLevel.text = $"Level {currentPlayer.PlayerConfig.Level}";
 
         if (!currentPlayer.PlayerConfig.unlock)
