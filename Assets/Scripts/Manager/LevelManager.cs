@@ -73,6 +73,7 @@ public class LevelManager : Singleton<LevelManager>
         if(GameManager.Instance.playerPrefab != null)
         {
             SelectedPlayer =  Instantiate(GameManager.Instance.playerPrefab.playerPrefab);
+            SelectedPlayer.GetComponent<PlayerWeapon>().enabled = true;
             PlayerConfig player = SelectedPlayer.GetComponent<PlayerController>().PlayerData;
             SetStatWhenStart(player);
         }

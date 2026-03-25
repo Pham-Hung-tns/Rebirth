@@ -5,6 +5,7 @@ using UnityEngine;
 public class NPCInteractable : MonoBehaviour
 {
     private DS.DSDialogue npcDialogue;
+    [SerializeField] private FeedbackPlayer npcFeedback;
 
     // Lưu trữ Node đang nói chuyện dở dang
     [HideInInspector] public DS.ScriptableObjects.DSDialogueSO CurrentNode;
@@ -41,7 +42,7 @@ public class NPCInteractable : MonoBehaviour
             if (player != null)
             {
                 player.SetInteractable(this);
-                        
+                npcFeedback?.PlayFeedbacks();
             }
         }
     }
@@ -57,6 +58,8 @@ public class NPCInteractable : MonoBehaviour
             {
                 player.SetInteractable(null);
             }
+            
+            npcFeedback?.CompleteFeedbacks();
 
             // Ép tắt hộp thoại nếu Player bỏ chạy khi đang trò chuyện với NPC này
             DialogueUIManager uiManager = FindObjectOfType<DialogueUIManager>();

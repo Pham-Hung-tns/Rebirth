@@ -15,6 +15,7 @@ MonoBehaviour:
   Level: 0
   Name: Frontiersman
   Icon: {fileID: 21300000, guid: c5e39c314f2e65f4bb963ab5c1c2c75a, type: 3}
+  Story: Khong co thuc luc, thi viec gi phai buon?
   speed: 8
   acceleration: 15
   deceleration: 10

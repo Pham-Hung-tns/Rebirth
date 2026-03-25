@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Rifle
   m_EditorClassIdentifier: 
   Name: Rifle
-  icon: {fileID: -730901295, guid: 13206ce5c0155524f8b9066ce518f830, type: 3}
+  icon: {fileID: 21300000, guid: 69c9de425412df44f8ba713bb8c7e034, type: 3}
   damage: 5
-  energy: 0
+  energy: 2
   weaponType: 1
   weaponRarity: 0
   firePoint: {fileID: 0}
@@ -28,5 +28,5 @@ MonoBehaviour:
   projectilePrefab: {fileID: 2206017541237943215, guid: c9a89c1b2dc352d428cc6f681a591799, type: 3}
   projectileSpeed: 15
   projectileLifetime: 5
-  projectileCount: 3
-  spreadAngle: 30
+  projectileCount: 1
+  spreadAngle: 5

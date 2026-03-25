@@ -1,0 +1,56 @@
+{
+    "items": [
+        {
+            "key": "START",
+            "value": "Bắt đầu"
+        },
+        {
+            "key": "QUIT",
+            "value": "Thoát"
+        },
+        {
+            "key": "LANGUAGE",
+            "value": "Ngôn ngữ"
+        },
+        {
+            "key": "ENGLISH",
+            "value": "Tiếng Anh"
+        },
+        {
+            "key": "VIETNAMESE",
+            "value": "Tiếng Việt"
+        },
+        {
+            "key": "Vietnamese people are not bad.",
+            "value": "Người Việt mình không có dở"
+        },
+        {
+            "key": "LET'S GO!",
+            "value": "Đi nào!"
+        },
+        {
+            "key": "UPGRADE",
+            "value": "Nâng cấp"
+        },
+        {
+            "key": "UNLOCK",
+            "value": "Mở khóa"
+        },
+        {
+            "key": "LEVEL",
+            "value": "Màn"
+        },
+        {
+            "key": "GAME OVER",
+            "value": "Thất bại"
+        },
+        {
+            "key": "CLEAR",
+            "value": "Vượt qua"
+        },
+        {
+            "key": "STORY",
+            "value": "Người Việt mình không có dở!"
+        }
+    ]
+}

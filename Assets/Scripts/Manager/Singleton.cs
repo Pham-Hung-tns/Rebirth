@@ -14,6 +14,12 @@ public class Persistence<T> : Singleton<T> where T : MonoBehaviour
 {
     protected override void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            // A valid instance already exists from a previous scene → destroy this duplicate
+            UnityEngine.Object.Destroy(gameObject);
+            return;
+        }
         base.Awake();
         DontDestroyOnLoad(gameObject);
     }
