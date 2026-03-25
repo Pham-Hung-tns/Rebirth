@@ -25,6 +25,7 @@ public class MenuManager : Singleton<MenuManager>
 
     [Header("Coin")]
     [SerializeField] private TextMeshProUGUI coinUI;
+    [SerializeField] private TextMeshProUGUI chooseCharacterText;
     [SerializeField] private TextMeshProUGUI unlockCharacterText;
     [SerializeField] private TextMeshProUGUI upgradeCharacterText;
     private SelectCharacter currentPlayer;
@@ -103,22 +104,22 @@ public class MenuManager : Singleton<MenuManager>
         playerPanel.SetActive(true);
         icon.sprite = currentPlayer.PlayerConfig.Icon;
         playerName.text = currentPlayer.PlayerConfig.Name;
-        Story.text = currentPlayer.PlayerConfig.Story;
-        currentLevel.text = $"Level {currentPlayer.PlayerConfig.Level}";
-
+        Story.text = LocalizationManager.Instance.GetText("STORY");
+        currentLevel.text = $"{LocalizationManager.Instance.GetText("LEVEL")} {currentPlayer.PlayerConfig.Level}";
+        chooseCharacterText.text = LocalizationManager.Instance.GetText("LET'S GO!");
         if (!currentPlayer.PlayerConfig.unlock)
         {
             upgradeButton.gameObject.SetActive(false);
             chooseButton.interactable = false;
             unlockButton.gameObject.SetActive(true);
-            unlockCharacterText.text = $"Unlock\n({currentPlayer.PlayerConfig.unlockCost.ToString()})";
+            unlockCharacterText.text = $"{LocalizationManager.Instance.GetText("UNLOCK")}\n({currentPlayer.PlayerConfig.unlockCost.ToString()})";
         }
         else
         {
             upgradeButton.gameObject.SetActive(true);
             chooseButton.interactable = true;
             unlockButton.gameObject.SetActive(false);
-            upgradeCharacterText.text = $"Upgrade\n({currentPlayer.PlayerConfig.upgradeCost.ToString()})";
+            upgradeCharacterText.text = $"{LocalizationManager.Instance.GetText("UPGRADE")}\n({currentPlayer.PlayerConfig.upgradeCost.ToString()})";
         }
         ResetStat();
         ShowSkillTreeUI();
@@ -131,7 +132,7 @@ public class MenuManager : Singleton<MenuManager>
         {
             unlockButton.gameObject.SetActive(false);
             upgradeButton.gameObject.SetActive(true);
-            upgradeCharacterText.text = $"Upgrade\n({currentPlayer.PlayerConfig.upgradeCost.ToString()})";
+            upgradeCharacterText.text = $"{LocalizationManager.Instance.GetText("UPGRADE")}\n({currentPlayer.PlayerConfig.upgradeCost.ToString()})";
             chooseButton.interactable = true;
             ResetStat();
             CoinManager.Instance.RemoveCoin(currentPlayer.PlayerConfig.unlockCost);
@@ -161,12 +162,12 @@ public class MenuManager : Singleton<MenuManager>
         config.MaxEnergy += 10;
         config.MaxArmor++;
         config.upgradeCost = Mathf.RoundToInt(config.upgradeCost + config.upgradeCost * (config.upgradeCostPercent / 100f));
-        upgradeCharacterText.text = $"Upgrade\n({config.upgradeCost.ToString()})";
+        upgradeCharacterText.text = $"{LocalizationManager.Instance.GetText("UPGRADE")}\n({config.upgradeCost.ToString()})";
         ResetStat();
     }
     public void ResetStat()
     {
-        currentLevel.text = $"Level {currentPlayer.PlayerConfig.Level.ToString()}";
+        currentLevel.text = $"{LocalizationManager.Instance.GetText("LEVEL")} {currentPlayer.PlayerConfig.Level.ToString()}";
         maxHealthStat.text = $"{currentPlayer.PlayerConfig.MaxHealth.ToString()}";
         maxEnergyStat.text = $"{currentPlayer.PlayerConfig.MaxEnergy.ToString()}";
         maxArmorStat.text = $"{currentPlayer.PlayerConfig.MaxArmor.ToString()}";
@@ -186,11 +187,27 @@ public class MenuManager : Singleton<MenuManager>
     private void OnEnable()
     {
         UIEvents.OnCoinChanged += OnCoinChanged;
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.OnLanguageChanged += RefreshUIOnLanguageChanged;
+        }
     }
 
     private void OnDisable()
     {
         UIEvents.OnCoinChanged -= OnCoinChanged;
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.OnLanguageChanged -= RefreshUIOnLanguageChanged;
+        }
+    }
+
+    private void RefreshUIOnLanguageChanged()
+    {
+        if (currentPlayer != null && playerPanel.activeSelf)
+        {
+            ShowStats(currentPlayer);
+        }
     }
 
     // Skill Tree UI Methods
@@ -212,7 +229,7 @@ public class MenuManager : Singleton<MenuManager>
         if (buttonIndex >= 0 && buttonIndex < skillNodes.Count)
         {
             TechNode node = skillNodes[buttonIndex];
-            string detailText = $"<b>Definition:</b>\n{node.tech.definition}";
+            string detailText = LocalizationManager.Instance.GetText("STORY");
             
             skillTreeDetailText.text = detailText;
         }

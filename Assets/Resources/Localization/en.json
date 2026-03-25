@@ -1,0 +1,56 @@
+{
+    "items": [
+        {
+            "key": "START",
+            "value": "Start"
+        },
+        {
+            "key": "QUIT",
+            "value": "Quit"
+        },
+        {
+            "key": "LANGUAGE",
+            "value": "Language"
+        },
+        {
+            "key": "ENGLISH",
+            "value": "English"
+        },
+        {
+            "key": "VIETNAMESE",
+            "value": "Vietnamese"
+        },
+        {
+            "key": "Vietnamese people are not bad.",
+            "value": "Vietnamese people are not bad."
+        },
+        {
+            "key": "LET'S GO!",
+            "value": "Let's go!"
+        },
+        {
+            "key": "UPGRADE",
+            "value": "Upgrade"
+        },
+        {
+            "key": "UNLOCK",
+            "value": "Unlock"
+        },
+        {
+            "key": "LEVEL",
+            "value": "Level"
+        },
+        {
+            "key": "GAME OVER",
+            "value": "Game Over"
+        },
+        {
+            "key": "CLEAR",
+            "value": "Clear"
+        },
+        {
+            "key": "STORY",
+            "value": "Vietnamese people are not bad."
+        }
+    ]
+}
