@@ -25,8 +25,14 @@ public class PlayerController : CharacterController
     private Vector2 _moveInput;
     private NPCInteractable _currentInteractable; // Thêm biến lưu NPC đang ở gần
 
+    // ── Audio State ────────────────────────────────────────────────────────────
+    /// <summary>Flag để kiểm soát khi nào cho phép phát âm thanh di chuyển.
+    /// Chỉ được phát khi player được đặt vào màn chơi mới thành công.</summary>
+    private bool isPlayerPlacedInLevel = false;
+
     public PlayerConfig PlayerData { get => playerData; set => playerData = value; }
     public DetectionEnemy Detection => _detection;
+    public bool IsPlayerPlacedInLevel => isPlayerPlacedInLevel;
 
     private void Awake()
     {
@@ -130,5 +136,13 @@ public class PlayerController : CharacterController
         inputReader.InteractEvent -= OnInteract;
     }
 
+    // ── Audio Control ──────────────────────────────────────────────────────────
 
+    /// <summary>Đánh dấu rằng player đã được đặt vào màn chơi mới.
+    /// Sau khi gọi hàm này, âm thanh di chuyển (tiếng bước chân) mới được phát.</summary>
+    public void SetPlayerPlacedInLevel(bool placed)
+    {
+        isPlayerPlacedInLevel = placed;
+    }
 }
+

@@ -15,3 +15,5 @@ MonoBehaviour:
   availableItems:
   - item: {fileID: 8887546011082847739, guid: e3a4c950f31d1d94686cc2672e7fc3b5, type: 3}
     ratio: 100
+  - item: {fileID: 825758664295854933, guid: 8b1d94362f6863d49a8e583b2b80f63e, type: 3}
+    ratio: 50

@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D _rb;
     private PlayerConfig _data;
     private SpriteRenderer _spriteRenderer;
+    private PlayerController _playerController;
 
     private float currentSpeed = 0f;
     public void Initialize(Rigidbody2D rb, SpriteRenderer spriteRenderer, PlayerConfig data)
@@ -15,6 +16,7 @@ public class PlayerMovement : MonoBehaviour
         _rb = rb;
         _data = data;
         _spriteRenderer = spriteRenderer;
+        _playerController = GetComponent<PlayerController>();
     }
 
     // dùng trong fixedupdate
@@ -62,9 +64,14 @@ public class PlayerMovement : MonoBehaviour
     /// <summary>
     /// Gọi hàm này từ Animation Event trên clip chạy của player.
     /// Đặt event tại frame khi chân chạm đất để sync âm thanh chính xác.
+    /// Chỉ phát âm thanh khi player đã được đặt vào màn chơi mới.
     /// </summary>
     public void OnFootstepAnimEvent()
     {
-        AudioManager.Instance?.PlaySFX(SFXClip.PlayerFootstep);
+        // Chỉ phát âm thanh bước chân nếu player được đặt vào màn chơi mới
+        if (_playerController != null && _playerController.IsPlayerPlacedInLevel)
+        {
+            AudioManager.Instance?.PlaySFX(SFXClip.PlayerFootstep);
+        }
     }
 }

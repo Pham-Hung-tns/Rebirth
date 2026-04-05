@@ -15,16 +15,20 @@ MonoBehaviour:
   levelName: Level 1-2
   roomTemplateList:
   - {fileID: 11400000, guid: d2968954cdf222142817091dc17cc925, type: 2}
+  - {fileID: 11400000, guid: db033d4c9bb22f54eadf2768623c3932, type: 2}
   - {fileID: 11400000, guid: f80fb87e95ddddb4a995cb4b7933eb45, type: 2}
   - {fileID: 11400000, guid: 0a05dcd1e4758f541b24414d566ced01, type: 2}
+  - {fileID: 11400000, guid: 0ddec596f37e995458d191b2725642b5, type: 2}
+  - {fileID: 11400000, guid: 19b4ed180bc79714abe4935759d8acc8, type: 2}
   - {fileID: 11400000, guid: e64722a7d0262ff4b9d78015b3107ed9, type: 2}
   - {fileID: 11400000, guid: 0aa91a88dbdfd394da26a9bac69288e0, type: 2}
+  - {fileID: 11400000, guid: a6995ce907d6aaf49aa62cf5af09fde7, type: 2}
   - {fileID: 11400000, guid: a57fd80d0c097d74da3c6ac4ac18437d, type: 2}
-  - {fileID: 11400000, guid: 8cc582dadce1b7848aae0161eb94bf0c, type: 2}
   - {fileID: 11400000, guid: d0f94ef77b9eb3249bef66878284698e, type: 2}
   - {fileID: 11400000, guid: 3d627a7cbbf05904a9bbc8b16d2a99ab, type: 2}
+  - {fileID: 11400000, guid: 6744b4d1b6248ce49addb34155c6fe42, type: 2}
   - {fileID: 11400000, guid: a5507522127051a4fb41fad1be2c4338, type: 2}
   roomNodeGraphList:
   - {fileID: 11400000, guid: a1a35309a782ca84897cf13748b39dea, type: 2}
   chestPrefab: {fileID: 2543308805713309664, guid: 01cfebaddbfc2374f9f8162bb716df9b, type: 3}
-  chestItem: {fileID: 11400000, guid: cac1ecdcfed4fe442a79d5527d81a059, type: 2}
+  chestItem: {fileID: 11400000, guid: d998c4b6fc8ca204ca0b26ba274240de, type: 2}

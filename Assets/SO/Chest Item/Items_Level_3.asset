@@ -12,4 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e7f70ef1242a5384b9f27d58d8441de6, type: 3}
   m_Name: Items_Level_3
   m_EditorClassIdentifier: 
-  availableItems: []
+  availableItems:
+  - item: {fileID: 8887546011082847739, guid: e3a4c950f31d1d94686cc2672e7fc3b5, type: 3}
+    ratio: 50
+  - item: {fileID: 825758664295854933, guid: 8b1d94362f6863d49a8e583b2b80f63e, type: 3}
+    ratio: 50

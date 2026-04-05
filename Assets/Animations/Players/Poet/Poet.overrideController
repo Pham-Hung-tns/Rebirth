@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Poet
+  m_Controller: {fileID: 9100000, guid: 8ae741b66bdead640b7ce2e05f8ecfee, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: 5a176383f8185484993f34e876f293f2, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 009f1f40990a8014da4f7e17333532fe, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 77f0be57222161a488b658ee3890a641, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 2975c69fb206e7f4699becadf7ce9eef, type: 2}

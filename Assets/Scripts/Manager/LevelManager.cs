@@ -104,12 +104,33 @@ public class LevelManager : Singleton<LevelManager>
             var entrancePos = entrance.instantiatedRoom.transform.position;
             SelectedPlayer.transform.position = entrancePos;
         }
+
+        // Phát nhạc nền
         AudioManager.Instance.PlayMusic(MusicTrack.BackGround);
+
+        // Đánh dấu rằng player đã được đặt vào màn chơi mới
+        // Và cho phép phát âm thanh di chuyển (tiếng bước chân)
+        var playerController = SelectedPlayer.GetComponent<PlayerController>();
+        if (playerController != null)
+        {
+            playerController.SetPlayerPlacedInLevel(true);
+        }
     }
 
     private void ContinueNextLevel()
     {
         DungeonBuilder db = DungeonBuilder.Instance;
+
+        // Tạm dừng âm thanh trước khi chuyển sang màn chơi mới
+        AudioManager.Instance.PauseAudio();
+
+        // Đánh dấu rằng player chưa được đặt vào màn chơi mới
+        // Điều này sẽ ngăn chặn phát âm thanh di chuyển cho đến khi player được đặt xong
+        var playerController = SelectedPlayer != null ? SelectedPlayer.GetComponent<PlayerController>() : null;
+        if (playerController != null)
+        {
+            playerController.SetPlayerPlacedInLevel(false);
+        }
 
         // If we have a list of levels, advance index; otherwise just regenerate current level
         if (dungeonLevels != null && dungeonLevels.Length > 0)
@@ -169,9 +190,12 @@ public class LevelManager : Singleton<LevelManager>
 
         UIEvents.OnFadeNewDungeon?.Invoke(1f);
         yield return new WaitForSeconds(2f);
-        ContinueNextLevel();
+        ContinueNextLevel();  // ContinueNextLevel sẽ tạm dừng âm thanh
         UIEvents.OnLevelTextUpdate?.Invoke(GetCurrentLevelText());
         UIEvents.OnFadeNewDungeon?.Invoke(0f);
+
+        // Tiếp tục phát âm thanh sau khi định vị player xong
+        AudioManager.Instance.ResumeAudio();
 
         // Re-enable player control after transition (if player still exists)
         yield return null; // wait one frame to ensure scene objects updated

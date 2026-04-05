@@ -1508,7 +1508,6 @@ MonoBehaviour:
   dungeonLevels:
   - {fileID: 11400000, guid: e017a8a6a0a0d1143b016540e1032893, type: 2}
   - {fileID: 11400000, guid: 710fb095fc9e08a48ba9ee939600e6e9, type: 2}
-  - {fileID: 11400000, guid: fb73327b7bc6f29449c4638ad3ccbfdd, type: 2}
 --- !u!4 &1051979971
 Transform:
   m_ObjectHideFlags: 0
@@ -2625,7 +2624,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1707871889
 RectTransform:
   m_ObjectHideFlags: 0

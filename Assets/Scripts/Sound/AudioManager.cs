@@ -13,6 +13,10 @@ public class AudioManager : Singleton<AudioManager>
     public AudioSource MusicSource => musicSource;
     public AudioSource SfxSource  => sfxSource;
 
+    // ── Pause/Resume State ─────────────────────────────────────────────────────
+    private bool isAudioPaused = false;
+    private float pausedMusicTime = 0f;
+
     // ── Lifecycle ──────────────────────────────────────────────────────────────
 
     protected override void Awake()
@@ -50,6 +54,30 @@ public class AudioManager : Singleton<AudioManager>
         if (musicSource == null) return;
         musicSource.Stop();
         musicSource.clip = null;
+    }
+
+    /// <summary>Tạm dừng âm nhạc. Có thể tiếp tục từ vị trí đã dừng bằng ResumeAudio().</summary>
+    public void PauseAudio()
+    {
+        if (musicSource == null) return;
+        isAudioPaused = true;
+        if (musicSource.isPlaying)
+        {
+            pausedMusicTime = musicSource.time;
+            musicSource.Pause();
+        }
+    }
+
+    /// <summary>Tiếp tục phát âm nhạc từ vị trí đã dừng.</summary>
+    public void ResumeAudio()
+    {
+        if (musicSource == null) return;
+        isAudioPaused = false;
+        if (!musicSource.isPlaying && musicSource.clip != null)
+        {
+            musicSource.time = pausedMusicTime;
+            musicSource.Play();
+        }
     }
 
     public bool ToggleMusic()
