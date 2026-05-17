@@ -8,6 +8,6 @@ public class HealthPotion : ItemDataSO
     [SerializeField] private float health;
     public override void PickUp(GameObject player)
     {
-        player.GetComponent<PlayerVitality>().RecoverHealth(Random.Range(1,health));
+        player.GetComponent<PlayerVitality>().RecoverHealth(Mathf.RoundToInt(Random.Range(1f, health)));
     }
 }

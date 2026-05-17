@@ -15,6 +15,6 @@ public class EnergyBonus : BonusBase
     protected override void GetBonus()
     {
         base.GetBonus();
-        player.GetComponent<PlayerVitality>().RecoverEnergy(1f);
+        player.GetComponent<PlayerVitality>().RecoverEnergy(1);
     }
 }

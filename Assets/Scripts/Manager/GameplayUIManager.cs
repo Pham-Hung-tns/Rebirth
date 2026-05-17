@@ -64,9 +64,9 @@ public class GameplayUIManager : Singleton<GameplayUIManager>
         if (EnergyBarImage != null)
             EnergyBarImage.fillAmount = Mathf.Clamp01((float)data.curEnergy / Mathf.Max(1f, data.maxEnergy));
 
-        if (healthText != null) healthText.text = data.curHp + "/" + data.maxHp;
-        if (armorText != null) armorText.text = data.curArmor + "/" + data.maxArmor;
-        if (energyText != null) energyText.text = data.curEnergy + "/" + data.maxEnergy;
+        if (healthText != null) healthText.text = Mathf.RoundToInt(data.curHp) + "/" + Mathf.RoundToInt(data.maxHp);
+        if (armorText != null) armorText.text = Mathf.RoundToInt(data.curArmor) + "/" + Mathf.RoundToInt(data.maxArmor);
+        if (energyText != null) energyText.text = Mathf.RoundToInt(data.curEnergy) + "/" + Mathf.RoundToInt(data.maxEnergy);
     }
 
     private void OnCoinChanged(float totalCoins)

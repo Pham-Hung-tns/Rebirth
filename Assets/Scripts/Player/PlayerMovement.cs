@@ -11,12 +11,12 @@ public class PlayerMovement : MonoBehaviour
     private PlayerController _playerController;
 
     private float currentSpeed = 0f;
-    public void Initialize(Rigidbody2D rb, SpriteRenderer spriteRenderer, PlayerConfig data)
+    public void Initialize(Rigidbody2D rb, SpriteRenderer spriteRenderer, PlayerConfig data, PlayerController controller)
     {
         _rb = rb;
         _data = data;
         _spriteRenderer = spriteRenderer;
-        _playerController = GetComponent<PlayerController>();
+        _playerController = controller;
     }
 
     // dùng trong fixedupdate
@@ -68,8 +68,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     public void OnFootstepAnimEvent()
     {
-        // Chỉ phát âm thanh bước chân nếu player được đặt vào màn chơi mới
-        if (_playerController != null && _playerController.IsPlayerPlacedInLevel)
+        if (_playerController != null)
         {
             AudioManager.Instance?.PlaySFX(SFXClip.PlayerFootstep);
         }

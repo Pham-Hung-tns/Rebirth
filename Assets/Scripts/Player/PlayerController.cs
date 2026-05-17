@@ -37,7 +37,7 @@ public class PlayerController : CharacterController
     private void Awake()
     {
         // Dependency Injection: Đẩy dữ liệu vào các module con
-        _movement.Initialize(rigidBody2D, Spr, PlayerData);
+        _movement.Initialize(rigidBody2D, Spr, PlayerData, this);
         _vitality.Initialize(PlayerData);
         _combat = GetComponent<ICombatBehavior>();
         // _skill.Initialize(...);

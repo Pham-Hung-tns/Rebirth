@@ -30,7 +30,7 @@ MonoBehaviour:
   CriticalChance: 45
   CriticalDamage: 20
   rangeDetect: 0
-  unlock: 0
+  unlock: 1
   unlockCost: 100
   upgradeCost: 30
   upgradeCostPercent: 30

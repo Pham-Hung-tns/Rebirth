@@ -359,7 +359,7 @@ GameObject:
   m_Component:
   - component: {fileID: 372915711889641523}
   - component: {fileID: 6331103968718174817}
-  m_Layer: 6
+  m_Layer: 0
   m_Name: Movement
   m_TagString: movement
   m_Icon: {fileID: 0}

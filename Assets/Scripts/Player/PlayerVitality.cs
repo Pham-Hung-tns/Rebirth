@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -96,7 +96,7 @@ public class PlayerVitality : MonoBehaviour, ITakeDamage
         }
     }
 
-    public void RecoverHealth(float amount)
+    public void RecoverHealth(int amount)
     {
         CurrentHealth = Mathf.Min(CurrentHealth + amount, _data.MaxHealth);
         NotifyStatsChanged();
@@ -106,7 +106,7 @@ public class PlayerVitality : MonoBehaviour, ITakeDamage
 
     #region Player Energy Methods
 
-    public void RecoverEnergy(float amount)
+    public void RecoverEnergy(int amount)
     {
         CurrentEnergy = Mathf.Min(CurrentEnergy + amount, _data.MaxEnergy);
         NotifyStatsChanged();
